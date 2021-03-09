@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "spring.mail.host.properties.mail.smtp.auth",
+      "type": "java.lang.String",
+      "description": "Description for spring.mail.host.properties.mail.smtp.auth."
+    },
+    {
+      "name": "spring.mail.port.usernmae",
+      "type": "java.lang.String",
+      "description": "Description for spring.mail.port.usernmae."
+    }
+  ] }

@@ -1,0 +1,21 @@
+spring:
+  mail:
+    host: stmp@gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail.stmp.auth: true
+      mail.stmp.starttls.enable: true
+
+  #      properties:
+#      mail.smtp.auth: true
+#      mail.smtp.starttls.enable: true
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: false
+    show-sql: false
+  output:
+    ansi:
+      enabled: always
