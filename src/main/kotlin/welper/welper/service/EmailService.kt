@@ -4,6 +4,7 @@ import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 import welper.welper.domain.EmailCertify
+import welper.welper.exception.AlreadyExistAccountException
 import welper.welper.repository.EmailCertifyRepository
 import java.math.BigInteger
 import java.nio.charset.Charset
@@ -20,6 +21,9 @@ class EmailService(
     private val characterEncoding = Charset.forName("UTF-8")
 
     fun send(email: String) {
+        val isJoinPossible = isJoinPossible(email)
+        if(isJoinPossible) throw AlreadyExistAccountException(email)
+
         val randomCode: String = getRandomString(10)
 
         emailCertifyRepository.save(
@@ -60,5 +64,6 @@ class EmailService(
                 .map { charset.random() }
                 .joinToString("")
     }
+    private fun isJoinPossible(email: String) = !emailCertifyRepository.existsById(email)
 
 }
