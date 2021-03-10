@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import welper.welper.domain.EmailCertify
 import welper.welper.domain.User
 import welper.welper.exception.AlreadyExistAccountException
+import welper.welper.exception.NonExistEmailCertifyException
 import welper.welper.repository.EmailCertifyRepository
 import welper.welper.repository.UserRepository
 import java.math.BigInteger
@@ -22,20 +23,21 @@ class AuthService(
 
 
     fun signUp(email: String, password: String, name: String, age: Int, isMerry: Boolean, isWomen: Boolean) {
-        val emailCertify: EmailCertify = emailCertifyRepository.findByEmailAndCertified(email, true) ?: throw Exception()
+        val emailCertify: EmailCertify = emailCertifyRepository.findByEmailAndCertified(email, true)
+                ?: throw NonExistEmailCertifyException(email)
         val isJoinPossible = isJoinPossible(email)
-        if(isJoinPossible) throw AlreadyExistAccountException(email)
+        if (isJoinPossible) throw AlreadyExistAccountException(email)
         userRepository.save(
-                    User(
-                            email = email,
-                            password = encodingPassword(password),
-                            name = name,
-                            age = age,
-                            isMerry = isMerry,
-                            isWomen = isWomen,
+                User(
+                        email = email,
+                        password = encodingPassword(password),
+                        name = name,
+                        age = age,
+                        isMerry = isMerry,
+                        isWomen = isWomen,
 
-                    )
-            )
+                        )
+        )
 
     }
 
@@ -44,6 +46,7 @@ class AuthService(
         messageDigest.update(originalPassword.toByteArray(characterEncoding))
         return String.format("%0128x", BigInteger(1, messageDigest.digest()))
     }
+
     private fun isJoinPossible(email: String) = !userRepository.existsById(email)
 
 
