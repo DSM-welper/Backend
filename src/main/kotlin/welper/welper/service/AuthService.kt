@@ -2,6 +2,7 @@ package welper.welper.service
 
 import net.bytebuddy.implementation.bytecode.Throw
 import org.springframework.stereotype.Service
+import welper.welper.controller.response.LoginResponse
 import welper.welper.domain.EmailCertify
 import welper.welper.domain.User
 import welper.welper.exception.AlreadyExistAccountException
@@ -16,6 +17,7 @@ import java.security.MessageDigest
 @Service
 class AuthService(
         private val userRepository: UserRepository,
+        private val jwtService: JwtService,
         private val emailCertifyRepository: EmailCertifyRepository,
 ) {
     private val encryptionAlgorithm = "SHA-512"
@@ -40,8 +42,11 @@ class AuthService(
         )
     }
 
-    fun login(email:String,password: String){
-
+    fun login(email: String, password: String): LoginResponse {
+        return LoginResponse(
+                accessToken = createAccessToken(email),
+                refreshToken = createRefreshToken(email),
+        )
     }
 
 
@@ -52,6 +57,10 @@ class AuthService(
     }
 
     private fun isJoinPossible(email: String) = !userRepository.existsById(email)
+
+    private fun createAccessToken(teacherId: String) = jwtService.createToken(teacherId, Token.ACCESS)
+
+    private fun createRefreshToken(teacherId: String) = jwtService.createToken(teacherId, Token.REFRESH)
 
 
 }

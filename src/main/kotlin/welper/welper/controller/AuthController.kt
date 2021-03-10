@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import welper.welper.controller.request.LoginRequest
 import welper.welper.controller.request.SignUpRequest
+import welper.welper.controller.response.LoginResponse
 import welper.welper.service.AuthService
 import javax.validation.Valid
 
@@ -27,7 +28,7 @@ class AuthController(
             )
 
     @PostMapping
-    fun login(@RequestBody @Valid request: LoginRequest) =
+    fun login(@RequestBody @Valid request: LoginRequest): LoginResponse =
             authService.login(
                     email = request.email,
                     password = request.password,
