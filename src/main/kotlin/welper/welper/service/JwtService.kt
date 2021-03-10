@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import welper.welper.exception.InvalidTokenException
 import java.util.*
 
 @Service
@@ -17,8 +18,9 @@ class JwtService(
 
     fun createToken(email: String, tokenType: Token): String =
             Jwts.builder()
+                    .setId(email)
                     .setHeaderParam("typ", "JWT")
-                    .claim("id", email)
+                    .claim("email", email)
                     .setExpiration(Date(System.currentTimeMillis() + tokenType.expirationTime))
                     .signWith(signatureAlgorithm, base64SecretKey)
                     .compact()
@@ -27,7 +29,7 @@ class JwtService(
                     .setSigningKey(base64SecretKey)
                     .parseClaimsJws(token)
                     .body
-                    .get("id", String::class.java)
+                    .get("email", String::class.java)
 
     fun isValid(token: String) =
             try {
@@ -39,5 +41,10 @@ class JwtService(
                         .expiration
                 expirationTime.after(currentTime)
             } catch (e: Exception) { false }
+
+    fun validateToken(token: String) {
+        val isValid = isValid(token)
+        if (!isValid) throw InvalidTokenException(token)
+    }
 
 }
