@@ -38,8 +38,12 @@ class AuthService(
 
                         )
         )
+    }
+
+    fun login(email:String,password: String){
 
     }
+
 
     private fun encodingPassword(originalPassword: String): String {
         val messageDigest = MessageDigest.getInstance(encryptionAlgorithm)
