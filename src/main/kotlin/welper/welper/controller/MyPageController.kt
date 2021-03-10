@@ -29,7 +29,7 @@ class MyPageController(
         )
     }
 
-    @PutMapping
+    @PatchMapping
     fun updateMyPage(@RequestHeader("Authorization") token: String,
                      @RequestBody request:MyPageRequest) {
         val email = jwtService.getEmail(token)
