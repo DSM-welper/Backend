@@ -1,0 +1,41 @@
+package welper.welper.controller
+
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.web.bind.annotation.*
+import welper.welper.controller.request.MyPageRequest
+import welper.welper.controller.response.LoginResponse
+import welper.welper.controller.response.MyPageResponse
+import welper.welper.domain.User
+import welper.welper.exception.UserNotFoundException
+import welper.welper.repository.UserRepository
+import welper.welper.service.JwtService
+
+@RestController
+@RequestMapping("/user")
+class MyPageController(
+        val userRepository: UserRepository,
+        val jwtService: JwtService,
+) {
+    @GetMapping
+    fun myPage(@RequestHeader("Authorization") token: String): MyPageResponse {
+        val email = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        return MyPageResponse(
+                email = user.email,
+                isMarry = user.isMarry,
+                isWomen = user.isWomen,
+                age = user.age,
+                name = user.name,
+        )
+    }
+
+    @PutMapping
+    fun updateMyPage(@RequestHeader("Authorization") token: String,
+                     @RequestBody request:MyPageRequest) {
+        val email = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        user.updateMyPage(request.name, request.isMarry, request.isWomen, request.age)
+
+        userRepository.save(user)
+    }
+}

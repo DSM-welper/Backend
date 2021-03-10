@@ -22,7 +22,7 @@ data class SignUpRequest(
         @get:Pattern(regexp = "^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,3}$", message = "정규표현식 = ^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,3}$")
         val age:Int,
 
-        var isMerry:Boolean,
+        var isMarry:Boolean,
 
         var isWomen:Boolean,
 

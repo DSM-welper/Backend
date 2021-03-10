@@ -22,7 +22,7 @@ class AuthController(
                     email = request.email,
                     password = request.password,
                     name = request.name,
-                    isMerry = request.isMerry,
+                    isMarry = request.isMarry,
                     isWomen = request.isWomen,
                     age = request.age
             )
