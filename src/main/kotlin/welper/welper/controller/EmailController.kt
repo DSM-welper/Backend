@@ -1,9 +1,7 @@
 package welper.welper.controller
 
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import welper.welper.controller.request.ApproveRequest
 import welper.welper.controller.request.EmailCertifyRequest
 import welper.welper.service.EmailService
 import javax.validation.Valid
@@ -17,4 +15,8 @@ class EmailController(
     @PostMapping("send")
     fun sendMail(@RequestBody @Valid request: EmailCertifyRequest)=
             emailService.send(request.email)
+
+    @PutMapping("send")
+    fun approvalMail(@RequestBody @Valid request: ApproveRequest)=
+            emailService.approvalMail(request.authCode,request.email)
 }

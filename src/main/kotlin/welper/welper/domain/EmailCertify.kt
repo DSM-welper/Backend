@@ -12,4 +12,7 @@ class EmailCertify(
         @Column(name = "authCode")
         val authCode: String,
 
-        )
+        @Column(name="certified")
+        val certified:Boolean,
+
+)

@@ -12,15 +12,18 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/auth")
 class AuthController(
-    private val authService: AuthService,
+        private val authService: AuthService,
 ) {
     @PostMapping("/signUp")
     fun signUp(@RequestBody @Valid request: SignUpRequest) =
-        authService.signUp(
-            email = request.email,
-            password = request.password,
-            name=request.name,
-        )
+            authService.signUp(
+                    email = request.email,
+                    password = request.password,
+                    name = request.name,
+                    isMerry = request.isMerry,
+                    isWomen = request.isWomen,
+                    age = request.age
+            )
 //    @PostMapping("login")
 //    fun login(@RequestBody @Valid) =
 //            authService.login
