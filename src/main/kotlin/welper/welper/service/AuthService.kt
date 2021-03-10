@@ -9,7 +9,6 @@ import java.security.MessageDigest
 
 
 @Service
-
 class AuthService(
         private val userRepository: UserRepository
 ) {
