@@ -1,11 +1,9 @@
 package welper.welper.controller
 
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.LoginRequest
 import welper.welper.controller.request.SignUpRequest
+import welper.welper.controller.response.AccessTokenResponse
 import welper.welper.controller.response.LoginResponse
 import welper.welper.service.AuthService
 import javax.validation.Valid
@@ -33,4 +31,7 @@ class AuthController(
                     email = request.email,
                     password = request.password,
             )
+    @PatchMapping
+    fun recreateToken(@RequestHeader("refreshToken") token: String):AccessTokenResponse =
+             AccessTokenResponse(authService.recreateAccessToken(token))
 }
