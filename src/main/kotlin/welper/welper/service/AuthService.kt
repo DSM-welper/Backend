@@ -5,10 +5,7 @@ import org.springframework.stereotype.Service
 import welper.welper.controller.response.LoginResponse
 import welper.welper.domain.EmailCertify
 import welper.welper.domain.User
-import welper.welper.exception.AlreadyExistAccountException
-import welper.welper.exception.AuthenticationNumberMismatchException
-import welper.welper.exception.NonExistEmailCertifyException
-import welper.welper.exception.UserNotFoundException
+import welper.welper.exception.*
 import welper.welper.repository.EmailCertifyRepository
 import welper.welper.repository.UserRepository
 import java.math.BigInteger
@@ -63,9 +60,19 @@ class AuthService(
 
     private fun isJoinPossible(email: String) = !userRepository.existsById(email)
 
-    private fun createAccessToken(teacherId: String) = jwtService.createToken(teacherId, Token.ACCESS)
+    private fun createAccessToken(email: String) = jwtService.createToken(email, Token.ACCESS)
 
-    private fun createRefreshToken(teacherId: String) = jwtService.createToken(teacherId, Token.REFRESH)
+    private fun createRefreshToken(email: String) = jwtService.createToken(email, Token.REFRESH)
 
+    fun recreateAccessToken(refreshToken: String): String {
+        validateToken(refreshToken)
+
+        val email = jwtService.getEmail(refreshToken)
+        return createAccessToken(email)
+    }
+    fun validateToken(token: String) {
+        val isValid = jwtService.isValid(token)
+        if (!isValid) throw InvalidTokenException(token)
+    }
 
 }

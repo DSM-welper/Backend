@@ -12,11 +12,11 @@ class EmailController(
         private val emailService: EmailService,
 ) {
 
-    @PostMapping("send")
+    @PostMapping
     fun sendMail(@RequestBody @Valid request: EmailCertifyRequest)=
-            emailService.send(request.email)
+            emailService.send(request.mail)
 
-    @PutMapping("send")
+    @PatchMapping
     fun approvalMail(@RequestBody @Valid request: ApproveRequest)=
             emailService.approvalMail(request.authCode,request.email)
 }
