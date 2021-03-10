@@ -26,7 +26,7 @@ class AuthService(
     private val characterEncoding = Charset.forName("UTF-8")
 
 
-    fun signUp(email: String, password: String, name: String, age: Int, isMerry: Boolean, isWomen: Boolean) {
+    fun signUp(email: String, password: String, name: String, age: Int, isMarry: Boolean, isWomen: Boolean) {
         val emailCertify: EmailCertify = emailCertifyRepository.findByEmailAndCertified(email, true)
                 ?: throw NonExistEmailCertifyException(email)
         val isJoinPossible = isJoinPossible(email)
@@ -37,7 +37,7 @@ class AuthService(
                         password = encodingPassword(password),
                         name = name,
                         age = age,
-                        isMerry = isMerry,
+                        isMarry = isMarry,
                         isWomen = isWomen,
 
                         )
