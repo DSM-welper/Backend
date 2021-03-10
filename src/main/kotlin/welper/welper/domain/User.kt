@@ -12,21 +12,36 @@ class User(
 
         @Column(name = "password")
         val password: String,
-
-        @Column(name = "name")
-        val name: String,
-
-        @Column(name = "isMarry")
-        val isMerry: Boolean,
-
-        @Column(name = "isWomen")
-        val isWomen: Boolean,
-
-        @Column(name = "age")
-        val age: Int,
-
+        age: Int,
+        name: String,
+        isMarry: Boolean,
+        isWomen: Boolean,
 //        @Column(name = "emailCertifyId")
 //        @OneToOne(mappedBy = "EmailCertify")
 //        val emailCertify: EmailCertify?,
+) {
 
-        )
+    @Column(name = "name")
+    var name = name
+        private set
+
+    @Column(name = "isMarry")
+    var isMarry = isMarry
+        private set
+
+    @Column(name = "isWomen")
+    var isWomen = isWomen
+        private set
+
+    @Column(name = "age")
+    var age = age
+        private set
+
+     fun updateMyPage(name:String,isMarry: Boolean,isWomen: Boolean,age: Int){
+            this.name = name
+            this.isWomen = isWomen
+            this.age =age
+            this.isMarry = isMarry
+    }
+
+}
