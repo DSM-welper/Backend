@@ -5,6 +5,7 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 import welper.welper.domain.EmailCertify
 import welper.welper.exception.AlreadyExistAccountException
+import welper.welper.exception.AuthenticationNumberMismatchException
 import welper.welper.repository.EmailCertifyRepository
 import java.math.BigInteger
 import java.nio.charset.Charset
@@ -29,7 +30,7 @@ class EmailService(
         emailCertifyRepository.save(
                 EmailCertify(
                         email = email,
-                        authCode = encodingPassword(randomCode),
+                        authCode = encodingAuthCode(randomCode),
                         certified = false,
                 )
         )
@@ -45,14 +46,14 @@ class EmailService(
     }
 
     fun approvalMail(authCode: String, email: String) {
-        val emailCertify: EmailCertify = emailCertifyRepository.findByEmailAndAuthCode(email = email, authCode = encodingPassword(authCode))
-                ?: throw Exception()
+        val emailCertify: EmailCertify = emailCertifyRepository.findByEmailAndAuthCode(email = email, authCode = encodingAuthCode(authCode))
+                ?: throw AuthenticationNumberMismatchException(email)
         emailCertify.isCertified(emailCertify.certified)
         emailCertifyRepository.save(emailCertify)
     }
 
 
-    private fun encodingPassword(originalPassword: String): String {
+    private fun encodingAuthCode(originalPassword: String): String {
         val messageDigest = MessageDigest.getInstance(encryptionAlgorithm)
         messageDigest.update(originalPassword.toByteArray(characterEncoding))
         return String.format("%0128x", BigInteger(1, messageDigest.digest()))
