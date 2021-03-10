@@ -24,8 +24,10 @@ class AuthController(
                     isWomen = request.isWomen,
                     age = request.age
             )
-//    @PostMapping("login")
-//    fun login(@RequestBody @Valid) =
-//            authService.login
+
+//    @PostMapping
+//    fun login(@RequestBody @Valid loginRequest: LoginRequest) =
+//            authService.login(
 //
+//            )
 }
