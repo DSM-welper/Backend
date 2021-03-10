@@ -1,5 +1,6 @@
 package welper.welper.service
 
+import net.bytebuddy.implementation.bytecode.Throw
 import org.springframework.stereotype.Service
 import welper.welper.domain.EmailCertify
 import welper.welper.domain.User
@@ -20,8 +21,8 @@ class AuthService(
 
 
     fun signUp(email: String, password: String, name: String, age: Int, isMerry: Boolean, isWomen: Boolean) {
-        val emailCertify: EmailCertify? = emailCertifyRepository.findByEmailAndCertified(email, true)
-        if(emailCertify!=null){
+        val emailCertify: EmailCertify = emailCertifyRepository.findByEmailAndCertified(email, true) ?: throw Exception()
+
             userRepository.save(
                     User(
                             email = email,
@@ -33,7 +34,7 @@ class AuthService(
 //                        emailCertify = emailCertify,
                     )
             )
-        }
+
     }
 
     private fun encodingPassword(originalPassword: String): String {
@@ -42,7 +43,5 @@ class AuthService(
         return String.format("%0128x", BigInteger(1, messageDigest.digest()))
     }
 
-    private fun findCertify(email: String) =
-            emailCertifyRepository.findByEmailAndCertified(email, true)
 
 }
