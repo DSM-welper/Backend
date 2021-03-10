@@ -1,12 +1,14 @@
 package welper.welper.service
 
-import net.bytebuddy.implementation.bytecode.Throw
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import welper.welper.controller.response.LoginResponse
 import welper.welper.domain.EmailCertify
 import welper.welper.domain.User
 import welper.welper.exception.AlreadyExistAccountException
+import welper.welper.exception.AuthenticationNumberMismatchException
 import welper.welper.exception.NonExistEmailCertifyException
+import welper.welper.exception.UserNotFoundException
 import welper.welper.repository.EmailCertifyRepository
 import welper.welper.repository.UserRepository
 import java.math.BigInteger
@@ -43,9 +45,12 @@ class AuthService(
     }
 
     fun login(email: String, password: String): LoginResponse {
+        userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        val user: User = userRepository.findByEmailAndPassword(email, encodingPassword(password))
+                ?: throw AuthenticationNumberMismatchException(email)
         return LoginResponse(
-                accessToken = createAccessToken(email),
-                refreshToken = createRefreshToken(email),
+                accessToken = createAccessToken(user.email),
+                refreshToken = createRefreshToken(user.email),
         )
     }
 
