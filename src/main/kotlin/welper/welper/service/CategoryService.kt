@@ -6,7 +6,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
-import welper.welper.controller.response.CategoryPostResponse
+import welper.welper.controller.response.CategoryListPostResponse
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -16,7 +16,13 @@ class CategoryService(
         private val key: String,
 ){
 
-    fun getCategory(type:String):CategoryPostResponse{
+    fun detailCategory(id:String){
+        val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
+                "?crtiKey=$key" +
+                "&callTp=D" +
+                "&servId=$id"
+    }
+    fun getCategory(type:String):CategoryListPostResponse{
         val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
                 "?crtiKey=$key" +
                 "&callTp=L" +
@@ -27,21 +33,21 @@ class CategoryService(
         val dBuilder: DocumentBuilder = dbFactoty.newDocumentBuilder();
         val doc: Document = dBuilder.parse(urlstr)
 
-        return CategoryPostResponse(
+        return CategoryListPostResponse(
                 wantedList = getWantedList(doc),
                 servList = createServList(doc)
         )
     }
 
-    private fun createServList(doc:Document): List<CategoryPostResponse.ServList> {
+    private fun createServList(doc:Document): List<CategoryListPostResponse.ServList> {
 
         val nList: NodeList = doc.getElementsByTagName("servList");
 
-        val list: ArrayList<CategoryPostResponse.ServList> = ArrayList()
+        val list: ArrayList<CategoryListPostResponse.ServList> = ArrayList()
         for (i in 1 until nList.length) {
             val nNode: Node = nList.item(i)
             val eElement = nNode as Element
-            val a = CategoryPostResponse.ServList(
+            val a = CategoryListPostResponse.ServList(
                     inqNUm = getTagValue("inqNum", eElement),
                     jurOrgNm = getTagValue("jurOrgNm", eElement),
                     servDgst = getTagValue("servDgst", eElement),
