@@ -15,5 +15,6 @@ interface WelfareConnection {
             @Query("pageNum") pageNum: String,
             @Query("numOfRows") numOfRows: String,
             @Query("lifeArray") lifeArray: String,
-            ): Call<WelfareResponse>
+            @Query("_type") type:String,
+    ): Call<WelfareResponse>
 }
