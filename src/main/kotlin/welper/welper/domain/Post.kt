@@ -3,7 +3,7 @@ package welper.welper.domain
 import javax.persistence.*
 
 @Entity
-@Table("Post")
+@Table(name ="post")
 class Post(
         @Id
         @Column(name = "email")
@@ -23,7 +23,6 @@ class Post(
         @JoinColumn(name = "user", referencedColumnName = "email")
         var user: User,
 
-        val Category: String,
-) {
-
-}
+        @Column(name = "category")
+        val category: String,
+)
