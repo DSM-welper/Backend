@@ -16,9 +16,6 @@ class User(
         name: String,
         isMarry: Boolean,
         isWomen: Boolean,
-//        @Column(name = "emailCertifyId")
-//        @OneToOne(mappedBy = "EmailCertify")
-//        val emailCertify: EmailCertify?,
 ) {
 
     @Column(name = "name")
@@ -37,11 +34,11 @@ class User(
     var age = age
         private set
 
-     fun updateMyPage(name:String,isMarry: Boolean,isWomen: Boolean,age: Int){
-            this.name = name
-            this.isWomen = isWomen
-            this.age =age
-            this.isMarry = isMarry
+    fun updateMyPage(name: String, isMarry: Boolean, isWomen: Boolean, age: Int) {
+        this.name = name
+        this.isWomen = isWomen
+        this.age = age
+        this.isMarry = isMarry
     }
 
 }

@@ -9,22 +9,24 @@ class PostController(
         val postService: PostService,
 ) {
     @PostMapping
-    fun postCreate() {
-
+    fun postCreate(@RequestHeader("Authorization") token: String) {
+        postService.postCreate(token)
     }
 
-    @DeleteMapping
-    fun postDelete() {
+    @DeleteMapping("/{id}")
+    fun postDelete(@RequestHeader("Authorization") token: String,
+                   @PathVariable("id") id:Int) {
+        postService.postDelete(token,id)
+    }
 
+    @GetMapping("/{id}")
+    fun postRead(@RequestHeader("Authorization") token: String,
+                 @PathVariable("id") id:Int){
+        postService.postRead(token,id)
     }
 
     @GetMapping
-    fun postRead() {
-
-    }
-
-    @GetMapping
-    fun postList(){
-
+    fun postList(@RequestHeader("Authorization") token: String){
+        postService.postList(token)
     }
 }
