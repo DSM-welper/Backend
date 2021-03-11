@@ -1,13 +1,15 @@
 package welper.welper.domain
 
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 @Table(name ="post")
 class Post(
         @Id
-        @Column(name = "email")
-        val id: Int,
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "id")
+        val id: Int = 0,
 
         @Column(name = "title")
         val title: String,
@@ -16,9 +18,8 @@ class Post(
         val content: String,
 
         @Column(name = "createdAt")
-        val createdAt: String,
+        val createdAt: LocalDateTime,
 
-        @Column(name = "writer")
         @ManyToOne
         @JoinColumn(name = "user", referencedColumnName = "email")
         var user: User,
