@@ -1,9 +1,9 @@
-    package welper.welper.service
+package welper.welper.service
 
-    import org.springframework.beans.factory.annotation.Value
-    import org.springframework.stereotype.Service
-    import org.w3c.dom.Document
-    import org.w3c.dom.Element
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Service
+import org.w3c.dom.Document
+import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
@@ -30,16 +30,16 @@ class CategoryService(
         val eElement = nNode as Element
         return CategoryDetailResponse(
                 wantedDtl = getWantedList(doc),
-                alwServCn = getTagValue("alwServCn",eElement),
+                alwServCn = getTagValue("alwServCn", eElement),
                 applmetList = createApplmetList(doc),
                 basfrmList = createBasfrmList(doc),
                 baslawList = createBaslawList(doc),
                 inqplCtadrList = createInqplCtarList(doc),
-                servDgst =getTagValue("servDgst",eElement),
-                servId = getTagValue("servId",eElement),
-                servNm =getTagValue("servNm",eElement),
-                slctCritCn = getTagValue("slctCritCn",eElement),
-                tgtrDtlCn = getTagValue("tgtrDtlCn",eElement),
+                servDgst = getTagValue("servDgst", eElement),
+                servId = getTagValue("servId", eElement),
+                servNm = getTagValue("servNm", eElement),
+                slctCritCn = getTagValue("slctCritCn", eElement),
+                tgtrDtlCn = getTagValue("tgtrDtlCn", eElement),
         )
     }
 
