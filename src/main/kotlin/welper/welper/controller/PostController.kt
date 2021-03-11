@@ -1,8 +1,6 @@
 package welper.welper.controller
 
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import welper.welper.service.PostService
 
 @RestController
@@ -10,6 +8,23 @@ import welper.welper.service.PostService
 class PostController(
         val postService: PostService,
 ) {
-    @PostMapping()
+    @PostMapping
+    fun postCreate() {
 
+    }
+
+    @DeleteMapping
+    fun postDelete() {
+
+    }
+
+    @GetMapping
+    fun postRead() {
+
+    }
+
+    @GetMapping
+    fun postList(){
+            
+    }
 }
