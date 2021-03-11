@@ -1,10 +1,13 @@
 package welper.welper.service
 
+import org.springframework.data.jpa.domain.AbstractPersistable_
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import welper.welper.controller.response.PostResponse
 import welper.welper.domain.Post
 import welper.welper.domain.User
+import welper.welper.exception.PostNotFoundException
 import welper.welper.exception.UserNotFoundException
 import welper.welper.repository.PostRepository
 import welper.welper.repository.UserRepository
@@ -33,6 +36,9 @@ class PostService(
     fun postDelete(token: String, id: Int) {
         val email:String =jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email)?: throw UserNotFoundException(email)
+        val post: Post = postRepository.findByIdAndUser(id,user)?: throw PostNotFoundException(email,id)
+
+        postRepository.delete(post)
     }
 
     fun postRead(token: String, id: Int) {
