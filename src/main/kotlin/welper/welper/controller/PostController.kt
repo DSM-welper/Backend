@@ -25,6 +25,6 @@ class PostController(
 
     @GetMapping
     fun postList(){
-            
+
     }
 }
