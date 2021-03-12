@@ -22,22 +22,31 @@ class CommentsService(
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
-        val comments: List<Comments?> = commentRepository.findAllByParentsAndDepts(0, 0)
-        var num: Int = 0
-        for (i in 1..comments.size)
-            num++
+        val comments: Comments = (commentRepository.findByIdOrNull(commentsId)
+                ?: UserNotFoundException(email)) as Comments
+        val commentsChild: List<Comments> = commentRepository.findAll()
+        var i3: Int = 0
+        commentsChild.forEach {
+            
+            if (it.parents != commentsId) {
+                it.sequence > comments.sequence
+                //다른거 업데이트 구문
+            } else i3++
+        }
+
 
         commentRepository.save(
                 Comments(
-                        parents = 0,
+                        parents = commentsId,
                         depts = 0,
-                        sequence = num,
+                        sequence = comments.sequence+i3,
                         comments = content,
                         postId = post.id,
                 )
         )
     }
-    fun commentsWrite( token: String,postId: Int,content: String){
+
+    fun commentsWrite(token: String, postId: Int, content: String) {
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
