@@ -14,8 +14,14 @@ class CommentsController(
                       @PathVariable postId:Int,
                       @PathVariable commentsId:Int,
     @RequestBody commentsRequest: CommentsRequest){
-        commentsService.commentWrite(postId,commentsId,commentsRequest.contents,token)
+        commentsService.commentsParents(postId,commentsId,commentsRequest.contents,token)
     }
+    @PostMapping("/{postId}")
+    fun commentsParents(@RequestHeader("refreshToken") token: String,
+                     @PathVariable postId: Int){
+
+    }
+
     @GetMapping("/{postId}")
     fun commentsRead(@RequestHeader("refreshToken") token: String,
                      @PathVariable postId: Int){
