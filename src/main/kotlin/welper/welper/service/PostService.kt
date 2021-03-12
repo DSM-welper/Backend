@@ -61,7 +61,7 @@ class PostService(
         val user: User = userRepository.findByIdOrNull(email)?: throw UserNotFoundException(email)
 
         val post:List<Post?> = postRepository.findAll()
-        val list: ArrayList<PostListResponse> = ArrayList()
+        val list: MutableList<PostListResponse> = mutableListOf()
         post.forEach {
             if (it != null) {
                 list.add(
