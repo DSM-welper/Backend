@@ -2,6 +2,8 @@ package welper.welper.service
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
 import welper.welper.domain.Post
 import welper.welper.domain.User
@@ -54,9 +56,27 @@ class PostService(
 
     }
 
-    fun postList(token: String) {
+    fun postList(token: String) :List<PostListResponse>{
         val email:String =jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email)?: throw UserNotFoundException(email)
 
+        val post:List<Post?> = postRepository.findAll()
+        val list: ArrayList<PostListResponse> = ArrayList()
+        post.forEach {
+            if (it != null) {
+                list.add(
+
+                        PostListResponse(
+                                title = it.title,
+                                id = it.id,
+                                name = it.user.name,
+                                creatAt = it.createdAt,
+                        )
+                )
+            }
+
+        }
+        return list
     }
+
 }

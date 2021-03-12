@@ -2,6 +2,7 @@ package welper.welper.controller
 
 import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.PostRequest
+import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
 import welper.welper.service.PostService
 import java.time.LocalDateTime
@@ -31,11 +32,11 @@ class PostController(
     @GetMapping("/{id}")
     fun postRead(@RequestHeader("Authorization") token: String,
                  @PathVariable("id") id:Int): PostResponse {
-        postService.postRead(token,id)
+        return postService.postRead(token,id)
     }
 
     @GetMapping
-    fun postList(@RequestHeader("Authorization") token: String){
-        postService.postList(token)
+    fun postList(@RequestHeader("Authorization") token: String):List<PostListResponse>{
+        return postService.postList(token)
     }
 }
