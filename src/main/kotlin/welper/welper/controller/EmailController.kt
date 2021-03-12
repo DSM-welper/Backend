@@ -18,5 +18,5 @@ class EmailController(
 
     @PatchMapping
     fun approvalMail(@RequestBody @Valid request: ApproveRequest)=
-            emailService.approvalMail(request.authCode,request.email)
+            emailService.approvalMail(request.authCode,request.mail)
 }

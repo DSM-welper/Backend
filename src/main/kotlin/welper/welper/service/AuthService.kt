@@ -58,7 +58,7 @@ class AuthService(
         return String.format("%0128x", BigInteger(1, messageDigest.digest()))
     }
 
-    private fun isJoinPossible(email: String) = !userRepository.existsById(email)
+    private fun isJoinPossible(email: String) = userRepository.existsById(email)
 
     private fun createAccessToken(email: String) = jwtService.createToken(email, Token.ACCESS)
 
