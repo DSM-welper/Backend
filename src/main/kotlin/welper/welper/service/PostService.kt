@@ -65,7 +65,6 @@ class PostService(
         post.forEach {
             if (it != null) {
                 list.add(
-
                         PostListResponse(
                                 title = it.title,
                                 id = it.id,
@@ -74,7 +73,6 @@ class PostService(
                         )
                 )
             }
-
         }
         return list
     }
