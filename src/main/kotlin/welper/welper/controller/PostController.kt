@@ -25,7 +25,7 @@ class PostController(
         )
     }
 
-    @PostMapping
+    @GetMapping
     fun searchPost(@RequestHeader("Authorization") token: String, @RequestBody request: SearchPostRequest)
             : PostListResponse {
         return postService.searchPost(token, request.content)
