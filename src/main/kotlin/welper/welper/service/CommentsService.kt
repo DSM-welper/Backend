@@ -23,23 +23,27 @@ class CommentsService(
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
         val comments: Comments = (commentRepository.findByIdOrNull(commentsId)
-                ?: UserNotFoundException(email)) as Comments
-        val commentsChild: List<Comments> = commentRepository.findAll()
-        var i3: Int = 0
-        commentsChild.forEach {
-            
-            if (it.parents != commentsId) {
-                it.sequence > comments.sequence
-                //다른거 업데이트 구문
-            } else i3++
+                ?: throw UserNotFoundException(commentsId.toString()))
+        val commentsChild: List<Comments> = commentRepository.findAllByPostIdAndParents(postId, commentsId)
+        val allComments: List<Comments> = commentRepository.findAllByPostId(postId)
+        var i3: Int = 1
+        println(commentsChild.size)
+
+            repeat(commentsChild.size) {
+                i3++
+            }
+        println("i3: "+comments.sequence+i3 )
+        allComments.forEach {
+            println(it.sequence)
+            if (it.sequence >= comments.sequence + i3)
+                it.updateSequence(it.sequence + 1)
+            commentRepository.save(it)
         }
-
-
         commentRepository.save(
                 Comments(
                         parents = commentsId,
                         depts = 0,
-                        sequence = comments.sequence+i3,
+                        sequence = comments.sequence + i3,
                         comments = content,
                         postId = post.id,
                 )
@@ -51,7 +55,7 @@ class CommentsService(
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
         val comments: List<Comments?> = commentRepository.findAllByParentsAndDepts(0, 0)
-        var num: Int = 0
+        var num: Int = 1
         for (i in 1..comments.size)
             num++
 

@@ -13,10 +13,19 @@ class Comments(
 
         @Column(name = "depth")
         val depts: Int,
-        @Column(name = "sequence")
-        val sequence: Int,
         @Column(name = "comments")
         val comments: String,
         @Column(name = "postId")
         val postId: Int,
-)
+        sequence: Int,
+
+        ) {
+
+    @Column(name = "sequence", nullable = false, length = 555)
+    var sequence = sequence
+        private set
+
+    fun updateSequence(sequence: Int) {
+        this.sequence = sequence
+    }
+}
