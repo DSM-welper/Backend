@@ -1,5 +1,7 @@
 package welper.welper.controller.request
 
+import welper.welper.domain.attribute.Gender
+import welper.welper.domain.attribute.Marry
 import javax.validation.constraints.*
 
 data class SignUpRequest(
@@ -17,10 +19,9 @@ data class SignUpRequest(
         val name: String,
 
         @get:NotNull(message = "허용하지 않는 형식 <NULL, EMPTY, BLANK>")
-        val age:Int,
+        val age: Int,
 
-        var isMarry:Boolean,
+        var marry: Marry,
 
-        var isWomen:Boolean,
-
+        var gender: Gender,
 )

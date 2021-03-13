@@ -1,5 +1,9 @@
 package welper.welper.domain
 
+import welper.welper.domain.attribute.Gender
+import welper.welper.domain.attribute.Marry
+import welper.welper.domain.converter.GenderConverter
+import welper.welper.domain.converter.MarryConverter
 import javax.persistence.*
 
 @Entity
@@ -14,31 +18,33 @@ class User(
         val password: String,
         age: Int,
         name: String,
-        isMarry: Boolean,
-        isWomen: Boolean,
+        marry: Marry,
+        gender: Gender,
 ) {
 
     @Column(name = "name")
     var name = name
         private set
 
-    @Column(name = "isMarry")
-    var isMarry = isMarry
+    @Column(name = "marry")
+    @Convert(converter = MarryConverter::class)
+    var marry = marry
         private set
 
-    @Column(name = "isWomen")
-    var isWomen = isWomen
+    @Column(name = "gender")
+    @Convert(converter = GenderConverter::class)
+    var gender = gender
         private set
 
     @Column(name = "age")
     var age = age
         private set
 
-    fun updateMyPage(name: String, isMarry: Boolean, isWomen: Boolean, age: Int) {
+    fun updateMyPage(name: String, marry: Marry, gender: Gender, age: Int) {
         this.name = name
-        this.isWomen = isWomen
+        this.gender = gender
         this.age = age
-        this.isMarry = isMarry
+        this.marry = marry
     }
 
 }

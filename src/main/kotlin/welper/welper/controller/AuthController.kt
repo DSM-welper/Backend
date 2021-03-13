@@ -20,8 +20,8 @@ class AuthController(
                     email = request.email,
                     password = request.password,
                     name = request.name,
-                    isMarry = request.isMarry,
-                    isWomen = request.isWomen,
+                    marry = request.marry,
+                    gender = request.gender,
                     age = request.age
             )
 
