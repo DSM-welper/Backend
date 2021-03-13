@@ -68,14 +68,13 @@ class CommentsService(
 
     fun commentsDelete(token: String, postId: Int, commentsId: Int) {
         examineInformation(token, postId)
-        deleteComments(postId, commentsId)
         deleteCommentsChild(postId, commentsId)
+        deleteComments(postId, commentsId)
     }
 
     fun deleteCommentsChild(postId: Int, commentsId: Int) {
         val commentsChild: List<Comments> = commentRepository.findAllByPostIdAndParents(postId, commentsId)
         commentsChild.forEach {
-            deleteComments(postId, it.id)
             val allComments: List<Comments> = commentRepository.findAllByPostId(postId)
             allComments.forEach { it2 ->
                 println("it: " + it.sequence + "it2: " + it2.sequence)
