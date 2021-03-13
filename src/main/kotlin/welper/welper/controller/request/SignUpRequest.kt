@@ -24,4 +24,6 @@ data class SignUpRequest(
         var marry: Marry,
 
         var gender: Gender,
+
+        val disorder: Boolean,
 )

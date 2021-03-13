@@ -26,15 +26,18 @@ class MyPageController(
                 gender = user.gender,
                 age = user.age,
                 name = user.name,
+                disorder = user.disorder,
         )
     }
 
     @PatchMapping
-    fun updateMyPage(@RequestHeader("Authorization") token: String,
-                     @RequestBody request:MyPageRequest) {
+    fun updateMyPage(
+            @RequestHeader("Authorization") token: String,
+            @RequestBody request: MyPageRequest,
+    ) {
         val email = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
-        user.updateMyPage(request.name, request.marry, request.gender, request.age)
+        user.updateMyPage(request.name, request.marry, request.gender, request.age, request.disorder)
 
         userRepository.save(user)
     }

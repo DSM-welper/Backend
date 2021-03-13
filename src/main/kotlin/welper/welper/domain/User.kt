@@ -19,8 +19,12 @@ class User(
         age: Int,
         name: String,
         marry: Marry,
+        disorder:Boolean,
         gender: Gender,
 ) {
+    @Column(name = "disorder")
+    var disorder=disorder
+        private set
 
     @Column(name = "name")
     var name = name
@@ -40,8 +44,9 @@ class User(
     var age = age
         private set
 
-    fun updateMyPage(name: String, marry: Marry, gender: Gender, age: Int) {
+    fun updateMyPage(name: String, marry: Marry, gender: Gender, age: Int,disorder: Boolean) {
         this.name = name
+        this.disorder = disorder
         this.gender = gender
         this.age = age
         this.marry = marry

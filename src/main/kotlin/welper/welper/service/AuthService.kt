@@ -25,7 +25,7 @@ class AuthService(
     private val characterEncoding = Charset.forName("UTF-8")
 
 
-    fun signUp(email: String, password: String, name: String, age: Int, marry: Marry, gender: Gender) {
+    fun signUp(email: String, password: String, name: String, age: Int, marry: Marry, gender: Gender, disorder: Boolean) {
         val emailCertify: EmailCertify = emailCertifyRepository.findByEmailAndCertified(email, true)
                 ?: throw NonExistEmailCertifyException(email)
         val isJoinPossible = isJoinPossible(email)
@@ -38,8 +38,8 @@ class AuthService(
                         age = age,
                         marry = marry,
                         gender = gender,
-
-                        )
+                        disorder = disorder,
+                )
         )
     }
 
@@ -72,6 +72,7 @@ class AuthService(
         val email = jwtService.getEmail(refreshToken)
         return createAccessToken(email)
     }
+
     fun validateToken(token: String) {
         val isValid = jwtService.isValid(token)
         if (!isValid) throw InvalidTokenException(token)

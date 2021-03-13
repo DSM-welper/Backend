@@ -9,4 +9,5 @@ data class MyPageResponse (
         val gender: Gender,
         val age:Int,
         val name:String,
+        val disorder:Boolean,
         )
