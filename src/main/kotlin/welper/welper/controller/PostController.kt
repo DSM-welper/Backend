@@ -2,6 +2,7 @@ package welper.welper.controller
 
 import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.PostRequest
+import welper.welper.controller.request.SearchPostRequest
 import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
 import welper.welper.domain.Post
@@ -22,6 +23,12 @@ class PostController(
                 category = request.category,
                 createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
         )
+    }
+
+    @PostMapping
+    fun searchPost(@RequestHeader("Authorization") token: String, @RequestBody request: SearchPostRequest)
+            : PostListResponse {
+        return postService.searchPost(token, request.content)
     }
 
     @DeleteMapping("/{id}")

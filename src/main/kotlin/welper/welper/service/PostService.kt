@@ -128,4 +128,29 @@ class PostService(
                 post = list
         )
     }
+
+    fun searchPost(token: String, content: String): PostListResponse {
+        val email: String = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+
+        val post: List<Post?> = postRepository.findAll()
+        val list: MutableList<PostListResponse.PostList> = mutableListOf()
+        post.forEach {
+            if (it != null) {
+                list.add(
+                        PostListResponse.PostList(
+                                title = it.title,
+                                id = it.id,
+                                writer = it.user.name,
+                                creatAt = it.createdAt,
+                                category = it.category
+                        )
+                )
+            }
+        }
+        list.filter { it.title.contains(content) }
+        return PostListResponse(
+                post = list
+        )
+    }
 }
