@@ -15,12 +15,11 @@ class Comments(
         @Column(name = "comments")
         val comments: String,
 
-        @ManyToOne
-        @JoinColumn(name = "user", referencedColumnName = "postId")
-        var post: Post,
+        @Column(name = "postId")
+        val postId:Int,
 
         @ManyToOne
-        @JoinColumn(name = "user", referencedColumnName = "mail")
+        @JoinColumn(name = "user", referencedColumnName = "email")
         var user: User,
 
         sequence: Int

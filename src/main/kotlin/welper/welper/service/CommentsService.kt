@@ -25,27 +25,24 @@ class CommentsService(
         val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
         val comments: Comments = (commentRepository.findByIdOrNull(commentsId)
                 ?: throw CommentsNotFoundException(commentsId))
-        val commentsChild: List<Comments> = commentRepository.findAllByPostIdAndParents(postId, commentsId)
         val allComments: List<Comments> = commentRepository.findAllByPostId(postId)
-        var i3: Int = 1
+        var i = 1
+        var i2 = countParents(postId, comments, i)
+        println("ansser$i2")
 
-        repeat(commentsChild.size) {
-            i3++
-        }
-        println("i3: " + comments.sequence + i3)
         allComments.forEach {
-            println(it.sequence)
-            if (it.sequence >= comments.sequence + i3)
+            if (it.sequence >= comments.sequence + i2)
                 it.updateSequence(it.sequence + 1)
             commentRepository.save(it)
         }
+
         commentRepository.save(
                 Comments(
                         parents = commentsId,
                         depts = comments.depts + 1,
-                        sequence = comments.sequence + i3,
+                        sequence = comments.sequence + i2,
                         comments = content,
-                        post = post,
+                        postId = post.id,
                         user = user,
                 )
         )
@@ -57,14 +54,13 @@ class CommentsService(
         val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
         val comments: List<Comments?> = commentRepository.findAll()
 
-
         commentRepository.save(
                 Comments(
                         parents = 0,
                         depts = 0,
                         sequence = comments.size + 1,
                         comments = content,
-                        post = post,
+                        postId = post.id,
                         user = user,
                 )
         )
@@ -109,5 +105,19 @@ class CommentsService(
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
+    }
+
+    fun countParents(postId: Int, comments: Comments, i: Int): Int {
+        var i2 = i
+        val commentsChild: List<Comments> = commentRepository.findAllByPostIdAndParents(postId, comments.id)
+        if (commentsChild.isNotEmpty()) {
+            repeat(commentsChild.size) {
+                i2++
+            }
+            commentsChild.forEach {
+                countParents(postId, it, i2)
+            }
+        }
+        return i2
     }
 }
