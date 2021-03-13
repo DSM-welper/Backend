@@ -27,20 +27,14 @@ class CommentsController(
         commentsService.commentsWrite(token,postId,commentsRequest.contents)
     }
 
-    @GetMapping("/{postId}")
-    fun commentsRead(
-            @RequestHeader("Authorization") token: String,
-            @PathVariable postId: Int,
-    ) {
-
-    }
 
     @DeleteMapping("/{postId}/{commentsId}")
     fun commentsDelete(
             @PathVariable postId: Int,
             @PathVariable commentsId: Int,
-            @RequestHeader("refreshToken") token: String,
+            @RequestHeader("Authorization") token: String,
     ) {
+        commentsService.commentsDelete(token,postId,commentsId)
     }
 
 }

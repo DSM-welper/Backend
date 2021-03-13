@@ -4,9 +4,8 @@ import javax.persistence.*
 
 @Entity
 class Comments(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Int = 0,
+
+        id: Int = 0,
 
         @Column(name = "parents")
         val parents: Int,
@@ -15,17 +14,35 @@ class Comments(
         val depts: Int,
         @Column(name = "comments")
         val comments: String,
-        @Column(name = "postId")
-        val postId: Int,
-        sequence: Int,
 
-        ) {
+        @ManyToOne
+        @JoinColumn(name = "user", referencedColumnName = "postId")
+        var post: Post,
+
+        @ManyToOne
+        @JoinColumn(name = "user", referencedColumnName = "mail")
+        var user: User,
+
+        sequence: Int
+) {
 
     @Column(name = "sequence", nullable = false, length = 555)
     var sequence = sequence
         private set
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id = id
+        private set
+
     fun updateSequence(sequence: Int) {
         this.sequence = sequence
     }
+
+    fun updateIdAndSequence(sequence: Int, id: Int) {
+        this.sequence = sequence
+        this.id = id
+    }
+
+
 }
