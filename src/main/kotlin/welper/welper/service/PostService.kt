@@ -51,30 +51,32 @@ class PostService(
                 content = post.content,
                 createdAt = post.createdAt,
                 category = post.category,
-                userName = user.name,
+                writer = user.name,
         )
 
     }
 
-    fun postList(token: String) :List<PostListResponse>{
+    fun postList(token: String) :PostListResponse{
         val email:String =jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email)?: throw UserNotFoundException(email)
 
         val post:List<Post?> = postRepository.findAll()
-        val list: MutableList<PostListResponse> = mutableListOf()
+        val list: MutableList<PostListResponse.PostList> = mutableListOf()
         post.forEach {
             if (it != null) {
                 list.add(
-                        PostListResponse(
+                        PostListResponse.PostList(
                                 title = it.title,
                                 id = it.id,
-                                name = it.user.name,
+                                writer = it.user.name,
                                 creatAt = it.createdAt,
                         )
                 )
             }
         }
-        return list
+        return PostListResponse(
+                post = list
+        )
     }
 
 }

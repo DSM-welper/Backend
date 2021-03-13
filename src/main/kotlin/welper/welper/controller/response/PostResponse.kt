@@ -7,6 +7,6 @@ data class PostResponse(
         val content: String,
         val category: String,
         val createdAt:LocalDateTime,
-        val userName: String,
+        val writer: String,
 ) {
 }

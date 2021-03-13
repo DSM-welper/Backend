@@ -36,7 +36,7 @@ class PostController(
     }
 
     @GetMapping
-    fun postList(@RequestHeader("Authorization") token: String):List<PostListResponse>{
+    fun postList(@RequestHeader("Authorization") token: String):PostListResponse{
         return postService.postList(token)
     }
 }
