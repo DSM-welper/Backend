@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.domain.attribute.DesireArray
+import welper.welper.domain.attribute.LifeArray
+import welper.welper.domain.attribute.TrgterindvdlArray
 import welper.welper.service.CategoryService
 
 @RestController
@@ -14,9 +17,9 @@ import welper.welper.service.CategoryService
 class CategoryController(
         val categoryService: CategoryService,
 ) {
-    @GetMapping("/{type}")
-    fun cateGoryList(@PathVariable type: String): CategoryListPostResponse {
-        return categoryService.getCategory(type)
+    @GetMapping()
+    fun cateGoryList(lifeArray: LifeArray,trgterindvdlArray: TrgterindvdlArray,desireArray:DesireArray): CategoryListPostResponse {
+        return categoryService.getCategory(lifeArray,trgterindvdlArray,desireArray)
     }
 
     @GetMapping("/type/{id}")

@@ -1,4 +1,5 @@
 package welper.welper.domain.attribute
 
-class DesireArray {
+enum class DesireArray {
+    
 }

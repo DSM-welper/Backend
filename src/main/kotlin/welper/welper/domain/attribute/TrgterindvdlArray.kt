@@ -1,4 +1,5 @@
 package welper.welper.domain.attribute
 
-class TrgterindvdlArray {
+enum class TrgterindvdlArray {
+   doNot,Settermin,soloOld,SingleParent,nationalMerit,Multicultural,childHead
 }
