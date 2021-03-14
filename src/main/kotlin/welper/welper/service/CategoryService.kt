@@ -8,6 +8,9 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.domain.attribute.DesireArray
+import welper.welper.domain.attribute.LifeArray
+import welper.welper.domain.attribute.TrgterindvdlArray
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -43,12 +46,19 @@ class CategoryService(
         )
     }
 
-    fun getCategory(type: String): CategoryListPostResponse {
+    fun getCategory(lifeArray: LifeArray, trgterindvdlArray: TrgterindvdlArray, desireArray: DesireArray): CategoryListPostResponse {
+
+        val a: String = getLifeArray(lifeArray)
+        var string = ""
+        if (!a.equals("")) {
+            string = "&$a"
+        }
         val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
                 "?crtiKey=$key" +
                 "&callTp=L" +
                 "&pageNo=1" +
-                "&numOfRows=100"
+                "&numOfRows=100" +
+                string
 
         val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
         val dBuilder: DocumentBuilder = dbFactoty.newDocumentBuilder();
@@ -162,5 +172,18 @@ class CategoryService(
         val nlList: NodeList = eElement.getElementsByTagName(tag).item(0).getChildNodes()
         val nValue: Node = nlList.item(0) as Node ?: return null
         return nValue.getNodeValue()
+    }
+
+    private fun getLifeArray(lifeArray: LifeArray): String {
+
+        return when (lifeArray) {
+            LifeArray.doNot -> ""
+            LifeArray.child -> "002"
+            LifeArray.infants -> "001"
+            LifeArray.middleAge -> "005"
+            LifeArray.oldAge -> "006"
+            LifeArray.teenage -> "003"
+            LifeArray.youth -> "004"
+        }
     }
 }
