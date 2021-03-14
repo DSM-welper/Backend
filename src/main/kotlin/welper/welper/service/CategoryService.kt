@@ -8,9 +8,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
-import welper.welper.domain.attribute.DesireArray
 import welper.welper.domain.attribute.LifeArray
-import welper.welper.domain.attribute.TrgterindvdlArray
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -46,19 +44,22 @@ class CategoryService(
         )
     }
 
-    fun getCategory(lifeArray: LifeArray, trgterindvdlArray: TrgterindvdlArray, desireArray: DesireArray): CategoryListPostResponse {
-
+    fun getCategory(lifeArray: LifeArray): CategoryListPostResponse {
+        println("s")
         val a: String = getLifeArray(lifeArray)
         var string = ""
-        if (!a.equals("")) {
-            string = "&$a"
+        if (a != "") {
+            string = "&lifeArray=$a"
         }
+        println(string)
+         
         val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
-                "?crtiKey=$key" +
+                "?crtiKey=" +
+                "keTuCooJ8R9Ao5LERVj48XiH87g5hLr3teCu06S8KTfHxSwtGkz0nAS%2BYS8v35JrIJ%2FxYDe3%2BtshuX2%2B2EZg3w%3D%3D" +
                 "&callTp=L" +
                 "&pageNo=1" +
-                "&numOfRows=100" +
-                string
+                "&numOfRows=100${string}"
+
 
         val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
         val dBuilder: DocumentBuilder = dbFactoty.newDocumentBuilder();
@@ -73,8 +74,8 @@ class CategoryService(
     private fun createBaslawList(doc: Document): List<CategoryDetailResponse.BaslawList> {
         val nList: NodeList = doc.getElementsByTagName("baslawList");
         val list: ArrayList<CategoryDetailResponse.BaslawList> = ArrayList()
-        println("size:${nList.length}")
 
+        println("size:${nList.length}")
         for (i in 0 until nList.length) {
             val nNode: Node = nList.item(i)
             val eElement = nNode as Element
@@ -108,7 +109,6 @@ class CategoryService(
 
     private fun createInqplCtarList(doc: Document): List<CategoryDetailResponse.InqplCtadrList> {
         val nList: NodeList = doc.getElementsByTagName("inqplCtadrList");
-        println("size:${nList.length}")
 
         val list: ArrayList<CategoryDetailResponse.InqplCtadrList> = ArrayList()
         for (i in 0 until nList.length) {
@@ -127,7 +127,6 @@ class CategoryService(
     private fun createApplmetList(doc: Document): List<CategoryDetailResponse.ApplmetList> {
         val nList: NodeList = doc.getElementsByTagName("applmetList");
         val list: ArrayList<CategoryDetailResponse.ApplmetList> = ArrayList()
-        println("size:${nList.length}")
         for (i in 0 until nList.length) {
             val nNode: Node = nList.item(i)
             val eElement = nNode as Element
@@ -144,6 +143,7 @@ class CategoryService(
     private fun createServList(doc: Document): List<CategoryListPostResponse.ServList> {
 
         val nList: NodeList = doc.getElementsByTagName("servList");
+        println("size:${nList.length}")
 
         val list: ArrayList<CategoryListPostResponse.ServList> = ArrayList()
         for (i in 0 until nList.length) {
@@ -165,25 +165,25 @@ class CategoryService(
     }
 
     private fun getWantedList(doc: Document): String {
-        return doc.getDocumentElement().getNodeName()
+        return doc.documentElement.nodeName
     }
 
     private fun getTagValue(tag: String, eElement: Element): String? {
-        val nlList: NodeList = eElement.getElementsByTagName(tag).item(0).getChildNodes()
-        val nValue: Node = nlList.item(0) as Node ?: return null
-        return nValue.getNodeValue()
+        val nlList: NodeList = eElement.getElementsByTagName(tag).item(0).childNodes?:return "a"
+        val nValue: Node = nlList.item(0)?: return "a"
+        return nValue.nodeValue
     }
 
     private fun getLifeArray(lifeArray: LifeArray): String {
-
+        println("aaa")
         return when (lifeArray) {
-            LifeArray.doNot -> ""
-            LifeArray.child -> "002"
-            LifeArray.infants -> "001"
-            LifeArray.middleAge -> "005"
-            LifeArray.oldAge -> "006"
-            LifeArray.teenage -> "003"
-            LifeArray.youth -> "004"
+            LifeArray.DONOT -> ""
+            LifeArray.CHILD -> "002"
+            LifeArray.INFANTS -> "001"
+            LifeArray.MIDDLEAGE -> "005"
+            LifeArray.OLDAGE -> "006"
+            LifeArray.TEENAGE -> "003"
+            LifeArray.YOUTH -> "004"
         }
     }
 }
