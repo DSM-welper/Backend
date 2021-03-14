@@ -17,7 +17,7 @@ class CategoryController(
 ) {
     @GetMapping
     fun cateGoryList(@RequestBody request:CategoryRequest): CategoryListPostResponse {
-        return categoryService.getCategory(request.lifeArray)
+        return categoryService.getCategory(request.lifeArray,request.desireArray)
     }
 
     @GetMapping("/type/{id}")

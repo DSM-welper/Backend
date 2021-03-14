@@ -8,6 +8,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.domain.attribute.DesireArray
 import welper.welper.domain.attribute.LifeArray
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
@@ -44,21 +45,24 @@ class CategoryService(
         )
     }
 
-    fun getCategory(lifeArray: LifeArray): CategoryListPostResponse {
-        println("s")
+    fun getCategory(lifeArray: LifeArray, desireArray: DesireArray): CategoryListPostResponse {
         val a: String = getLifeArray(lifeArray)
+        val b: String = getDesireArray(desireArray)
         var string = ""
+        var string2 = ""
         if (a != "") {
             string = "&lifeArray=$a"
         }
-        println(string)
-         
+        if (b != "") {
+            string2 = "&desireArray=$b"
+        }
+
         val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
                 "?crtiKey=" +
                 "keTuCooJ8R9Ao5LERVj48XiH87g5hLr3teCu06S8KTfHxSwtGkz0nAS%2BYS8v35JrIJ%2FxYDe3%2BtshuX2%2B2EZg3w%3D%3D" +
                 "&callTp=L" +
                 "&pageNo=1" +
-                "&numOfRows=100${string}"
+                "&numOfRows=100$string$string2"
 
 
         val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -169,13 +173,12 @@ class CategoryService(
     }
 
     private fun getTagValue(tag: String, eElement: Element): String? {
-        val nlList: NodeList = eElement.getElementsByTagName(tag).item(0).childNodes?:return "a"
-        val nValue: Node = nlList.item(0)?: return "a"
+        val nlList: NodeList = eElement.getElementsByTagName(tag).item(0).childNodes ?: return "a"
+        val nValue: Node = nlList.item(0) ?: return "a"
         return nValue.nodeValue
     }
 
     private fun getLifeArray(lifeArray: LifeArray): String {
-        println("aaa")
         return when (lifeArray) {
             LifeArray.DONOT -> ""
             LifeArray.CHILD -> "002"
@@ -184,6 +187,23 @@ class CategoryService(
             LifeArray.OLDAGE -> "006"
             LifeArray.TEENAGE -> "003"
             LifeArray.YOUTH -> "004"
+        }
+    }
+
+    private fun getDesireArray(desireArray: DesireArray): String {
+        return when (desireArray) {
+            DesireArray.DONOT -> ""
+            DesireArray.SAFETY -> "0000000"
+            DesireArray.HEALTH -> "1000000"
+            DesireArray.DAILYLIFE -> "2000000"
+            DesireArray.FAMILY -> "3000000"
+            DesireArray.SOCIAL -> "4000000"
+            DesireArray.ECONOMIC -> "5000000"
+            DesireArray.EDUCATION -> "6000000"
+            DesireArray.EMPLOYMENT -> "7000000"
+            DesireArray.LIFE -> "8000000"
+            DesireArray.LAW -> "9000000"
+            DesireArray.EXCEPT -> "A000000"
         }
     }
 }
