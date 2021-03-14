@@ -31,7 +31,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
+    implementation("com.squareup.retrofit2:converter-jaxb:2.9.0")
+    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
 
