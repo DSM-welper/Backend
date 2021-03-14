@@ -1,8 +1,8 @@
 package welper.welper.controller.request
 
-import javax.validation.constraints.Email
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Pattern
+import welper.welper.domain.attribute.Gender
+import welper.welper.domain.attribute.Marry
+import javax.validation.constraints.*
 
 data class SignUpRequest(
         @get:NotBlank(message = "허용하지 않는 형식 <NULL, EMPTY, BLANK>")
@@ -15,15 +15,15 @@ data class SignUpRequest(
         val password: String,
 
         @get:NotBlank(message = "허용하지 않는 형식 <NULL, EMPTY, BLANK>")
-        @get:Pattern(regexp = "^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,12}$", message = "정규표현식 = ^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,12}$")
+        @get:Pattern(regexp = "^[a-zA-Zㄱ-ㅎ가-힣]{1,12}$", message = "정규표현식 = ^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,12}$")
         val name: String,
 
-        @get:NotBlank(message = "허용하지 않는 형식 <NULL, EMPTY, BLANK>")
-        @get:Pattern(regexp = "^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,3}$", message = "정규표현식 = ^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,3}$")
-        val age:Int,
+        @get:NotNull(message = "허용하지 않는 형식 <NULL, EMPTY, BLANK>")
+        val age: Int,
 
-        var isMarry:Boolean,
+        var marry: Marry,
 
-        var isWomen:Boolean,
+        var gender: Gender,
 
+        val disorder: Boolean,
 )

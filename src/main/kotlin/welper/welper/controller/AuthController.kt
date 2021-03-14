@@ -20,9 +20,10 @@ class AuthController(
                     email = request.email,
                     password = request.password,
                     name = request.name,
-                    isMarry = request.isMarry,
-                    isWomen = request.isWomen,
-                    age = request.age
+                    marry = request.marry,
+                    gender = request.gender,
+                    age = request.age,
+                    disorder = request.disorder,
             )
 
     @PostMapping
@@ -31,7 +32,8 @@ class AuthController(
                     email = request.email,
                     password = request.password,
             )
+
     @PatchMapping
-    fun recreateToken(@RequestHeader("refreshToken") token: String):AccessTokenResponse =
-             AccessTokenResponse(authService.recreateAccessToken(token))
+    fun recreateToken(@RequestHeader("refreshToken") token: String): AccessTokenResponse =
+            AccessTokenResponse(authService.recreateAccessToken(token))
 }

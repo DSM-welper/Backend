@@ -65,6 +65,6 @@ class EmailService(
                 .map { charset.random() }
                 .joinToString("")
     }
-    private fun isJoinPossible(email: String) = !emailCertifyRepository.existsById(email)
+    private fun isJoinPossible(email: String) = emailCertifyRepository.existsByEmailAndCertified(email,true)?:false
 
 }
