@@ -6,4 +6,6 @@ import welper.welper.domain.User
 
 interface PostRepository:JpaRepository<Post,Int>{
     fun findByIdAndUser(id: Int, user: User):Post?
+    fun findAllByCategory(category: String):List<Post?>
+    fun findAllByUser(user: User):List<Post?>
 }

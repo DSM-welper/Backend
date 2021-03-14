@@ -7,6 +7,7 @@ import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
 import welper.welper.domain.Post
 import welper.welper.domain.User
+import welper.welper.exception.PostListNotFoundException
 import welper.welper.exception.PostNotFoundException
 import welper.welper.exception.UserNotFoundException
 import welper.welper.repository.PostRepository
@@ -19,12 +20,12 @@ class PostService(
         val userRepository: UserRepository,
         val postRepository: PostRepository,
 ) {
-    fun postCreate(token: String,title: String,content:String,category:String ,createdAt:LocalDateTime) {
-        val email:String =jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email)?: throw UserNotFoundException(email)
+    fun postCreate(token: String, title: String, content: String, category: String, createdAt: LocalDateTime) {
+        val email: String = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
         postRepository.save(
                 Post(
-                        title= title,
+                        title = title,
                         content = content,
                         category = category,
                         createdAt = createdAt,
@@ -34,17 +35,17 @@ class PostService(
     }
 
     fun postDelete(token: String, id: Int) {
-        val email:String =jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email)?: throw UserNotFoundException(email)
-        val post: Post = postRepository.findByIdAndUser(id,user)?: throw PostNotFoundException(email,id)
+        val email: String = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        val post: Post = postRepository.findByIdAndUser(id, user) ?: throw PostNotFoundException(email, id)
 
         postRepository.delete(post)
     }
 
     fun postRead(token: String, id: Int): PostResponse {
-        val email:String =jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email)?: throw UserNotFoundException(email)
-        val post: Post = postRepository.findByIdAndUser(id,user)?: throw PostNotFoundException(email,id)
+        val email: String = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        val post: Post = postRepository.findByIdAndUser(id, user) ?: throw PostNotFoundException(email, id)
 
         return PostResponse(
                 title = post.title,
@@ -56,11 +57,11 @@ class PostService(
 
     }
 
-    fun postList(token: String) :PostListResponse{
-        val email:String =jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email)?: throw UserNotFoundException(email)
+    fun postList(token: String): PostListResponse {
+        val email: String = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
 
-        val post:List<Post?> = postRepository.findAll()
+        val post: List<Post?> = postRepository.findAll()
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
         post.forEach {
             if (it != null) {
@@ -70,6 +71,7 @@ class PostService(
                                 id = it.id,
                                 writer = it.user.name,
                                 creatAt = it.createdAt,
+                                category = it.category
                         )
                 )
             }
@@ -79,4 +81,76 @@ class PostService(
         )
     }
 
+    fun postCategoryRead(token: String, category: String): PostListResponse {
+        val email: String = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        val list: MutableList<PostListResponse.PostList> = mutableListOf()
+        val post: List<Post?> = postRepository.findAllByCategory(category)
+
+        post.forEach {
+            if (it != null) {
+                list.add(
+                        PostListResponse.PostList(
+                                title = it.title,
+                                id = it.id,
+                                writer = it.user.name,
+                                creatAt = it.createdAt,
+                                category = it.category
+                        )
+                )
+            }
+        }
+        return PostListResponse(
+                post = list
+        )
+    }
+
+    fun postMineRead(token: String): PostListResponse {
+        val email: String = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        val list: MutableList<PostListResponse.PostList> = mutableListOf()
+        val post: List<Post?> = postRepository.findAllByUser(user)
+
+        post.forEach {
+            if (it != null) {
+                list.add(
+                        PostListResponse.PostList(
+                                title = it.title,
+                                id = it.id,
+                                writer = it.user.name,
+                                creatAt = it.createdAt,
+                                category = it.category
+                        )
+                )
+            }
+        }
+        return PostListResponse(
+                post = list
+        )
+    }
+
+    fun searchPost(token: String, content: String): PostListResponse {
+        val email: String = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+
+        val post: List<Post?> = postRepository.findAll()
+        val list: MutableList<PostListResponse.PostList> = mutableListOf()
+        post.forEach {
+            if (it != null) {
+                list.add(
+                        PostListResponse.PostList(
+                                title = it.title,
+                                id = it.id,
+                                writer = it.user.name,
+                                creatAt = it.createdAt,
+                                category = it.category
+                        )
+                )
+            }
+        }
+        list.filter { it.title.contains(content) }
+        return PostListResponse(
+                post = list
+        )
+    }
 }

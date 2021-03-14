@@ -9,6 +9,7 @@ data class PostListResponse (
         val id:Int,
         val title:String,
         val creatAt:LocalDateTime,
+        val category:String,
         val writer :String,
     )
 }
