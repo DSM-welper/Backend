@@ -1,12 +1,14 @@
 package welper.welper.controller
 
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import welper.welper.controller.request.CategoryRequest
+import welper.welper.controller.request.SearchPostRequest
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.domain.attribute.DesireArray
+import welper.welper.domain.attribute.LifeArray
+import welper.welper.domain.attribute.TrgterindvdlArray
 import welper.welper.service.CategoryService
 
 @RestController
@@ -14,13 +16,17 @@ import welper.welper.service.CategoryService
 class CategoryController(
         val categoryService: CategoryService,
 ) {
-    @GetMapping("/{type}")
-    fun cateGoryList(@PathVariable type: String): CategoryListPostResponse {
-        return categoryService.getCategory(type)
+    @GetMapping
+    fun cateGoryList(@RequestBody request:CategoryRequest): CategoryListPostResponse {
+        return categoryService.getCategory(request.lifeArray,request.desireArray,request.trgterindvdlArray)
     }
 
     @GetMapping("/type/{id}")
     fun categoryDetail(@PathVariable id: String): CategoryDetailResponse {
         return categoryService.detailCategory(id)
+    }
+    @PostMapping("search")
+    fun categorySearch(@RequestBody searchPostRequest: SearchPostRequest): CategoryListPostResponse {
+        return categoryService.categorySearch(searchPostRequest.content)
     }
 }

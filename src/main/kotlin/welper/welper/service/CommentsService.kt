@@ -26,8 +26,8 @@ class CommentsService(
         val comments: Comments = (commentRepository.findByIdOrNull(commentsId)
                 ?: throw CommentsNotFoundException(commentsId))
         val allComments: List<Comments> = commentRepository.findAllByPostId(postId)
-        var i = 1
-        var i2 = countParents(postId, comments, i)
+        val i = 1
+        val i2 = countParents(postId, comments, i)
         println("ansser$i2")
 
         allComments.forEach {

@@ -1,4 +1,11 @@
 package welper.welper.domain.attribute
 
-class LifeArray {
+enum class LifeArray {
+    DONOT,
+    INFANTS,
+    CHILD,
+    TEENAGE,
+    YOUTH,
+    MIDDLEAGE,
+    OLDAGE
 }

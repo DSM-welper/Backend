@@ -8,6 +8,9 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.domain.attribute.DesireArray
+import welper.welper.domain.attribute.LifeArray
+import welper.welper.domain.attribute.TrgterindvdlArray
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -16,6 +19,7 @@ class CategoryService(
         @Value("\${API_KEY}")
         private val key: String,
 ) {
+
 
     fun detailCategory(id: String): CategoryDetailResponse {
         val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
@@ -43,28 +47,68 @@ class CategoryService(
         )
     }
 
-    fun getCategory(type: String): CategoryListPostResponse {
-        val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
-                "?crtiKey=$key" +
-                "&callTp=L" +
-                "&pageNo=1" +
-                "&numOfRows=100"
+    fun getCategory(lifeArray: LifeArray, desireArray: DesireArray, trgterindvdlArray: TrgterindvdlArray)
+            : CategoryListPostResponse {
+        println("시작")
+        val life: String = getLifeArray(lifeArray)
+        val desire: String = getDesireArray(desireArray)
+        val trgterindvdl: String = getTrgterindvdlArray(trgterindvdlArray)
 
+        var trgterindvded = ""
+        var lifeArrayed = ""
+        var desireArrayed = ""
+        if (life != "") {
+            lifeArrayed = "&lifeArray=$life"
+        }
+        if (desire != "") {
+            desireArrayed = "&desireArray=$desire"
+        }
+        if (trgterindvdl != "") {
+            trgterindvded = "&trgterindvdl=$trgterindvdl"
+        }
+        println("시작2")
+        val list: MutableList<Document> = mutableListOf()
+        val docList: MutableList<Document> = categoryURL(1, lifeArrayed, trgterindvded, desireArrayed, list, "", "")
+        val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
+
+        docList.forEach {
+            servList.addAll(createServList(it))
+        }
+        return CategoryListPostResponse(
+                servList = servList
+        )
+    }
+
+    private fun categoryURL(
+            num: Int, lifeArrayed: String, trgterindvded: String, desireArrayed: String,
+            list: MutableList<Document>, srchKeyCode: String, searchWrd: String,
+    )
+            : MutableList<Document> {
+        println("시작$num")
+        var num2 = num
+        val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
+                "?crtiKey=" +
+                "keTuCooJ8R9Ao5LERVj48XiH87g5hLr3teCu06S8KTfHxSwtGkz0nAS%2BYS8v35JrIJ%2FxYDe3%2BtshuX2%2B2EZg3w%3D%3D" +
+                "&callTp=L" +
+                "&pageNo=$num2" +
+                "&numOfRows=100$lifeArrayed$trgterindvded$desireArrayed$srchKeyCode$searchWrd"
         val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
         val dBuilder: DocumentBuilder = dbFactoty.newDocumentBuilder();
         val doc: Document = dBuilder.parse(urlstr)
-
-        return CategoryListPostResponse(
-                wantedList = getWantedList(doc),
-                servList = createServList(doc)
-        )
+        println(doc.getElementsByTagName("servList").length)
+        list.add(doc)
+        if (doc.getElementsByTagName("servList").length == 100) {
+            num2++
+            categoryURL(num2, lifeArrayed, trgterindvded, desireArrayed, list,srchKeyCode,searchWrd)
+        }
+        return list
     }
 
     private fun createBaslawList(doc: Document): List<CategoryDetailResponse.BaslawList> {
         val nList: NodeList = doc.getElementsByTagName("baslawList");
         val list: ArrayList<CategoryDetailResponse.BaslawList> = ArrayList()
-        println("size:${nList.length}")
 
+        println("size:${nList.length}")
         for (i in 0 until nList.length) {
             val nNode: Node = nList.item(i)
             val eElement = nNode as Element
@@ -98,7 +142,6 @@ class CategoryService(
 
     private fun createInqplCtarList(doc: Document): List<CategoryDetailResponse.InqplCtadrList> {
         val nList: NodeList = doc.getElementsByTagName("inqplCtadrList");
-        println("size:${nList.length}")
 
         val list: ArrayList<CategoryDetailResponse.InqplCtadrList> = ArrayList()
         for (i in 0 until nList.length) {
@@ -117,7 +160,6 @@ class CategoryService(
     private fun createApplmetList(doc: Document): List<CategoryDetailResponse.ApplmetList> {
         val nList: NodeList = doc.getElementsByTagName("applmetList");
         val list: ArrayList<CategoryDetailResponse.ApplmetList> = ArrayList()
-        println("size:${nList.length}")
         for (i in 0 until nList.length) {
             val nNode: Node = nList.item(i)
             val eElement = nNode as Element
@@ -134,6 +176,7 @@ class CategoryService(
     private fun createServList(doc: Document): List<CategoryListPostResponse.ServList> {
 
         val nList: NodeList = doc.getElementsByTagName("servList");
+        println("size:${nList.length}")
 
         val list: ArrayList<CategoryListPostResponse.ServList> = ArrayList()
         for (i in 0 until nList.length) {
@@ -155,12 +198,69 @@ class CategoryService(
     }
 
     private fun getWantedList(doc: Document): String {
-        return doc.getDocumentElement().getNodeName()
+        return doc.documentElement.nodeName
     }
 
     private fun getTagValue(tag: String, eElement: Element): String? {
-        val nlList: NodeList = eElement.getElementsByTagName(tag).item(0).getChildNodes()
-        val nValue: Node = nlList.item(0) as Node ?: return null
-        return nValue.getNodeValue()
+        val nlList: NodeList = eElement.getElementsByTagName(tag).item(0).childNodes ?: return "a"
+        val nValue: Node = nlList.item(0) ?: return "a"
+        return nValue.nodeValue
+    }
+
+    private fun getLifeArray(lifeArray: LifeArray): String {
+        return when (lifeArray) {
+            LifeArray.DONOT -> ""
+            LifeArray.CHILD -> "002"
+            LifeArray.INFANTS -> "001"
+            LifeArray.MIDDLEAGE -> "005"
+            LifeArray.OLDAGE -> "006"
+            LifeArray.TEENAGE -> "003"
+            LifeArray.YOUTH -> "004"
+
+        }
+    }
+
+    private fun getDesireArray(desireArray: DesireArray): String {
+        return when (desireArray) {
+            DesireArray.DONOT -> ""
+            DesireArray.SAFETY -> "0000000"
+            DesireArray.HEALTH -> "1000000"
+            DesireArray.DAILYLIFE -> "2000000"
+            DesireArray.FAMILY -> "3000000"
+            DesireArray.SOCIAL -> "4000000"
+            DesireArray.ECONOMIC -> "5000000"
+            DesireArray.EDUCATION -> "6000000"
+            DesireArray.EMPLOYMENT -> "7000000"
+            DesireArray.LIFE -> "8000000"
+            DesireArray.LAW -> "9000000"
+            DesireArray.EXCEPT -> "A000000"
+        }
+    }
+
+
+    private fun getTrgterindvdlArray(trgterindvdlArray: TrgterindvdlArray)
+            : String {
+        return when (trgterindvdlArray) {
+            TrgterindvdlArray.DONOT -> ""
+            TrgterindvdlArray.EXCEPT -> "001"
+            TrgterindvdlArray.SINGLEPARENTS -> "002"
+            TrgterindvdlArray.MULTICULTURAL -> "003"
+            TrgterindvdlArray.GRANDCHILDREN -> "004"
+            TrgterindvdlArray.SETTERMIN -> "005"
+            TrgterindvdlArray.CHILDHEAD -> "006"
+            TrgterindvdlArray.SOLOOLD -> "007"
+        }
+    }
+
+     fun categorySearch(content: String):CategoryListPostResponse {
+        val list: MutableList<Document> = mutableListOf()
+        val docList: MutableList<Document> = categoryURL(1, "", "", "", list, "001", content)
+        val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
+        docList.forEach {
+            servList.addAll(createServList(it))
+        }
+        return CategoryListPostResponse(
+                servList = servList
+        )
     }
 }
