@@ -10,6 +10,7 @@ import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.domain.attribute.DesireArray
 import welper.welper.domain.attribute.LifeArray
+import welper.welper.domain.attribute.TrgterindvdlArray
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -45,24 +46,30 @@ class CategoryService(
         )
     }
 
-    fun getCategory(lifeArray: LifeArray, desireArray: DesireArray): CategoryListPostResponse {
-        val a: String = getLifeArray(lifeArray)
-        val b: String = getDesireArray(desireArray)
-        var string = ""
-        var string2 = ""
-        if (a != "") {
-            string = "&lifeArray=$a"
-        }
-        if (b != "") {
-            string2 = "&desireArray=$b"
-        }
+    fun getCategory(lifeArray: LifeArray, desireArray: DesireArray, trgterindvdlArray: TrgterindvdlArray)
+            : CategoryListPostResponse {
+        val life: String = getLifeArray(lifeArray)
+        val desire: String = getDesireArray(desireArray)
+        val trgterindvdl: String = getTrgterindvdlArray(trgterindvdlArray)
 
+        var trgterindvded = ""
+        var lifeArrayed = ""
+        var desireArrayed = ""
+        if (life != "") {
+            lifeArrayed = "&lifeArray=$life"
+        }
+        if (desire != "") {
+            desireArrayed = "&desireArray=$desire"
+        }
+        if(trgterindvdl!=""){
+            trgterindvded = "&trgterindvdl=$trgterindvdl"
+        }
         val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
                 "?crtiKey=" +
                 "keTuCooJ8R9Ao5LERVj48XiH87g5hLr3teCu06S8KTfHxSwtGkz0nAS%2BYS8v35JrIJ%2FxYDe3%2BtshuX2%2B2EZg3w%3D%3D" +
                 "&callTp=L" +
-                "&pageNo=1" +
-                "&numOfRows=100$string$string2"
+                "&pageNo=4" +
+                "&numOfRows=100$lifeArrayed$trgterindvded$desireArrayed"
 
 
         val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -187,6 +194,7 @@ class CategoryService(
             LifeArray.OLDAGE -> "006"
             LifeArray.TEENAGE -> "003"
             LifeArray.YOUTH -> "004"
+
         }
     }
 
@@ -204,6 +212,21 @@ class CategoryService(
             DesireArray.LIFE -> "8000000"
             DesireArray.LAW -> "9000000"
             DesireArray.EXCEPT -> "A000000"
+        }
+    }
+
+
+    private fun getTrgterindvdlArray(trgterindvdlArray: TrgterindvdlArray)
+            : String {
+        return when (trgterindvdlArray) {
+            TrgterindvdlArray.DONOT -> ""
+            TrgterindvdlArray.EXCEPT -> "001"
+            TrgterindvdlArray.SINGLEPARENTS -> "002"
+            TrgterindvdlArray.MULTICULTURAL -> "003"
+            TrgterindvdlArray.GRANDCHILDREN -> "004"
+            TrgterindvdlArray.SETTERMIN -> "005"
+            TrgterindvdlArray.CHILDHEAD -> "006"
+            TrgterindvdlArray.SOLOOLD -> "007"
         }
     }
 }
