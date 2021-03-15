@@ -1,7 +1,7 @@
 package welper.welper.controller.response
 
 data class CategoryListPostResponse(
-        var wantedList:String,
+//        var wantedList:String,
 //        val numOfRows:String,
 //        val pageNo:Int,
 //        val resultCode:String,

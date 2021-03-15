@@ -8,9 +8,11 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.controller.response.PostListResponse
 import welper.welper.domain.attribute.DesireArray
 import welper.welper.domain.attribute.LifeArray
 import welper.welper.domain.attribute.TrgterindvdlArray
+import javax.print.Doc
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -48,6 +50,7 @@ class CategoryService(
 
     fun getCategory(lifeArray: LifeArray, desireArray: DesireArray, trgterindvdlArray: TrgterindvdlArray)
             : CategoryListPostResponse {
+        println("시작")
         val life: String = getLifeArray(lifeArray)
         val desire: String = getDesireArray(desireArray)
         val trgterindvdl: String = getTrgterindvdlArray(trgterindvdlArray)
@@ -61,25 +64,42 @@ class CategoryService(
         if (desire != "") {
             desireArrayed = "&desireArray=$desire"
         }
-        if(trgterindvdl!=""){
+        if (trgterindvdl != "") {
             trgterindvded = "&trgterindvdl=$trgterindvdl"
         }
+        println("시작2")
+        val list: MutableList<Document> = mutableListOf()
+        val docList: MutableList<Document> = CategoryURL(1, lifeArrayed, trgterindvded, desireArrayed,list)
+        val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
+
+        docList.forEach {
+            servList.addAll(createServList(it))
+        }
+        return CategoryListPostResponse(
+                servList = servList
+        )
+    }
+
+    private fun CategoryURL(num: Int, lifeArrayed: String, trgterindvded: String, desireArrayed: String,list: MutableList<Document>)
+            : MutableList<Document> {
+        println("시작$num")
+        var num2 = num
         val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
                 "?crtiKey=" +
                 "keTuCooJ8R9Ao5LERVj48XiH87g5hLr3teCu06S8KTfHxSwtGkz0nAS%2BYS8v35JrIJ%2FxYDe3%2BtshuX2%2B2EZg3w%3D%3D" +
                 "&callTp=L" +
-                "&pageNo=4" +
+                "&pageNo=$num2" +
                 "&numOfRows=100$lifeArrayed$trgterindvded$desireArrayed"
-
-
         val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
         val dBuilder: DocumentBuilder = dbFactoty.newDocumentBuilder();
         val doc: Document = dBuilder.parse(urlstr)
-
-        return CategoryListPostResponse(
-                wantedList = getWantedList(doc),
-                servList = createServList(doc)
-        )
+        println(doc.getElementsByTagName("servList").length)
+        list.add(doc)
+        if (doc.getElementsByTagName("servList").length == 100) {
+            num2++
+            CategoryURL(num2, lifeArrayed, trgterindvded, desireArrayed,list)
+        }
+        return list
     }
 
     private fun createBaslawList(doc: Document): List<CategoryDetailResponse.BaslawList> {
