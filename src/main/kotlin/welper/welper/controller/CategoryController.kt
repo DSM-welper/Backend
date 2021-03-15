@@ -3,6 +3,7 @@ package welper.welper.controller
 
 import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.CategoryRequest
+import welper.welper.controller.request.SearchPostRequest
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.domain.attribute.DesireArray
@@ -23,5 +24,9 @@ class CategoryController(
     @GetMapping("/type/{id}")
     fun categoryDetail(@PathVariable id: String): CategoryDetailResponse {
         return categoryService.detailCategory(id)
+    }
+    @PostMapping("search")
+    fun categorySearch(@RequestBody searchPostRequest: SearchPostRequest): CategoryListPostResponse {
+        return categoryService.categorySearch(searchPostRequest.content)
     }
 }
