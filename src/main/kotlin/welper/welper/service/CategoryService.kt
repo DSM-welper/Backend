@@ -8,9 +8,11 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.domain.OpenAPI
 import welper.welper.domain.attribute.DesireArray
 import welper.welper.domain.attribute.LifeArray
 import welper.welper.domain.attribute.TrgterindvdlArray
+import welper.welper.repository.OpenAPIRepository
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -18,8 +20,30 @@ import javax.xml.parsers.DocumentBuilderFactory
 class CategoryService(
         @Value("\${API_KEY}")
         private val key: String,
+        private val openAPIRepository: OpenAPIRepository,
 ) {
+    fun getAllCategory(): CategoryListPostResponse {
+        val a: MutableList<OpenAPI> = openAPIRepository.findAll()
+        val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
 
+        a.forEach {
+            servList.add(
+                    CategoryListPostResponse.ServList(
+                            inqNUm = it.inqNUm,
+                            jurMnofNm = it.jurMnofNm,
+                            jurOrgNm = it.jurOrgNm,
+                            servDgst = it.servDgst,
+                            servDtlLink = it.servDtlLink,
+                            servId = it.servId,
+                            servNm = it.servNm,
+                            svcfrstRegTs = it.svcfrstRegTs,
+                    )
+            )
+        }
+        return CategoryListPostResponse(
+                servList = servList
+        )
+    }
 
     fun detailCategory(id: String): CategoryDetailResponse {
         val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
@@ -99,7 +123,7 @@ class CategoryService(
         list.add(doc)
         if (doc.getElementsByTagName("servList").length == 100) {
             num2++
-            categoryURL(num2, lifeArrayed, trgterindvded, desireArrayed, list,srchKeyCode,searchWrd)
+            categoryURL(num2, lifeArrayed, trgterindvded, desireArrayed, list, srchKeyCode, searchWrd)
         }
         return list
     }
@@ -252,7 +276,7 @@ class CategoryService(
         }
     }
 
-     fun categorySearch(content: String):CategoryListPostResponse {
+    fun categorySearch(content: String): CategoryListPostResponse {
         val list: MutableList<Document> = mutableListOf()
         val docList: MutableList<Document> = categoryURL(1, "", "", "", list, "001", content)
         val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
