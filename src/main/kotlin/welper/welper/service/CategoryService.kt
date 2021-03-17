@@ -9,6 +9,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.controller.response.RandomCategoryResponse
 import welper.welper.domain.OpenApICategory
 import welper.welper.domain.attribute.Category
 import welper.welper.repository.OpenApiCategoryRepository
@@ -23,7 +24,13 @@ class CategoryService(
         private val openApiCategoryRepository: OpenApiCategoryRepository,
         private val openApiPostRepository: OpenApiPostRepository,
 ) {
-
+    fun randomCategory(): RandomCategoryResponse {
+        return RandomCategoryResponse(
+                ageList = ,
+                genderList = ,
+                marryList = ,
+        )
+    }
     fun getCategory(categoryNameList: List<Category>)
             : CategoryListPostResponse {
         val list: MutableList<String> = mutableListOf()
