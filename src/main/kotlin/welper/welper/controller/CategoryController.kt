@@ -16,12 +16,13 @@ import welper.welper.service.CategoryService
 class CategoryController(
         val categoryService: CategoryService,
 ) {
-    @GetMapping
-    fun cateGoryList(@RequestBody request:CategoryRequest): CategoryListPostResponse {
+    @GetMapping("/tag")
+    fun cateGoryList(@RequestBody request: CategoryRequest): CategoryListPostResponse {
         return categoryService.getCategory(request.categoryName)
     }
-    @GetMapping
-    fun cateAllGoryList():CategoryListPostResponse{
+
+    @GetMapping()
+    fun cateAllGoryList(): CategoryListPostResponse {
         return categoryService.getAllCategory()
     }
 
