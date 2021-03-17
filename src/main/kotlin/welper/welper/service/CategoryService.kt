@@ -10,11 +10,7 @@ import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.domain.OpenApICategory
-import welper.welper.domain.OpenApiPost
 import welper.welper.domain.attribute.Category
-import welper.welper.domain.attribute.DesireArray
-import welper.welper.domain.attribute.LifeArray
-import welper.welper.domain.attribute.TrgterindvdlArray
 import welper.welper.repository.OpenApiCategoryRepository
 import welper.welper.repository.OpenApiPostRepository
 import javax.xml.parsers.DocumentBuilder
@@ -31,7 +27,7 @@ class CategoryService(
     fun getCategory(categoryNameList: List<Category>)
             : CategoryListPostResponse {
         val list: MutableList<String> = mutableListOf()
-        categoryNameList.forEach {
+        categoryNameList.map {
             list.add(it.value)
         }
         val categoryList: MutableList<OpenApICategory> =
@@ -52,12 +48,16 @@ class CategoryService(
                     )
             )
         }
-        println(servList.size)
+        val count = categoryNameList.count()
         val set: List<CategoryListPostResponse.ServList> = servList.groupBy { it.servId }
-                .filter { it.value.size == categoryNameList.count() }.flatMap { it.value }
+                .filter { it.value.size ==  count}.flatMap { it.value }
 
+        val set2:MutableList<CategoryListPostResponse.ServList> = mutableListOf()
+        for(i in set.indices step count) {
+            set2.add(set[i])
+        }
         return CategoryListPostResponse(
-                servList = set
+                servList = set2
         )
     }
 
@@ -105,7 +105,6 @@ class CategoryService(
                     )
             )
         }
-
         return CategoryListPostResponse(
                 servList = servList
         )
