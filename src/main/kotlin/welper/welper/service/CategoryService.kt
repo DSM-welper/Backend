@@ -1,6 +1,7 @@
 package welper.welper.service
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -10,12 +11,12 @@ import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.controller.response.RandomCategoryResponse
 import welper.welper.domain.OpenApICategory
-import welper.welper.domain.attribute.Category
-import welper.welper.domain.attribute.MarryArray
-import welper.welper.domain.attribute.GenderArray
-import welper.welper.domain.attribute.LifeArray
+import welper.welper.domain.User
+import welper.welper.domain.attribute.*
+import welper.welper.exception.UserNotFoundException
 import welper.welper.repository.OpenApiCategoryRepository
 import welper.welper.repository.OpenApiPostRepository
+import welper.welper.repository.UserRepository
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -25,9 +26,47 @@ class CategoryService(
         private val key: String,
         private val openApiCategoryRepository: OpenApiCategoryRepository,
         private val openApiPostRepository: OpenApiPostRepository,
+        private val jwtService: JwtService,
+        private val userRepository: UserRepository,
 ) {
+    fun userCategory(token: String): RandomCategoryResponse {
+        val email = jwtService.getEmail(token)
+        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        val lifeList: MutableSet<OpenApICategory> = mutableSetOf()
+        val genderList: MutableSet<OpenApICategory> = mutableSetOf()
+        val marryList: MutableSet<OpenApICategory> = mutableSetOf()
+        val gender: String = getGender(user.gender)
+        val age: String = getAge(user.age)
+        val marry: String = getMarry(user.marry)
+        lifeList.addAll(
+                openApiCategoryRepository.findAllByCategoryName(age)
+        )
+        genderList.addAll(
+                openApiCategoryRepository.findAllByCategoryName(gender)
+        )
+        if (marry == "모두") {
+            DesireArray.values().forEach {
+                marryList.addAll(
+                        openApiCategoryRepository.findAllByCategoryName(it.value)
+                )
+            }
+            openApiCategoryRepository.findAll()
+        } else
+            marryList.addAll(
+                    openApiCategoryRepository.findAllByCategoryName(marry)
+            )
+        return RandomCategoryResponse(
+                ageList = RandomCategoryResponse.AgeList(
+                        list = getDetailRandomArray(lifeList)),
+                genderList = RandomCategoryResponse.GenderList(
+                        list = getDetailRandomArray(genderList)),
+                marryList = RandomCategoryResponse.MarryList(
+                        list = getDetailRandomArray(marryList)),
+        )
+    }
 
     fun randomCategory(): RandomCategoryResponse {
+
         val lifeList: MutableSet<OpenApICategory> = mutableSetOf()
         val genderList: MutableSet<OpenApICategory> = mutableSetOf()
         val marryList: MutableSet<OpenApICategory> = mutableSetOf()
@@ -167,6 +206,33 @@ class CategoryService(
         return CategoryListPostResponse(
                 servList = servList
         )
+    }
+
+    private fun getGender(gender: Gender): String {
+        return when (gender) {
+            Gender.MEN -> "특성없음"
+            Gender.SECRET -> "특성없음"
+            Gender.WOMEN -> "여성"
+        }
+    }
+
+    private fun getAge(age: Int): String {
+        return when (age) {
+            in 0..6 -> "영유아"
+            in 7..12 -> "아동"
+            in 13..19 -> "청소년"
+            in 19..40 -> "청년"
+            in 41..65 -> "중장년"
+            else -> "노년"
+        }
+    }
+
+    private fun getMarry(marry: Marry): String {
+        return when (marry) {
+            Marry.DO -> "가족관계"
+            Marry.DONOT -> "가구없음"
+            Marry.SECRET -> "모두"
+        }
     }
 
     private fun getDetailRandomArray(list: MutableSet<OpenApICategory>): List<RandomCategoryResponse.DetailRandomList> {
