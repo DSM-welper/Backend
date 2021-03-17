@@ -21,7 +21,7 @@ class CategoryController(
         return categoryService.getCategory(request.categoryName)
     }
 
-    @GetMapping("/type/{id}")
+    @GetMapping("/{id}")
     fun categoryDetail(@PathVariable id: String): CategoryDetailResponse {
         return categoryService.detailCategory(id)
     }

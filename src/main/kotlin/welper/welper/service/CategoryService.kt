@@ -50,10 +50,10 @@ class CategoryService(
         }
         val count = categoryNameList.count()
         val set: List<CategoryListPostResponse.ServList> = servList.groupBy { it.servId }
-                .filter { it.value.size ==  count}.flatMap { it.value }
+                .filter { it.value.size == count }.flatMap { it.value }
 
-        val set2:MutableList<CategoryListPostResponse.ServList> = mutableListOf()
-        for(i in set.indices step count) {
+        val set2: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
+        for (i in set.indices step count) {
             set2.add(set[i])
         }
         return CategoryListPostResponse(
@@ -62,8 +62,8 @@ class CategoryService(
     }
 
     fun detailCategory(id: String): CategoryDetailResponse {
-        val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc"
-        "?crtiKey=$key" +
+        val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
+                "?crtiKey=$key" +
                 "&callTp=D" +
                 "&servId=$id"
         val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -123,7 +123,7 @@ class CategoryService(
             val a = CategoryDetailResponse.DetailList(
                     servSeCode = getTagValue("servSeCode", eElement),
                     servSeDetailNm = getTagValue("servSeDetailNm", eElement),
-                    servSeDetailLink = getTagValue("servSeDetailNm", eElement)
+                    servSeDetailLink = getTagValue("servSeDetailLink", eElement)
             )
             list.add(a)
         }
