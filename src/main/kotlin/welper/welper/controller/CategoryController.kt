@@ -6,9 +6,6 @@ import welper.welper.controller.request.CategoryRequest
 import welper.welper.controller.request.SearchPostRequest
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
-import welper.welper.domain.attribute.DesireArray
-import welper.welper.domain.attribute.LifeArray
-import welper.welper.domain.attribute.TrgterindvdlArray
 import welper.welper.service.CategoryService
 
 @RestController
@@ -16,12 +13,13 @@ import welper.welper.service.CategoryService
 class CategoryController(
         val categoryService: CategoryService,
 ) {
-    @GetMapping
-    fun cateGoryList(@RequestBody request:CategoryRequest): CategoryListPostResponse {
+    @GetMapping("/tag")
+    fun cateGoryList(@RequestBody request: CategoryRequest): CategoryListPostResponse {
         return categoryService.getCategory(request.categoryName)
     }
-    @GetMapping
-    fun cateAllGoryList():CategoryListPostResponse{
+
+    @GetMapping()
+    fun cateAllGoryList(): CategoryListPostResponse {
         return categoryService.getAllCategory()
     }
 
