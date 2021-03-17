@@ -1,7 +1,6 @@
 package welper.welper.controller.response
 
 data class CategoryDetailResponse(
-        var wantedDtl: String?,
         var alwServCn: String?,
         val applmetList: List<ApplmetList>,
         val basfrmList: List<BasfrmList>,

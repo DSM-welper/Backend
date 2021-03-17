@@ -18,13 +18,14 @@ class CategoryController(
 ) {
     @GetMapping
     fun cateGoryList(@RequestBody request:CategoryRequest): CategoryListPostResponse {
-        return categoryService.getCategory(request.lifeArray,request.desireArray,request.trgterindvdlArray)
+        return categoryService.getCategory(request.categoryName)
     }
 
     @GetMapping("/type/{id}")
     fun categoryDetail(@PathVariable id: String): CategoryDetailResponse {
         return categoryService.detailCategory(id)
     }
+
     @PostMapping("search")
     fun categorySearch(@RequestBody searchPostRequest: SearchPostRequest): CategoryListPostResponse {
         return categoryService.categorySearch(searchPostRequest.content)

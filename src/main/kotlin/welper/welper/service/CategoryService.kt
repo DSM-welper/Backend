@@ -1,6 +1,7 @@
 package welper.welper.service
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -8,9 +9,14 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.domain.OpenApICategory
+import welper.welper.domain.OpenApiPost
+import welper.welper.domain.attribute.Category
 import welper.welper.domain.attribute.DesireArray
 import welper.welper.domain.attribute.LifeArray
 import welper.welper.domain.attribute.TrgterindvdlArray
+import welper.welper.repository.OpenApiCategoryRepository
+import welper.welper.repository.OpenApiPostRepository
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -18,12 +24,48 @@ import javax.xml.parsers.DocumentBuilderFactory
 class CategoryService(
         @Value("\${API_KEY}")
         private val key: String,
+        private val openApiCategoryRepository: OpenApiCategoryRepository,
+        private val openApiPostRepository: OpenApiPostRepository,
 ) {
 
+    fun getCategory(categoryNameList: List<Category>)
+            : CategoryListPostResponse {
+        val list: MutableList<String> = mutableListOf()
+        categoryNameList.forEach {
+            list.add(it.value)
+        }
+        val categoryList: MutableList<OpenApICategory> =
+                openApiCategoryRepository.findByCategoryName3(list)
+
+        val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
+
+        categoryList.forEach {
+            servList.add(
+                    CategoryListPostResponse.ServList(
+                            servDgst = it.openApiPost.servDgst,
+                            servDtlLink = it.openApiPost.servDtlLink,
+                            servId = it.openApiPost.servId,
+                            servNm = it.openApiPost.servNm,
+                            inqNum = it.openApiPost.inqNum,
+                            jurMnofNm = it.openApiPost.jurMnofNm,
+                            jurOrgNm = it.openApiPost.jurOrgNm,
+                            svcfrstRegTs = it.openApiPost.svcfrstRegTs,
+                    )
+            )
+        }
+        println(servList.size)
+        val set: List<CategoryListPostResponse.ServList> = servList.groupBy { it.servId }
+                .filter { it.value.size == categoryNameList.count() }.flatMap { it.value }
+
+
+        return CategoryListPostResponse(
+                servList = set
+        )
+    }
 
     fun detailCategory(id: String): CategoryDetailResponse {
-        val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
-                "?crtiKey=$key" +
+        val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc"
+        "?crtiKey=$key" +
                 "&callTp=D" +
                 "&servId=$id"
         val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -33,7 +75,6 @@ class CategoryService(
         val nNode: Node = nList.item(0)
         val eElement = nNode as Element
         return CategoryDetailResponse(
-                wantedDtl = getWantedList(doc),
                 alwServCn = getTagValue("alwServCn", eElement),
                 applmetList = createApplmetList(doc),
                 basfrmList = createBasfrmList(doc),
@@ -47,41 +88,9 @@ class CategoryService(
         )
     }
 
-    fun getCategory(lifeArray: LifeArray, desireArray: DesireArray, trgterindvdlArray: TrgterindvdlArray)
-            : CategoryListPostResponse {
-        println("시작")
-        val life: String = getLifeArray(lifeArray)
-        val desire: String = getDesireArray(desireArray)
-        val trgterindvdl: String = getTrgterindvdlArray(trgterindvdlArray)
-
-        var trgterindvded = ""
-        var lifeArrayed = ""
-        var desireArrayed = ""
-        if (life != "") {
-            lifeArrayed = "&lifeArray=$life"
-        }
-        if (desire != "") {
-            desireArrayed = "&desireArray=$desire"
-        }
-        if (trgterindvdl != "") {
-            trgterindvded = "&trgterindvdl=$trgterindvdl"
-        }
-        println("시작2")
-        val list: MutableList<Document> = mutableListOf()
-        val docList: MutableList<Document> = categoryURL(1, lifeArrayed, trgterindvded, desireArrayed, list, "", "")
-        val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
-
-        docList.forEach {
-            servList.addAll(createServList(it))
-        }
-        return CategoryListPostResponse(
-                servList = servList
-        )
-    }
-
     private fun categoryURL(
-            num: Int, lifeArrayed: String, trgterindvded: String, desireArrayed: String,
-            list: MutableList<Document>, srchKeyCode: String, searchWrd: String,
+            num: Int,
+            list: MutableList<Document>, searchWrd: String,
     )
             : MutableList<Document> {
         println("시작$num")
@@ -91,16 +100,17 @@ class CategoryService(
                 "keTuCooJ8R9Ao5LERVj48XiH87g5hLr3teCu06S8KTfHxSwtGkz0nAS%2BYS8v35JrIJ%2FxYDe3%2BtshuX2%2B2EZg3w%3D%3D" +
                 "&callTp=L" +
                 "&pageNo=$num2" +
-                "&numOfRows=100$lifeArrayed$trgterindvded$desireArrayed$srchKeyCode$searchWrd"
+                "&numOfRows=100$searchWrd"
         val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
         val dBuilder: DocumentBuilder = dbFactoty.newDocumentBuilder();
         val doc: Document = dBuilder.parse(urlstr)
         println(doc.getElementsByTagName("servList").length)
-        list.add(doc)
         if (doc.getElementsByTagName("servList").length == 100) {
             num2++
-            categoryURL(num2, lifeArrayed, trgterindvded, desireArrayed, list,srchKeyCode,searchWrd)
+            categoryURL(num2, list, searchWrd)
         }
+        list.add(doc)
+
         return list
     }
 
@@ -183,7 +193,7 @@ class CategoryService(
             val nNode: Node = nList.item(i)
             val eElement = nNode as Element
             val a = CategoryListPostResponse.ServList(
-                    inqNUm = getTagValue("inqNum", eElement),
+                    inqNum = getTagValue("inqNum", eElement),
                     jurOrgNm = getTagValue("jurOrgNm", eElement),
                     servDgst = getTagValue("servDgst", eElement),
                     servDtlLink = getTagValue("servDtlLink", eElement),
@@ -197,9 +207,6 @@ class CategoryService(
         return list
     }
 
-    private fun getWantedList(doc: Document): String {
-        return doc.documentElement.nodeName
-    }
 
     private fun getTagValue(tag: String, eElement: Element): String? {
         val nlList: NodeList = eElement.getElementsByTagName(tag).item(0).childNodes ?: return "a"
@@ -207,54 +214,10 @@ class CategoryService(
         return nValue.nodeValue
     }
 
-    private fun getLifeArray(lifeArray: LifeArray): String {
-        return when (lifeArray) {
-            LifeArray.DONOT -> ""
-            LifeArray.CHILD -> "002"
-            LifeArray.INFANTS -> "001"
-            LifeArray.MIDDLEAGE -> "005"
-            LifeArray.OLDAGE -> "006"
-            LifeArray.TEENAGE -> "003"
-            LifeArray.YOUTH -> "004"
 
-        }
-    }
-
-    private fun getDesireArray(desireArray: DesireArray): String {
-        return when (desireArray) {
-            DesireArray.DONOT -> ""
-            DesireArray.SAFETY -> "0000000"
-            DesireArray.HEALTH -> "1000000"
-            DesireArray.DAILYLIFE -> "2000000"
-            DesireArray.FAMILY -> "3000000"
-            DesireArray.SOCIAL -> "4000000"
-            DesireArray.ECONOMIC -> "5000000"
-            DesireArray.EDUCATION -> "6000000"
-            DesireArray.EMPLOYMENT -> "7000000"
-            DesireArray.LIFE -> "8000000"
-            DesireArray.LAW -> "9000000"
-            DesireArray.EXCEPT -> "A000000"
-        }
-    }
-
-
-    private fun getTrgterindvdlArray(trgterindvdlArray: TrgterindvdlArray)
-            : String {
-        return when (trgterindvdlArray) {
-            TrgterindvdlArray.DONOT -> ""
-            TrgterindvdlArray.EXCEPT -> "001"
-            TrgterindvdlArray.SINGLEPARENTS -> "002"
-            TrgterindvdlArray.MULTICULTURAL -> "003"
-            TrgterindvdlArray.GRANDCHILDREN -> "004"
-            TrgterindvdlArray.SETTERMIN -> "005"
-            TrgterindvdlArray.CHILDHEAD -> "006"
-            TrgterindvdlArray.SOLOOLD -> "007"
-        }
-    }
-
-     fun categorySearch(content: String):CategoryListPostResponse {
+    fun categorySearch(content: String): CategoryListPostResponse {
         val list: MutableList<Document> = mutableListOf()
-        val docList: MutableList<Document> = categoryURL(1, "", "", "", list, "001", content)
+        val docList: MutableList<Document> = categoryURL(1, list, content)
         val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
         docList.forEach {
             servList.addAll(createServList(it))
