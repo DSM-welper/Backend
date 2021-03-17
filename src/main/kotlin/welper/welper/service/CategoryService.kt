@@ -1,7 +1,6 @@
 package welper.welper.service
 
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -12,6 +11,9 @@ import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.controller.response.RandomCategoryResponse
 import welper.welper.domain.OpenApICategory
 import welper.welper.domain.attribute.Category
+import welper.welper.domain.attribute.MarryArray
+import welper.welper.domain.attribute.GenderArray
+import welper.welper.domain.attribute.LifeArray
 import welper.welper.repository.OpenApiCategoryRepository
 import welper.welper.repository.OpenApiPostRepository
 import javax.xml.parsers.DocumentBuilder
@@ -24,13 +26,41 @@ class CategoryService(
         private val openApiCategoryRepository: OpenApiCategoryRepository,
         private val openApiPostRepository: OpenApiPostRepository,
 ) {
+
     fun randomCategory(): RandomCategoryResponse {
+        val lifeList: MutableSet<OpenApICategory> = mutableSetOf()
+        val genderList: MutableSet<OpenApICategory> = mutableSetOf()
+        val marryList: MutableSet<OpenApICategory> = mutableSetOf()
+
+        LifeArray.values().forEach {
+            lifeList.addAll(
+                    openApiCategoryRepository.findAllByCategoryName(it.value)
+            )
+        }
+        MarryArray.values().forEach {
+            marryList.addAll(
+                    openApiCategoryRepository.findAllByCategoryName(it.value)
+            )
+        }
+        GenderArray.values().forEach {
+            genderList.addAll(
+                    openApiCategoryRepository.findAllByCategoryName(it.value)
+            )
+        }
+
         return RandomCategoryResponse(
-                ageList = ,
-                genderList = ,
-                marryList = ,
+                ageList = RandomCategoryResponse.AgeList(
+                        type = "Random",
+                        list = getDetailRandomArray(lifeList)),
+                genderList = RandomCategoryResponse.GenderList(
+                        type = "Random",
+                        list = getDetailRandomArray(genderList)),
+                marryList = RandomCategoryResponse.MarryList(
+                        type = "Random",
+                        list = getDetailRandomArray(marryList)),
         )
     }
+
     fun getCategory(categoryNameList: List<Category>)
             : CategoryListPostResponse {
         val list: MutableList<String> = mutableListOf()
@@ -137,6 +167,27 @@ class CategoryService(
         return CategoryListPostResponse(
                 servList = servList
         )
+    }
+
+    private fun getDetailRandomArray(list: MutableSet<OpenApICategory>): List<RandomCategoryResponse.DetailRandomList> {
+        val detailRandomList: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
+        for (i in 0..2) {
+            val lifeArrayList: OpenApICategory = list.random()
+            detailRandomList.add(
+                    RandomCategoryResponse.DetailRandomList(
+                            inqNum = lifeArrayList.openApiPost.inqNum,
+                            jurMnofNm = lifeArrayList.openApiPost.jurMnofNm,
+                            jurOrgNm = lifeArrayList.openApiPost.jurOrgNm,
+                            servDgst = lifeArrayList.openApiPost.servDgst,
+                            servDtlLink = lifeArrayList.openApiPost.servDtlLink,
+                            servId = lifeArrayList.openApiPost.servId,
+                            servNm = lifeArrayList.openApiPost.servNm,
+                            svcfrstRegTs = lifeArrayList.openApiPost.svcfrstRegTs,
+                    )
+            )
+            list.remove(lifeArrayList)
+        }
+        return detailRandomList
     }
 
     private fun createDetailList(doc: Document, targetName: String)

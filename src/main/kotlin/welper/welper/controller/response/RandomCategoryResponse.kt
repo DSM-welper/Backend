@@ -7,20 +7,20 @@ class RandomCategoryResponse(
 ) {
     class AgeList(
             val type: String = "Age",
-            val list: List<DetailList>,
+            val list: List<DetailRandomList>,
     )
 
     class MarryList(
             val type: String = "Marry",
-            val list: List<DetailList>,
+            val list: List<DetailRandomList>,
     )
 
     class GenderList(
             val type: String = "Gender",
-            val list: List<DetailList>,
+            val list: List<DetailRandomList>,
     )
 
-    class DetailList(
+    class DetailRandomList(
             val inqNum: String?,
             val jurMnofNm: String?,
             val jurOrgNm: String?,
