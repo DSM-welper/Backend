@@ -20,6 +20,10 @@ class CategoryController(
     fun cateGoryList(@RequestBody request:CategoryRequest): CategoryListPostResponse {
         return categoryService.getCategory(request.categoryName)
     }
+    @GetMapping
+    fun cateAllGoryList():CategoryListPostResponse{
+        return categoryService.getAllCategory()
+    }
 
     @GetMapping("/{id}")
     fun categoryDetail(@PathVariable id: String): CategoryDetailResponse {

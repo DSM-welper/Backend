@@ -110,6 +110,27 @@ class CategoryService(
         )
     }
 
+    fun getAllCategory(): CategoryListPostResponse {
+        val list = openApiPostRepository.findAll()
+        val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
+        list.forEach {
+            servList.add(
+                    CategoryListPostResponse.ServList(
+                            inqNum = it.inqNum,
+                            jurMnofNm = it.jurMnofNm,
+                            jurOrgNm = it.jurOrgNm,
+                            servDgst = it.servDgst,
+                            servDtlLink = it.servDtlLink,
+                            servId = it.servId,
+                            servNm = it.servNm,
+                            svcfrstRegTs = it.svcfrstRegTs,
+                    )
+            )
+        }
+        return CategoryListPostResponse(
+                servList = servList
+        )
+    }
 
     private fun createDetailList(doc: Document, targetName: String)
             : List<CategoryDetailResponse.DetailList> {
