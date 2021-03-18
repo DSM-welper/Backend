@@ -13,9 +13,7 @@ import welper.welper.service.JwtService
 @RequestMapping("/main")
 class MainController(
         private val categoryService: CategoryService,
-        private val jwtService: JwtService,
-        private val userRepository: UserRepository,
-) {
+        ) {
     @GetMapping
     fun randomCategory(@RequestHeader("Authorization") token: String?):
             RandomCategoryResponse {

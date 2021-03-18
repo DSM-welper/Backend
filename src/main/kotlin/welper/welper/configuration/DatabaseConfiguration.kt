@@ -20,8 +20,6 @@ class DatabaseConfiguration(
 
     @Bean
     fun dataSource(): DataSource {
-        println("url: $url")
-        println("driver: $driverClassName")
         return DataSourceBuilder.create()
                 .driverClassName(driverClassName)
                 .url(url)
