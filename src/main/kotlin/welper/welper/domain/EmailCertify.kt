@@ -3,6 +3,7 @@ package welper.welper.domain
 import javax.persistence.*;
 
 @Entity
+@Table(name = "email_certify")
 class EmailCertify(
         @Id
         @Column(name = "email")

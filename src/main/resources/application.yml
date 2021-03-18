@@ -4,11 +4,10 @@ spring:
     port: 587
     username: ahn479512@gmail.com
     password: ${MAIL_PASSWORD}
-
-
   jpa:
     hibernate:
-      ddl-auto: update
+      use-new-id-generator-mappings: false
+      ddl-auto: create
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     generate-ddl: false

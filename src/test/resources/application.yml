@@ -13,9 +13,8 @@ spring:
     console:
       enabled: true
       path: /h2-console
-  output:
-    ansi:
-      enabled: always
-server:
-  address: 0.0.0.0
-  port: 8081
+  mail:
+      host: smtp.gmail.com
+      port: 587
+      username: ahn479512@gmail.com
+      password: ${MAIL_PASSWORD}
