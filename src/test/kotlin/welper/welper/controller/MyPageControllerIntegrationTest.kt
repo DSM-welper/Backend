@@ -2,7 +2,6 @@ package welper.welper.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -15,7 +14,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.transaction.annotation.Transactional
 import welper.welper.controller.request.MyPageRequest
 import welper.welper.controller.response.MyPageResponse
-import welper.welper.controller.response.PostListResponse
 import welper.welper.domain.attribute.Gender
 import welper.welper.domain.attribute.Marry
 
