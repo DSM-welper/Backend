@@ -93,8 +93,4 @@ internal class MyPageControllerIntegrationTest(
                 .response
                 .contentAsString
     }
-//    @Test
-//    fun `마이페이지 파라미터 입력 x`(){
-//        var response:
-//    }
 }
