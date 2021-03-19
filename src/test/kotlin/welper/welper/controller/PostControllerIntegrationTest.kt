@@ -20,6 +20,8 @@ import welper.welper.controller.request.SearchPostRequest
 import welper.welper.controller.response.LoginResponse
 import welper.welper.exception.handler.ExceptionResponse
 import welper.welper.controller.response.PostListResponse
+import welper.welper.controller.response.PostResponse
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 
 @Suppress("DEPRECATION")//사용되지 않는 경고 비활성화
 @SpringBootTest
@@ -150,10 +152,45 @@ internal class PostControllerIntegrationTest(
         )
         assertThat(response.code).isEqualTo("POST_NOTFOUND")
     }
+
     @Test
     fun `post삭제 유저가 다름`() {
         val response = objectMapper.readValue<ExceptionResponse>(
                 mock.perform(delete("/post/2")
+                        .header("Authorization", "this-is-test-token")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .characterEncoding("UTF-8"))
+                        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                        .andReturn()
+                        .response
+                        .contentAsString
+        )
+        assertThat(response.code).isEqualTo("POST_NOTFOUND")
+    }
+    @Test
+    fun `post 읽기 ok`() {
+        val response = objectMapper.readValue<PostResponse>(
+                mock.perform(get("/post/1")
+                        .header("Authorization", "this-is-test-token")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .characterEncoding("UTF-8"))
+                        .andExpect(MockMvcResultMatchers.status().isOk)
+                        .andReturn()
+                        .response
+                        .contentAsString
+        )
+        assertThat(response.title).isNotBlank
+        assertThat(response.content).isNotBlank
+        assertThat(response.category).isNotBlank
+        assertThat(response.writer).isNotBlank
+        assertThat(response.createdAt)
+    }
+    @Test
+    fun `없는 post 읽기 에러`() {
+        val response = objectMapper.readValue<ExceptionResponse>(
+                mock.perform(get("/post/2")
                         .header("Authorization", "this-is-test-token")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8)

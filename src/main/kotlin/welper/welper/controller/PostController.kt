@@ -59,7 +59,7 @@ class PostController(
         return postService.postList(token)
     }
 
-    @GetMapping("/{category}")
+    @GetMapping("/category{category}")
     fun postCategoryRead(
             @RequestHeader("Authorization") token: String,
             @PathVariable("category") category: String,

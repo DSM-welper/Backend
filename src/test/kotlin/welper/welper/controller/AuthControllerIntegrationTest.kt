@@ -16,6 +16,8 @@ import welper.welper.controller.request.LoginRequest
 import welper.welper.controller.response.LoginResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import welper.welper.controller.response.AccessTokenResponse
 import welper.welper.exception.handler.ExceptionResponse
