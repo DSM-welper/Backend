@@ -36,6 +36,7 @@ class AuthController(
     @PatchMapping
     fun recreateToken(@RequestHeader("refreshToken") token: String): AccessTokenResponse =
             AccessTokenResponse(authService.recreateAccessToken(token))
+
     @PostMapping("/token")
     fun validateToken(@RequestHeader("Authorization") token: String) =
             authService.validateToken(token)
