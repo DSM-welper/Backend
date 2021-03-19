@@ -44,11 +44,16 @@ class User(
     var age = age
         private set
 
-    fun updateMyPage(name: String, marry: Marry, gender: Gender, age: Int,disorder: Boolean) {
+    fun updateMyPage(name: String?, marry: Marry?, gender: Gender?, age: Int?,disorder: Boolean?) {
+        if(name!=null)
         this.name = name
+        if(disorder!=null)
         this.disorder = disorder
+        if(gender!=null)
         this.gender = gender
+        if(age!=null)
         this.age = age
+        if(marry!=null)
         this.marry = marry
     }
 

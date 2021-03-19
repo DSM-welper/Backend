@@ -13,6 +13,7 @@ import welper.welper.controller.response.RandomCategoryResponse
 import welper.welper.domain.OpenApICategory
 import welper.welper.domain.User
 import welper.welper.domain.attribute.*
+import welper.welper.exception.NonExistCategoryDetailException
 import welper.welper.exception.UserNotFoundException
 import welper.welper.repository.OpenApiCategoryRepository
 import welper.welper.repository.OpenApiPostRepository
@@ -138,28 +139,32 @@ class CategoryService(
     }
 
     fun detailCategory(id: String): CategoryDetailResponse {
-        val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
-                "?crtiKey=$key" +
-                "&callTp=D" +
-                "&servId=$id"
-        val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
-        val dBuilder: DocumentBuilder = dbFactoty.newDocumentBuilder();
-        val doc: Document = dBuilder.parse(urlstr)
-        val nList: NodeList = doc.getElementsByTagName("wantedDtl")
-        val nNode: Node = nList.item(0)
-        val eElement = nNode as Element
-        return CategoryDetailResponse(
-                alwServCn = getTagValue("alwServCn", eElement),
-                applmetList = createDetailList(doc, "applmetList"),
-                basfrmList = createDetailList(doc, "basfrmList"),
-                baslawList = createDetailList(doc, "baslawList"),
-                inqplCtadrList = createDetailList(doc, "inqplCtadrList"),
-                servDgst = getTagValue("servDgst", eElement),
-                servId = getTagValue("servId", eElement),
-                servNm = getTagValue("servNm", eElement),
-                slctCritCn = getTagValue("slctCritCn", eElement),
-                tgtrDtlCn = getTagValue("tgtrDtlCn", eElement),
-        )
+        try {
+            val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
+                    "?crtiKey=$key" +
+                    "&callTp=D" +
+                    "&servId=$id"
+            val dbFactoty: DocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+            val dBuilder: DocumentBuilder = dbFactoty.newDocumentBuilder();
+            val doc: Document = dBuilder.parse(urlstr)
+            val nList: NodeList = doc.getElementsByTagName("wantedDtl")
+            val nNode: Node = nList.item(0)
+            val eElement = nNode as Element
+            return CategoryDetailResponse(
+                    alwServCn = getTagValue("alwServCn", eElement),
+                    applmetList = createDetailList(doc, "applmetList"),
+                    basfrmList = createDetailList(doc, "basfrmList"),
+                    baslawList = createDetailList(doc, "baslawList"),
+                    inqplCtadrList = createDetailList(doc, "inqplCtadrList"),
+                    servDgst = getTagValue("servDgst", eElement),
+                    servId = getTagValue("servId", eElement),
+                    servNm = getTagValue("servNm", eElement),
+                    slctCritCn = getTagValue("slctCritCn", eElement),
+                    tgtrDtlCn = getTagValue("tgtrDtlCn", eElement),
+            )
+        } catch (e:Exception) {
+            throw NonExistCategoryDetailException()
+        }
     }
 
     fun categorySearch(content: String): CategoryListPostResponse {
