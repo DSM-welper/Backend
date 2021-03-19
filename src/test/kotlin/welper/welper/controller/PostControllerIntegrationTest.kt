@@ -11,6 +11,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.transaction.annotation.Transactional
 import welper.welper.controller.request.LoginRequest
@@ -18,8 +19,6 @@ import welper.welper.controller.request.PostRequest
 import welper.welper.controller.request.SearchPostRequest
 import welper.welper.controller.response.LoginResponse
 import welper.welper.exception.handler.ExceptionResponse
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import welper.welper.controller.response.PostListResponse
 
 @Suppress("DEPRECATION")//사용되지 않는 경고 비활성화
@@ -98,5 +97,72 @@ internal class PostControllerIntegrationTest(
 
         )
         assertThat(response.post).map<String> { it.title }.containsAll(listOf("head"))
+    }
+
+    @Test
+    fun `post 게시물 검색 토큰 에러`() {
+        val requestBody = objectMapper.writeValueAsString(
+                SearchPostRequest(
+                        content = "head"
+                )
+        )
+        val response = objectMapper.readValue<ExceptionResponse>(
+                mock.perform(get("/post/search")
+                        .header("Authorization", "this-is-test-token2")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .characterEncoding("UTF-8"))
+                        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+                        .andReturn()
+                        .response
+                        .contentAsString
+
+        )
+        assertThat(response.code).isEqualTo("INVALID_TOKEN")
+    }
+
+    @Test
+    fun `post삭제 ok`() {
+        mock.perform(delete("/post/1")
+                .header("Authorization", "this-is-test-token")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .characterEncoding("UTF-8"))
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andReturn()
+                .response
+                .contentAsString
+    }
+
+    @Test
+    fun `post삭제 게시물 못찾음`() {
+        val response = objectMapper.readValue<ExceptionResponse>(
+                mock.perform(delete("/post/3")
+                        .header("Authorization", "this-is-test-token")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .characterEncoding("UTF-8"))
+                        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                        .andReturn()
+                        .response
+                        .contentAsString
+        )
+        assertThat(response.code).isEqualTo("POST_NOTFOUND")
+    }
+    @Test
+    fun `post삭제 유저가 다름`() {
+        val response = objectMapper.readValue<ExceptionResponse>(
+                mock.perform(delete("/post/2")
+                        .header("Authorization", "this-is-test-token")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .characterEncoding("UTF-8"))
+                        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                        .andReturn()
+                        .response
+                        .contentAsString
+        )
+        assertThat(response.code).isEqualTo("POST_NOTFOUND")
     }
 }

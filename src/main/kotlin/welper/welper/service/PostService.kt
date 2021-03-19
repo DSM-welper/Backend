@@ -130,6 +130,7 @@ class PostService(
     }
 
     fun searchPost(token: String, content: String): PostListResponse {
+
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
 
