@@ -26,7 +26,7 @@ class AuthService(
 
 
     fun signUp(email: String, password: String, name: String, age: Int, marry: Marry, gender: Gender, disorder: Boolean) {
-        val emailCertify: EmailCertify = emailCertifyRepository.findByEmailAndCertified(email, true)
+        emailCertifyRepository.findByEmailAndCertified(email, true)
                 ?: throw NonExistEmailCertifyException(email)
         val isJoinPossible = isJoinPossible(email)
         if (isJoinPossible) throw AlreadyExistAccountException(email)
@@ -73,7 +73,7 @@ class AuthService(
         return createAccessToken(email)
     }
 
-    private fun validateToken(token: String) {
+    fun validateToken(token: String) {
         val isValid = jwtService.isValid(token)
         if (!isValid) throw InvalidTokenException(token)
     }
