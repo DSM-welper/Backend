@@ -45,7 +45,7 @@ class PostService(
     fun postRead(token: String, id: Int): PostResponse {
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
-        val post: Post = postRepository.findByIdAndUser(id, user) ?: throw PostNotFoundException(email, id)
+        val post: Post = postRepository.findByIdOrNull(id) ?: throw PostNotFoundException(email, id)
 
         return PostResponse(
                 title = post.title,
@@ -54,13 +54,9 @@ class PostService(
                 category = post.category,
                 writer = user.name,
         )
-
     }
 
     fun postList(token: String): PostListResponse {
-        val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
-
         val post: List<Post?> = postRepository.findAll()
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
         post.forEach {
@@ -82,8 +78,6 @@ class PostService(
     }
 
     fun postCategoryRead(token: String, category: String): PostListResponse {
-        val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
         val post: List<Post?> = postRepository.findAllByCategory(category)
 
@@ -130,6 +124,7 @@ class PostService(
     }
 
     fun searchPost(token: String, content: String): PostListResponse {
+
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
 

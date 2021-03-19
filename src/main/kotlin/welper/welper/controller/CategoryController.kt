@@ -18,7 +18,7 @@ class CategoryController(
         return categoryService.getCategory(request.categoryName)
     }
 
-    @GetMapping()
+    @GetMapping
     fun cateAllGoryList(): CategoryListPostResponse {
         return categoryService.getAllCategory()
     }
