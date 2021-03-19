@@ -6,6 +6,7 @@ import welper.welper.controller.request.SearchPostRequest
 import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
 import welper.welper.domain.Post
+import welper.welper.service.AuthService
 import welper.welper.service.PostService
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -14,9 +15,11 @@ import java.time.ZoneId
 @RequestMapping("/post")
 class PostController(
         val postService: PostService,
+        val authService: AuthService,
 ) {
     @PostMapping
     fun postCreate(@RequestHeader("Authorization") token: String, @RequestBody request: PostRequest) {
+        authService.validateToken(token)
         postService.postCreate(token,
                 title = request.title,
                 content = request.content,
