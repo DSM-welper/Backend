@@ -190,7 +190,7 @@ internal class PostControllerIntegrationTest(
     @Test
     fun `없는 post 읽기 에러`() {
         val response = objectMapper.readValue<ExceptionResponse>(
-                mock.perform(get("/post/2")
+                mock.perform(get("/post/3")
                         .header("Authorization", "this-is-test-token")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -201,5 +201,50 @@ internal class PostControllerIntegrationTest(
                         .contentAsString
         )
         assertThat(response.code).isEqualTo("POST_NOTFOUND")
+    }
+    @Test
+    fun `post list 읽기 ok`() {
+        val response = objectMapper.readValue<PostListResponse>(
+                mock.perform(get("/post")
+                        .header("Authorization", "this-is-test-token")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .characterEncoding("UTF-8"))
+                        .andExpect(MockMvcResultMatchers.status().isOk)
+                        .andReturn()
+                        .response
+                        .contentAsString
+        )
+        assertThat(response.post).map<String> { it.title }.containsAll(listOf("head"))
+    }///category{category}
+    @Test
+    fun `post category 읽기 ok`() {
+        val response = objectMapper.readValue<PostListResponse>(
+                mock.perform(get("/post/category/test")
+                        .header("Authorization", "this-is-test-token")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .characterEncoding("UTF-8"))
+                        .andExpect(MockMvcResultMatchers.status().isOk)
+                        .andReturn()
+                        .response
+                        .contentAsString
+        )
+        assertThat(response.post).map<String> { it.title }.containsAll(listOf("head"))
+    }
+    @Test
+    fun `자신의 post 읽기 ok`() {
+        val response = objectMapper.readValue<PostListResponse>(
+                mock.perform(get("/post/category/test")
+                        .header("Authorization", "this-is-test-token")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .characterEncoding("UTF-8"))
+                        .andExpect(MockMvcResultMatchers.status().isOk)
+                        .andReturn()
+                        .response
+                        .contentAsString
+        )
+        assertThat(response.post).map<String> {it.title}.containsAll(listOf("head"))
     }
 }
