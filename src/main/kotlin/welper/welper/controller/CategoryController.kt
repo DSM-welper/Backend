@@ -23,9 +23,9 @@ class CategoryController(
         return categoryService.getAllCategory()
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/detail/{id}")
     fun categoryDetail(@PathVariable id: String): CategoryDetailResponse {
-        return categoryService.detailCategory(id)
+            return categoryService.detailCategory(id)
     }
 
     @GetMapping("/search")
