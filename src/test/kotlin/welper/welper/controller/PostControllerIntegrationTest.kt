@@ -183,6 +183,7 @@ internal class PostControllerIntegrationTest(
         assertThat(response.category).isNotBlank
         assertThat(response.writer).isNotBlank
         assertThat(response.createdAt)
+        assertThat(response.comment).map<String> {it.writer}.containsAll(listOf("test"))
     }
     @Test
     fun `없는 post 읽기 에러`() {
