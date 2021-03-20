@@ -60,7 +60,7 @@ class PostService(
                         depts = it.depts,
                         comments = it.comments,
                         postId = it.postId,
-                        writer = it.user.name,
+                        commentWriter = it.user.name,
                 ))
         }
 

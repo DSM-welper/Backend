@@ -28,7 +28,7 @@ class CategoryController(
         return categoryService.detailCategory(id)
     }
 
-    @PostMapping("search")
+    @GetMapping("/search")
     fun categorySearch(@RequestBody searchPostRequest: SearchPostRequest): CategoryListPostResponse {
         return categoryService.categorySearch(searchPostRequest.content)
     }

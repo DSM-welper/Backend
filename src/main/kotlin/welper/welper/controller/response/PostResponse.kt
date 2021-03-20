@@ -17,6 +17,6 @@ data class PostResponse(
             val depts: Int,
             val comments: String,
             val postId: Int,
-            val writer:String,
+            val commentWriter:String,
     )
 }
