@@ -67,7 +67,7 @@ class CommentsService(
     }
 
     fun commentsDelete(token: String, postId: Int, commentsId: Int) {
-        examineInformation(token, postId)
+        examineInformation(token, postId, commentsId)
         deleteCommentsChild(postId, commentsId)
         deleteComments(postId, commentsId)
     }
@@ -100,10 +100,11 @@ class CommentsService(
         }
     }
 
-    fun examineInformation(token: String, postId: Int) {
+    fun examineInformation(token: String, postId: Int, commentsId: Int) {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
-        val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
+        val user = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
+        commentRepository.findByIdAndUser(commentsId,user) ?: throw CommentsNotFoundException(commentsId)
     }
 
     fun countParents(postId: Int, comments: Comments, i: Int): Int {
