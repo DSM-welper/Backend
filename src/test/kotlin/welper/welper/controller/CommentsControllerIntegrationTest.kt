@@ -10,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.transaction.annotation.Transactional
 import welper.welper.controller.request.CommentsRequest
@@ -49,7 +50,7 @@ internal class CommentsControllerIntegrationTest(
     }
 
     @Test
-    fun `없는 post 댓글 exception`(){
+    fun `없는 post 댓글 exception`() {
         val requestBody = objectMapper.writeValueAsString(
                 CommentsRequest(
                         contents = "1"
@@ -69,26 +70,28 @@ internal class CommentsControllerIntegrationTest(
         )
         Assertions.assertThat(response.code).isEqualTo("POST_NOTFOUND")
     }
+
     @Test
-    fun `대댓글 ok`(){
+    fun `대댓글 ok`() {
         val requestBody = objectMapper.writeValueAsString(
                 CommentsRequest(
                         contents = "1"
                 )
         )
-                mock.perform(MockMvcRequestBuilders.post("/comments/1/1")
-                        .content(requestBody)
-                        .header("Authorization", "this-is-test-token")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .characterEncoding("UTF-8"))
-                        .andExpect(MockMvcResultMatchers.status().isOk)
-                        .andReturn()
-                        .response
-                        .contentAsString
+        mock.perform(MockMvcRequestBuilders.post("/comments/1/1")
+                .content(requestBody)
+                .header("Authorization", "this-is-test-token")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .characterEncoding("UTF-8"))
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andReturn()
+                .response
+                .contentAsString
     }
+
     @Test
-    fun `없는 post 대댓글 exception`(){
+    fun `없는 post 대댓글 exception`() {
         val requestBody = objectMapper.writeValueAsString(
                 CommentsRequest(
                         contents = "1"
@@ -108,8 +111,9 @@ internal class CommentsControllerIntegrationTest(
         )
         Assertions.assertThat(response.code).isEqualTo("POST_NOTFOUND")
     }
+
     @Test
-    fun `없는 comment 대댓글 exception`(){
+    fun `없는 comment 대댓글 exception`() {
         val requestBody = objectMapper.writeValueAsString(
                 CommentsRequest(
                         contents = "1"
@@ -118,6 +122,34 @@ internal class CommentsControllerIntegrationTest(
         val response = objectMapper.readValue<ExceptionResponse>(
                 mock.perform(MockMvcRequestBuilders.post("/comments/1/2")
                         .content(requestBody)
+                        .header("Authorization", "this-is-test-token")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .characterEncoding("UTF-8"))
+                        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+                        .andReturn()
+                        .response
+                        .contentAsString
+        )
+        Assertions.assertThat(response.code).isEqualTo("COMMENTS_NOTFOUND")
+    }
+
+    @Test
+    fun `댓글 삭제 ok`() {
+        mock.perform(delete("/comments/1/1")
+                .header("Authorization", "this-is-test-token")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .characterEncoding("UTF-8"))
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andReturn()
+                .response
+                .contentAsString
+    }
+    @Test
+    fun `권한 없는 댓글 삭제 exception`() {
+        val response = objectMapper.readValue<ExceptionResponse>(
+                mock.perform(delete("/comments/1/2")
                         .header("Authorization", "this-is-test-token")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
