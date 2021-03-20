@@ -41,7 +41,8 @@ class PostService(
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findByIdAndUser(id, user) ?: throw PostNotFoundException(email, id)
-
+        
+        commentsRepository.deleteAllByPostId(post.id)
         postRepository.delete(post)
     }
 
