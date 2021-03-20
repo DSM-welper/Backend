@@ -29,8 +29,10 @@ class CategoryService(
         private val openApiPostRepository: OpenApiPostRepository,
         private val jwtService: JwtService,
         private val userRepository: UserRepository,
+        private val authService: AuthService,
 ) {
     fun userCategory(token: String): RandomCategoryResponse {
+        authService.validateToken(token)
         val email = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
         val lifeList: MutableSet<OpenApICategory> = mutableSetOf()
@@ -162,7 +164,7 @@ class CategoryService(
                     slctCritCn = getTagValue("slctCritCn", eElement),
                     tgtrDtlCn = getTagValue("tgtrDtlCn", eElement),
             )
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             throw NonExistCategoryDetailException()
         }
     }
@@ -242,21 +244,26 @@ class CategoryService(
 
     private fun getDetailRandomArray(list: MutableSet<OpenApICategory>): List<RandomCategoryResponse.DetailRandomList> {
         val detailRandomList: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
-        for (i in 0..2) {
-            val lifeArrayList: OpenApICategory = list.random()
-            detailRandomList.add(
-                    RandomCategoryResponse.DetailRandomList(
-                            inqNum = lifeArrayList.openApiPost.inqNum,
-                            jurMnofNm = lifeArrayList.openApiPost.jurMnofNm,
-                            jurOrgNm = lifeArrayList.openApiPost.jurOrgNm,
-                            servDgst = lifeArrayList.openApiPost.servDgst,
-                            servDtlLink = lifeArrayList.openApiPost.servDtlLink,
-                            servId = lifeArrayList.openApiPost.servId,
-                            servNm = lifeArrayList.openApiPost.servNm,
-                            svcfrstRegTs = lifeArrayList.openApiPost.svcfrstRegTs,
-                    )
-            )
-            list.remove(lifeArrayList)
+        if (list.isNotEmpty()) {
+            var num: Int = 2;
+            if (list.size < 3)
+                num = list.size
+            for (i in 0..num) {
+                val lifeArrayList: OpenApICategory = list.random()
+                detailRandomList.add(
+                        RandomCategoryResponse.DetailRandomList(
+                                inqNum = lifeArrayList.openApiPost.inqNum,
+                                jurMnofNm = lifeArrayList.openApiPost.jurMnofNm,
+                                jurOrgNm = lifeArrayList.openApiPost.jurOrgNm,
+                                servDgst = lifeArrayList.openApiPost.servDgst,
+                                servDtlLink = lifeArrayList.openApiPost.servDtlLink,
+                                servId = lifeArrayList.openApiPost.servId,
+                                servNm = lifeArrayList.openApiPost.servNm,
+                                svcfrstRegTs = lifeArrayList.openApiPost.svcfrstRegTs,
+                        )
+                )
+                list.remove(lifeArrayList)
+            }
         }
         return detailRandomList
     }
