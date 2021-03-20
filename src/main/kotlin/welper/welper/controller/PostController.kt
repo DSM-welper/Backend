@@ -44,7 +44,7 @@ class PostController(
         postService.postDelete(token, id)
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/detail/{id}")
     fun postRead(
             @RequestHeader("Authorization") token: String,
             @PathVariable("id") id: Int,
