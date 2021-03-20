@@ -10,3 +10,5 @@ INSERT INTO open_api_post(serv_id,inq_num,jur_mnof_nm,jur_org_nm,serv_dgst,serv_
 INSERT INTO open_api_category(id,category_name,post_id)VALUES(1,'교육','WII00000001');
 INSERT INTO open_api_category(id,category_name,post_id)VALUES(2,'영유아','WII00000002');
 INSERT INTO open_api_category(id,category_name,post_id)VALUES(3,'영유아','WII00000001');
+
+INSERT INTO comments(id,sequence,comments,post_id,user,depth,parents) values(1,1,'2',1,'test@email.com',0,0);
