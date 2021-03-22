@@ -44,7 +44,7 @@ class AuthService(
     }
 
     fun login(email: String, password: String): LoginResponse {
-        userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         validateAccountInformation(email, password)
 
         return LoginResponse(
@@ -52,19 +52,6 @@ class AuthService(
                 refreshToken = createRefreshToken(email),
         )
     }
-
-
-    private fun encodingPassword(originalPassword: String): String {
-        val messageDigest = MessageDigest.getInstance(encryptionAlgorithm)
-        messageDigest.update(originalPassword.toByteArray(characterEncoding))
-        return String.format("%0128x", BigInteger(1, messageDigest.digest()))
-    }
-
-    private fun isJoinPossible(email: String) = userRepository.existsById(email)
-
-    private fun createAccessToken(email: String) = jwtService.createToken(email, Token.ACCESS)
-
-    private fun createRefreshToken(email: String) = jwtService.createToken(email, Token.REFRESH)
 
     fun recreateAccessToken(refreshToken: String): String {
         validateToken(refreshToken)
@@ -78,6 +65,19 @@ class AuthService(
         if (!isValid) throw InvalidTokenException(token)
     }
 
+    private fun encodingPassword(originalPassword: String): String {
+        val messageDigest = MessageDigest.getInstance(encryptionAlgorithm)
+        messageDigest.update(originalPassword.toByteArray(characterEncoding))
+        return String.format("%0128x", BigInteger(1, messageDigest.digest()))
+    }
+
+    private fun isJoinPossible(email: String) = userRepository.existsById(email)
+
+    private fun createAccessToken(email: String) = jwtService.createToken(email, Token.ACCESS)
+
+    private fun createRefreshToken(email: String) = jwtService.createToken(email, Token.REFRESH)
+
+
     private fun validateAccountInformation(email: String, teacherPassword: String) {
         val teacher = findUserByEmail(email)
         val encodedPassword = encodingPassword(teacherPassword)
@@ -85,7 +85,7 @@ class AuthService(
     }
 
     private fun findUserByEmail(email: String) =
-            userRepository.findByIdOrNull(email) ?: throw AccountInformationMismatchException(email, "찾은 정보 없음")
+            userRepository.findByEmail(email) ?: throw AccountInformationMismatchException(email, "찾은 정보 없음")
 
     private fun validateSamePassword(requestPassword: String, findPassword: String) {
         if (requestPassword != findPassword)

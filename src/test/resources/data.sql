@@ -20,5 +20,5 @@ INSERT INTO open_api_category(id,category_name,post_id)VALUES(9,'여성','WII000
 
 INSERT INTO comments(id,sequence,comments,post_id,user,depth,parents) values(1,1,'2',1,'test@email.com',0,0);
 
-INSERT INTO email_certify(email,auth_code,certified) values('test@email.com','6170e8244d4c94f6a695d440f0c96f9ef5a946ae7dc5aca3a6bfdfcd8938630f9f04e5ed41d20315c25cf2d747b5b1c6491d732bf7f3d0ed61f6857ef379fa79',true);
-INSERT INTO email_certify(email,auth_code,certified) values('test2@email.com','6170e8244d4c94f6a695d440f0c96f9ef5a946ae7dc5aca3a6bfdfcd8938630f9f04e5ed41d20315c25cf2d747b5b1c6491d732bf7f3d0ed61f6857ef379fa79',false );
+INSERT INTO email_certify(email,auth_code,certified) values('test@email.com','a9a406153c49650fc7596654ba77f4a6254e214bcd65a45f4717727b3decd264fa4f3d244b735ab1e55830cff078e58801117a127f9f1d62cf1589f9103e9339',true);
+INSERT INTO email_certify(email,auth_code,certified) values('test2@email.com','a9a406153c49650fc7596654ba77f4a6254e214bcd65a45f4717727b3decd264fa4f3d244b735ab1e55830cff078e58801117a127f9f1d62cf1589f9103e9339',false );
