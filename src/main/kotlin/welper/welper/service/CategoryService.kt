@@ -1,7 +1,6 @@
 package welper.welper.service
 
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -29,12 +28,10 @@ class CategoryService(
         private val openApiPostRepository: OpenApiPostRepository,
         private val jwtService: JwtService,
         private val userRepository: UserRepository,
-        private val authService: AuthService,
 ) {
     fun userCategory(token: String): RandomCategoryResponse {
-        authService.validateToken(token)
         val email = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val lifeList: MutableSet<OpenApICategory> = mutableSetOf()
         val genderList: MutableSet<OpenApICategory> = mutableSetOf()
         val marryList: MutableSet<OpenApICategory> = mutableSetOf()
@@ -247,7 +244,7 @@ class CategoryService(
         if (list.isNotEmpty()) {
             var num: Int = 2;
             if (list.size < 3)
-                num = list.size
+                num = list.size-1
             for (i in 0..num) {
                 val lifeArrayList: OpenApICategory = list.random()
                 detailRandomList.add(
