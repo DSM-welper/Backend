@@ -110,7 +110,7 @@ class CategoryService(
             list.add(it.value)
         }
         val categoryList: MutableList<OpenApICategory> =
-                openApiCategoryRepository.findByCategoryName3(list)
+                openApiCategoryRepository.findSeveralByCategory(list)
         val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
 
         categoryList.forEach {
