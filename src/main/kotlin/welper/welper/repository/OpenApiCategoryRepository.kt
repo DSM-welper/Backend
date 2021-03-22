@@ -7,12 +7,11 @@ import welper.welper.domain.OpenApICategory
 import welper.welper.domain.OpenApiPost
 
 interface OpenApiCategoryRepository : JpaRepository<OpenApICategory, String> {
-    fun existsByCategoryNameAndOpenApiPost(categoryName: String, openApiPost: OpenApiPost): Boolean
 
     fun findAllByCategoryName(categoryName: String):MutableSet<OpenApICategory>
 
     @Query("SELECT c FROM OpenApICategory c WHERE c.categoryName in :categoryName")
-    fun findByCategoryName3(
+    fun findSeveralByCategory(
             categoryName: List<String>,
     ): MutableList<OpenApICategory>
 }
