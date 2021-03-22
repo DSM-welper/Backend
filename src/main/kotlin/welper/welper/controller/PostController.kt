@@ -50,7 +50,7 @@ class PostController(
             @PathVariable("id") id: Int,
     ): PostResponse {
         authService.validateToken(token)
-        return postService.postRead(token, id)
+        return postService.postDetailRead(token, id)
     }
 
     @GetMapping
