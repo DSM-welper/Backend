@@ -4,5 +4,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 import welper.welper.domain.User
 
 interface UserRepository:JpaRepository<User,String>{
-    fun findByEmailAndPassword(email: String, password: String):User?
 }
