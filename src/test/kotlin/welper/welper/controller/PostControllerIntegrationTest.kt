@@ -168,7 +168,7 @@ internal class PostControllerIntegrationTest(
     @Test
     fun `post 읽기 ok`() {
         val response = objectMapper.readValue<PostResponse>(
-                mock.perform(get("/post/1")
+                mock.perform(get("/post/detail/1")
                         .header("Authorization", "this-is-test-token")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -188,7 +188,7 @@ internal class PostControllerIntegrationTest(
     @Test
     fun `없는 post 읽기 에러`() {
         val response = objectMapper.readValue<ExceptionResponse>(
-                mock.perform(get("/post/3")
+                mock.perform(get("/post/detail/3")
                         .header("Authorization", "this-is-test-token")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8)

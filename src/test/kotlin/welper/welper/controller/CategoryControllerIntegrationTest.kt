@@ -88,7 +88,7 @@ internal class CategoryControllerIntegrationTest(
     @Test
     fun `카테고리 자세히 보기`(){
         val response = objectMapper.readValue<CategoryDetailResponse>(
-                mock.perform(get("/category/WII00000001")
+                mock.perform(get("/category/detail/WII00000001")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .characterEncoding("UTF-8"))
@@ -102,7 +102,7 @@ internal class CategoryControllerIntegrationTest(
     @Test
     fun `카테고리 자세히 보기 없는 id`(){
         val response = objectMapper.readValue<ExceptionResponse>(
-                mock.perform(get("/category/TEST")
+                mock.perform(get("/category/detail/TEST")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .characterEncoding("UTF-8"))
@@ -121,7 +121,7 @@ internal class CategoryControllerIntegrationTest(
                 )
         )
         val response = objectMapper.readValue<CategoryListPostResponse>(
-                mock.perform(post("/category/search")
+                mock.perform(get("/category/search")
                         .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
