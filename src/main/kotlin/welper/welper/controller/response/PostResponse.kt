@@ -4,6 +4,7 @@ import welper.welper.domain.Comments
 import java.time.LocalDateTime
 
 data class PostResponse(
+        val id: Int,
         val title: String,
         val content: String,
         val category: String,
@@ -11,12 +12,14 @@ data class PostResponse(
         val writer: String,
         val comment: List<CommentsResponse>,
 ) {
-    class CommentsResponse(
+    class CommentsResponse
+    (
+            val sequence: Int,
             val id: Int,
             val parents: Int,
             val depts: Int,
             val comments: String,
             val postId: Int,
-            val commentWriter:String,
+            val commentWriter: String,
     )
 }

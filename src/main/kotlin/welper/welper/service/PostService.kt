@@ -25,7 +25,7 @@ class PostService(
 ) {
     fun postCreate(token: String, title: String, content: String, category: String, createdAt: LocalDateTime) {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         postRepository.save(
                 Post(
                         title = title,
@@ -39,17 +39,17 @@ class PostService(
 
     fun postDelete(token: String, id: Int) {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findByIdAndUser(id, user) ?: throw PostNotFoundException(email, id)
-        
+
         commentsRepository.deleteAllByPostId(post.id)
         postRepository.delete(post)
     }
 
-    fun postRead(token: String, id: Int): PostResponse {
+    fun postDetailRead(token: String, id: Int): PostResponse {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
-        val post: Post = postRepository.findByIdOrNull(id) ?: throw PostNotFoundException(email, id)
+        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
+        val post: Post = postRepository.findPostById(id) ?: throw PostNotFoundException(email, id)
         val comments: List<Comments?> = commentsRepository.findAllByPostId(id)
 
         val list: MutableList<PostResponse.CommentsResponse> = mutableListOf()
@@ -62,6 +62,7 @@ class PostService(
                         comments = it.comments,
                         postId = it.postId,
                         commentWriter = it.user.name,
+                        sequence = it.sequence,
                 ))
         }
 
@@ -72,6 +73,7 @@ class PostService(
                 category = post.category,
                 writer = user.name,
                 comment = list,
+                id = post.id,
         )
     }
 
@@ -120,7 +122,7 @@ class PostService(
 
     fun postMineRead(token: String): PostListResponse {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
         val post: List<Post?> = postRepository.findAllByUser(user)
 
@@ -145,7 +147,7 @@ class PostService(
     fun searchPost(token: String, content: String): PostListResponse {
 
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
+        userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
 
         val post: List<Post?> = postRepository.findAll()
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
