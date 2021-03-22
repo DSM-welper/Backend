@@ -46,7 +46,7 @@ class PostService(
         postRepository.delete(post)
     }
 
-    fun postRead(token: String, id: Int): PostResponse {
+    fun postDetailRead(token: String, id: Int): PostResponse {
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findByIdOrNull(id) ?: throw PostNotFoundException(email, id)
