@@ -244,7 +244,7 @@ class CategoryService(
         if (list.isNotEmpty()) {
             var num: Int = 2;
             if (list.size < 3)
-                num = list.size-1
+                num = list.size - 1
             for (i in 0..num) {
                 val lifeArrayList: OpenApICategory = list.random()
                 detailRandomList.add(
