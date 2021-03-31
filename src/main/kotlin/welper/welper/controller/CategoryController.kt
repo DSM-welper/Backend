@@ -4,6 +4,7 @@ package welper.welper.controller
 import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.CategoryRequest
 import welper.welper.controller.request.SearchPostRequest
+import welper.welper.controller.request.PageRequest
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.service.CategoryService
@@ -14,22 +15,22 @@ class CategoryController(
         val categoryService: CategoryService,
 ) {
     @GetMapping("/tag")
-    fun cateGoryList(@RequestBody request: CategoryRequest): CategoryListPostResponse {
-        return categoryService.getCategory(request.categoryName)
+    fun showCategoryTagList(@RequestBody request: CategoryRequest): CategoryListPostResponse {
+        return categoryService.showCategoryTagList(request.categoryName,request.numOfPage)
     }
 
     @GetMapping
-    fun cateAllGoryList(): CategoryListPostResponse {
-        return categoryService.getAllCategory()
+    fun showCategoryList(@RequestBody request: PageRequest): CategoryListPostResponse {
+        return categoryService.showCategoryList(request.numOfPage)
     }
 
     @GetMapping("/detail/{id}")
-    fun categoryDetail(@PathVariable id: String): CategoryDetailResponse {
+    fun showDetailCategory(@PathVariable id: String): CategoryDetailResponse {
             return categoryService.detailCategory(id)
     }
 
     @GetMapping("/search")
-    fun categorySearch(@RequestBody searchPostRequest: SearchPostRequest): CategoryListPostResponse {
-        return categoryService.categorySearch(searchPostRequest.content)
+    fun showSearchCategory(@RequestBody searchPostRequest: SearchPostRequest): CategoryListPostResponse {
+        return categoryService.showSearchCategory(searchPostRequest.content)
     }
 }

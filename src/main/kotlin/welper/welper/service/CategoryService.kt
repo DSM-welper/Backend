@@ -100,41 +100,46 @@ class CategoryService(
         )
     }
 
-    fun getCategory(categoryNameList: List<Category>)
+    fun showCategoryTagList(categoryNameList: List<Category>, numOfPage: Int)
             : CategoryListPostResponse {
-        val list: MutableList<String> = mutableListOf()
-        categoryNameList.map {
-            list.add(it.value)
-        }
+        val list = categoryNameList.map { it.value }
         val categoryList: MutableList<OpenApICategory> =
                 openApiCategoryRepository.findSeveralByCategory(list)
-        val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
-
-        categoryList.forEach {
-            servList.add(
-                    CategoryListPostResponse.ServList(
-                            servDgst = it.openApiPost.servDgst,
-                            servDtlLink = it.openApiPost.servDtlLink,
-                            servId = it.openApiPost.servId,
-                            servNm = it.openApiPost.servNm,
-                            inqNum = it.openApiPost.inqNum,
-                            jurMnofNm = it.openApiPost.jurMnofNm,
-                            jurOrgNm = it.openApiPost.jurOrgNm,
-                            svcfrstRegTs = it.openApiPost.svcfrstRegTs,
-                    )
+        val servList = categoryList.map {
+            CategoryListPostResponse.ServList(
+                    servDgst = it.openApiPost.servDgst,
+                    servDtlLink = it.openApiPost.servDtlLink,
+                    servId = it.openApiPost.servId,
+                    servNm = it.openApiPost.servNm,
+                    inqNum = it.openApiPost.inqNum,
+                    jurMnofNm = it.openApiPost.jurMnofNm,
+                    jurOrgNm = it.openApiPost.jurOrgNm,
+                    svcfrstRegTs = it.openApiPost.svcfrstRegTs,
             )
         }
-        val count = categoryNameList.count()
-        val set: List<CategoryListPostResponse.ServList> = servList.groupBy { it.servId }
-                .filter { it.value.size == count }.flatMap { it.value }
-
-        val set2: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
-        for (i in set.indices step count) {
-            set2.add(set[i])
+        val categoryNameCount = categoryNameList.count()
+        val deduplicationServList: List<CategoryListPostResponse.ServList> = servList.groupBy { it.servId }
+                .filter { it.value.size == categoryNameCount }.flatMap { it.value }
+        val moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
+        for (i in deduplicationServList.indices step categoryNameCount) {
+            moreDeduplicationServList.add(deduplicationServList[i])
         }
+        val lastServList: MutableList<CategoryListPostResponse.ServList> =
+                getPageOfList(numOfPage, moreDeduplicationServList)
+
         return CategoryListPostResponse(
-                servList = set2
+                servList = lastServList
         )
+    }
+
+    private fun getPageOfList(numOfPage: Int, moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList>):
+            MutableList<CategoryListPostResponse.ServList> {
+        val numOfServList: Int = numOfPage * 10;
+        val lastServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf();
+        for (i in numOfServList..(numOfServList + 10)) {
+            lastServList.add(moreDeduplicationServList[i])
+        }
+        return lastServList
     }
 
     fun detailCategory(id: String): CategoryDetailResponse {
@@ -166,7 +171,7 @@ class CategoryService(
         }
     }
 
-    fun categorySearch(content: String): CategoryListPostResponse {
+    fun showSearchCategory(content: String): CategoryListPostResponse {
         val list = openApiPostRepository.findAll()
         val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
         list.filter {
@@ -190,11 +195,9 @@ class CategoryService(
         )
     }
 
-    fun getAllCategory(): CategoryListPostResponse {
+    fun showCategoryList(numOfPage: Int): CategoryListPostResponse {
         val list = openApiPostRepository.findAll()
-        val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
-        list.forEach {
-            servList.add(
+        val servList = list.map{
                     CategoryListPostResponse.ServList(
                             inqNum = it.inqNum,
                             jurMnofNm = it.jurMnofNm,
@@ -205,10 +208,12 @@ class CategoryService(
                             servNm = it.servNm,
                             svcfrstRegTs = it.svcfrstRegTs,
                     )
-            )
         }
+        val lastServList: MutableList<CategoryListPostResponse.ServList> =
+            getPageOfList(numOfPage, servList as MutableList<CategoryListPostResponse.ServList>)
+
         return CategoryListPostResponse(
-                servList = servList
+                servList = lastServList
         )
     }
 
