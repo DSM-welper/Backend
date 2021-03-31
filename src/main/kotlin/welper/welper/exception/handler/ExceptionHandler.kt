@@ -39,23 +39,23 @@ class ExceptionHandler {
                     e.status,
             )
 
-//    @ExceptionHandler(HttpMessageNotReadableException::class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    fun httpMessageNotReadableExceptionHandler(e: HttpMessageNotReadableException) {
-//        ExceptionResponse(
-//                code = "JSON_PARS_ERROR",
-//                message = "클라이언트의 요청이 잘못되었습니다. type을 맞춰주세요",
-//        )
-//    }
-//
-//    @ExceptionHandler(InvalidFormatException::class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    fun invalidFormatExceptionHandler(e: InvalidFormatException) {
-//        ExceptionResponse(
-//                code = "INVALID_REQUEST_BODY",
-//                message = "클라이언트의 요청이 잘못되었습니다. type을 맞춰주세요",
-//        )
-//    }
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun httpMessageNotReadableExceptionHandler(e: HttpMessageNotReadableException) {
+        ExceptionResponse(
+                code = "JSON_PARS_ERROR",
+                message = "클라이언트의 요청이 잘못되었습니다. type을 맞춰주세요",
+        )
+    }
+
+    @ExceptionHandler(InvalidFormatException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun invalidFormatExceptionHandler(e: InvalidFormatException) {
+        ExceptionResponse(
+                code = "INVALID_REQUEST_BODY",
+                message = "클라이언트의 요청이 잘못되었습니다. type을 맞춰주세요",
+        )
+    }
 
     @ExceptionHandler(RuntimeException::class)
     fun runtimeExceptionHandler(e: RuntimeException): ResponseEntity<ExceptionResponse> {
