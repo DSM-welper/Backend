@@ -14,22 +14,22 @@ class CategoryController(
         val categoryService: CategoryService,
 ) {
     @GetMapping("/tag")
-    fun cateGoryList(@RequestBody request: CategoryRequest): CategoryListPostResponse {
-        return categoryService.getCategory(request.categoryName)
+    fun showCategoryTagList(@RequestBody request: CategoryRequest): CategoryListPostResponse {
+        return categoryService.showCategoryTagList(request.categoryName)
     }
 
     @GetMapping
-    fun cateAllGoryList(): CategoryListPostResponse {
-        return categoryService.getAllCategory()
+    fun showCategoryList(): CategoryListPostResponse {
+        return categoryService.showCategoryList()
     }
 
     @GetMapping("/detail/{id}")
-    fun categoryDetail(@PathVariable id: String): CategoryDetailResponse {
+    fun showDetailCategory(@PathVariable id: String): CategoryDetailResponse {
             return categoryService.detailCategory(id)
     }
 
     @GetMapping("/search")
-    fun categorySearch(@RequestBody searchPostRequest: SearchPostRequest): CategoryListPostResponse {
-        return categoryService.categorySearch(searchPostRequest.content)
+    fun showSearchCategory(@RequestBody searchPostRequest: SearchPostRequest): CategoryListPostResponse {
+        return categoryService.showSearchCategory(searchPostRequest.content)
     }
 }

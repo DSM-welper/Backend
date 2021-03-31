@@ -100,7 +100,7 @@ class CategoryService(
         )
     }
 
-    fun getCategory(categoryNameList: List<Category>)
+    fun showCategoryTagList(categoryNameList: List<Category>)
             : CategoryListPostResponse {
         val list: MutableList<String> = mutableListOf()
         categoryNameList.map {
@@ -166,7 +166,7 @@ class CategoryService(
         }
     }
 
-    fun categorySearch(content: String): CategoryListPostResponse {
+    fun showSearchCategory(content: String): CategoryListPostResponse {
         val list = openApiPostRepository.findAll()
         val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
         list.filter {
@@ -190,7 +190,7 @@ class CategoryService(
         )
     }
 
-    fun getAllCategory(): CategoryListPostResponse {
+    fun showCategoryList(): CategoryListPostResponse {
         val list = openApiPostRepository.findAll()
         val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
         list.forEach {
