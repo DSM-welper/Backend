@@ -1,6 +1,7 @@
 package welper.welper.controller
 
 import org.springframework.web.bind.annotation.*
+import welper.welper.controller.request.PageRequest
 import welper.welper.controller.request.PostRequest
 import welper.welper.controller.request.SearchPostRequest
 import welper.welper.controller.response.PostListResponse
@@ -32,7 +33,7 @@ class PostController(
     fun searchPost(@RequestHeader("Authorization") token: String, @RequestBody request: SearchPostRequest)
             : PostListResponse {
         authService.validateToken(token)
-        return postService.searchPost(token, request.content)
+        return postService.searchPost(token, request.content,request.numOfPage)
     }
 
     @DeleteMapping("/{id}")
@@ -45,7 +46,7 @@ class PostController(
     }
 
     @GetMapping("/detail/{id}")
-    fun postRead(
+    fun postDetailRead(
             @RequestHeader("Authorization") token: String,
             @PathVariable("id") id: Int,
     ): PostResponse {
@@ -54,24 +55,26 @@ class PostController(
     }
 
     @GetMapping
-    fun postList(@RequestHeader("Authorization") token: String): PostListResponse {
+    fun postList(@RequestHeader("Authorization") token: String, @RequestBody request:PageRequest): PostListResponse {
         authService.validateToken(token)
-        return postService.postList(token)
+        return postService.postList(token,request.numOfPage)
     }
     @GetMapping("/category/{categoryId}")
     fun postCategoryRead(
             @RequestHeader("Authorization") token: String,
             @PathVariable("categoryId") categoryId: String,
+            @RequestBody request:PageRequest,
     ): PostListResponse {
         authService.validateToken(token)
-        return postService.postCategoryRead(token, categoryId)
+        return postService.postCategoryRead(token, categoryId,request.numOfPage)
     }
 
     @GetMapping("/mine")
     fun postMineRead(
             @RequestHeader("Authorization") token: String,
+            @RequestBody request:PageRequest,
     ): PostListResponse {
         authService.validateToken(token)
-        return postService.postMineRead(token)
+        return postService.postMineRead(token,request.numOfPage)
     }
 }
