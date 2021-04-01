@@ -1,6 +1,7 @@
 package welper.welper.controller.response
 
 data class CategoryListPostResponse(
+        val toTalPage: Int,
         val servList: List<ServList>,
 ) {
     class ServList(
