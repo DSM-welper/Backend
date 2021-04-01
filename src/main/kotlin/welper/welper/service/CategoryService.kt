@@ -129,28 +129,9 @@ class CategoryService(
                 getPageOfList(numOfPage, moreDeduplicationServList)
 
         return CategoryListPostResponse(
-                servList = lastServList
+                servList = lastServList,
+                toTalPage = moreDeduplicationServList.size / 10 + 1,
         )
-    }
-
-    private fun getPageOfList(numOfPage: Int, moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList>):
-            MutableList<CategoryListPostResponse.ServList> {
-        val numOfServList: Int = numOfPage * 10;
-        val lastServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf();
-        if (moreDeduplicationServList.size < numOfServList)
-            throw NonNumOfPageOutOfBoundsException()
-
-        val num = moreDeduplicationServList.size - numOfServList
-        if (moreDeduplicationServList.size < num)
-            for (i in numOfServList..(numOfServList + 10)) {
-                lastServList.add(moreDeduplicationServList[i])
-            }
-        else
-            for (i in numOfServList..num) {
-                lastServList.add(moreDeduplicationServList[i])
-            }
-
-        return lastServList
     }
 
     fun showDetailCategory(id: String): CategoryDetailResponse {
@@ -182,7 +163,7 @@ class CategoryService(
         }
     }
 
-    fun showSearchCategory(content: String): CategoryListPostResponse {
+    fun showSearchCategory(content: String, numOfPage: Int): CategoryListPostResponse {
         val list = openApiPostRepository.findAll()
         val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
         list.filter {
@@ -201,8 +182,12 @@ class CategoryService(
                     )
             )
         }
+        val lastServList: MutableList<CategoryListPostResponse.ServList> =
+                getPageOfList(numOfPage, servList)
+
         return CategoryListPostResponse(
-                servList = servList
+                servList = lastServList,
+                toTalPage = servList.size / 10 + 1,
         )
     }
 
@@ -224,8 +209,29 @@ class CategoryService(
                 getPageOfList(numOfPage, servList as MutableList<CategoryListPostResponse.ServList>)
 
         return CategoryListPostResponse(
-                servList = lastServList
-        )
+                servList = lastServList,
+                toTalPage = servList.size / 10 + 1,
+                )
+    }
+
+    private fun getPageOfList(numOfPage: Int, moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList>):
+            MutableList<CategoryListPostResponse.ServList> {
+        val numOfServList: Int = numOfPage * 10;
+        val lastServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf();
+        if (moreDeduplicationServList.size < numOfServList)
+            throw NonNumOfPageOutOfBoundsException()
+
+        val num = moreDeduplicationServList.size - numOfServList
+        if (moreDeduplicationServList.size < num)
+            for (i in numOfServList..(numOfServList + 10)) {
+                lastServList.add(moreDeduplicationServList[i])
+            }
+        else
+            for (i in numOfServList..num) {
+                lastServList.add(moreDeduplicationServList[i])
+            }
+
+        return lastServList
     }
 
     private fun getGender(gender: Gender): String {
