@@ -8,6 +8,7 @@ import welper.welper.controller.response.PostResponse
 import welper.welper.domain.Comments
 import welper.welper.domain.Post
 import welper.welper.domain.User
+import welper.welper.exception.NonNumOfPageOutOfBoundsException
 import welper.welper.exception.PostListNotFoundException
 import welper.welper.exception.PostNotFoundException
 import welper.welper.exception.UserNotFoundException
@@ -77,7 +78,7 @@ class PostService(
         )
     }
 
-    fun postList(token: String): PostListResponse {
+    fun postList(token: String, numOfPage: Int): PostListResponse {
         val post: List<Post?> = postRepository.findAll()
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
         post.forEach {
@@ -93,12 +94,14 @@ class PostService(
                 )
             }
         }
+        val lastPostList = getPageOfList(numOfPage, list)
         return PostListResponse(
-                post = list
+                post = lastPostList,
+                totalPage = list.size/10+1
         )
     }
 
-    fun postCategoryRead(token: String, categoryId: String): PostListResponse {
+    fun postCategoryRead(token: String, categoryId: String,numOfPage: Int): PostListResponse {
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
         val post: List<Post?> = postRepository.findAllByCategory(categoryId)
 
@@ -115,12 +118,15 @@ class PostService(
                 )
             }
         }
+
+        val lastPostList = getPageOfList(numOfPage, list)
         return PostListResponse(
-                post = list
+                post = lastPostList,
+                totalPage = list.size/10+1
         )
     }
 
-    fun postMineRead(token: String): PostListResponse {
+    fun postMineRead(token: String, numOfPage: Int): PostListResponse {
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
@@ -139,12 +145,15 @@ class PostService(
                 )
             }
         }
+        val lastPostList = getPageOfList(numOfPage, list)
+
         return PostListResponse(
-                post = list
+                post = lastPostList,
+                totalPage = list.size/10+1
         )
     }
 
-    fun searchPost(token: String, content: String): PostListResponse {
+    fun searchPost(token: String, content: String, numOfPage: Int): PostListResponse {
 
         val email: String = jwtService.getEmail(token)
         userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
@@ -166,7 +175,28 @@ class PostService(
         }
         list.filter { it.title.contains(content) }
         return PostListResponse(
-                post = list
+                post = list,
+                totalPage = list.size/10+1
         )
+    }
+
+    private fun getPageOfList(numOfPage: Int, moreDeduplicationServList: MutableList<PostListResponse.PostList>):
+            MutableList<PostListResponse.PostList> {
+        val numOfServList: Int = numOfPage * 10;
+        val lastPostList: MutableList<PostListResponse.PostList> = mutableListOf();
+        if (moreDeduplicationServList.size < numOfServList)
+            throw NonNumOfPageOutOfBoundsException()
+
+        val num = moreDeduplicationServList.size - numOfServList
+        if (moreDeduplicationServList.size < num)
+            for (i in numOfServList..(numOfServList + 5)) {
+                lastPostList.add(moreDeduplicationServList[i])
+            }
+        else
+            for (i in numOfServList..num) {
+                lastPostList.add(moreDeduplicationServList[i])
+            }
+
+        return lastPostList
     }
 }
