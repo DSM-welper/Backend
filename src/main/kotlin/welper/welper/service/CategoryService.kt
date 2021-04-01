@@ -264,8 +264,8 @@ class CategoryService(
     private fun getDetailRandomArray(list: MutableSet<OpenApICategory>): List<RandomCategoryResponse.DetailRandomList> {
         val detailRandomList: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
         if (list.isNotEmpty()) {
-            var num = 2;
-            if (list.size < 3)
+            var num = 5;
+            if (list.size < 6)
                 num = list.size - 1
             for (i in 0..num) {
                 val lifeArrayList: OpenApICategory = list.random()
