@@ -130,7 +130,7 @@ class CategoryService(
 
         return CategoryListPostResponse(
                 servList = lastServList,
-                toTalPage = moreDeduplicationServList.size / 10 + 1,
+                toTalPage = moreDeduplicationServList.size / 10,
         )
     }
 
@@ -187,7 +187,7 @@ class CategoryService(
 
         return CategoryListPostResponse(
                 servList = lastServList,
-                toTalPage = servList.size / 10 + 1,
+                toTalPage = servList.size / 10,
         )
     }
 
@@ -210,7 +210,8 @@ class CategoryService(
 
         return CategoryListPostResponse(
                 servList = lastServList,
-                toTalPage = servList.size / 10 + 1,
+                toTalPage = servList.size / 10,
+
                 )
     }
 
@@ -218,16 +219,15 @@ class CategoryService(
             MutableList<CategoryListPostResponse.ServList> {
         val numOfServList: Int = numOfPage * 10;
         val lastServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf();
-        if (moreDeduplicationServList.size < numOfServList)
+        if (moreDeduplicationServList.size / 10 < numOfPage)
             throw NonNumOfPageOutOfBoundsException()
-
-        val num = moreDeduplicationServList.size - numOfServList
-        if (moreDeduplicationServList.size < num)
-            for (i in numOfServList..(numOfServList + 10)) {
+        val num = moreDeduplicationServList.size - numOfServList - 1
+        if (num > 10)
+            for (i in numOfServList until (numOfServList + 10)) {
                 lastServList.add(moreDeduplicationServList[i])
             }
         else
-            for (i in numOfServList..num) {
+            for (i in numOfServList..(numOfServList + num)) {
                 lastServList.add(moreDeduplicationServList[i])
             }
 
@@ -264,7 +264,7 @@ class CategoryService(
     private fun getDetailRandomArray(list: MutableSet<OpenApICategory>): List<RandomCategoryResponse.DetailRandomList> {
         val detailRandomList: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
         if (list.isNotEmpty()) {
-            var num: Int = 2;
+            var num = 2;
             if (list.size < 3)
                 num = list.size - 1
             for (i in 0..num) {
