@@ -58,14 +58,14 @@ class PostController(
         authService.validateToken(token)
         return postService.postList(token)
     }
-
-    @GetMapping("/category/{category}")
+    //븅신새끼
+    @GetMapping("/category/{categoryId}")
     fun postCategoryRead(
             @RequestHeader("Authorization") token: String,
-            @PathVariable("category") category: String,
+            @PathVariable("categoryId") categoryId: String,
     ): PostListResponse {
         authService.validateToken(token)
-        return postService.postCategoryRead(token, category)
+        return postService.postCategoryRead(token, categoryId)
     }
 
     @GetMapping("/mine")
