@@ -142,7 +142,7 @@ class CategoryService(
         return lastServList
     }
 
-    fun detailCategory(id: String): CategoryDetailResponse {
+    fun showDetailCategory(id: String): CategoryDetailResponse {
         try {
             val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
                     "?crtiKey=$key" +
