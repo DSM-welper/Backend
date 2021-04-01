@@ -137,20 +137,19 @@ class CategoryService(
             MutableList<CategoryListPostResponse.ServList> {
         val numOfServList: Int = numOfPage * 10;
         val lastServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf();
-        if (moreDeduplicationServList.size > numOfServList) {
-            val num = moreDeduplicationServList.size - numOfServList
-            if (moreDeduplicationServList.size < num)
-                for (i in numOfServList..(numOfServList + 10)) {
-                    lastServList.add(moreDeduplicationServList[i])
-                }
-            else
-                for (i in numOfServList..num) {
-                    lastServList.add(moreDeduplicationServList[i])
-                }
-        }
-        else{
-             throw NonNumOfPageOutOfBoundsException()
-        }
+        if (moreDeduplicationServList.size < numOfServList)
+            throw NonNumOfPageOutOfBoundsException()
+
+        val num = moreDeduplicationServList.size - numOfServList
+        if (moreDeduplicationServList.size < num)
+            for (i in numOfServList..(numOfServList + 10)) {
+                lastServList.add(moreDeduplicationServList[i])
+            }
+        else
+            for (i in numOfServList..num) {
+                lastServList.add(moreDeduplicationServList[i])
+            }
+
         return lastServList
     }
 
