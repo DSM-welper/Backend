@@ -58,7 +58,6 @@ class PostController(
         authService.validateToken(token)
         return postService.postList(token)
     }
-    //븅신새끼
     @GetMapping("/category/{categoryId}")
     fun postCategoryRead(
             @RequestHeader("Authorization") token: String,

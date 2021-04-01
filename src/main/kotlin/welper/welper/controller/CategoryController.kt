@@ -26,7 +26,7 @@ class CategoryController(
 
     @GetMapping("/detail/{id}")
     fun showDetailCategory(@PathVariable id: String): CategoryDetailResponse {
-            return categoryService.detailCategory(id)
+            return categoryService.showDetailCategory(id)
     }
 
     @GetMapping("/search")

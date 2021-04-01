@@ -13,6 +13,7 @@ import welper.welper.domain.OpenApICategory
 import welper.welper.domain.User
 import welper.welper.domain.attribute.*
 import welper.welper.exception.NonExistCategoryDetailException
+import welper.welper.exception.NonNumOfPageOutOfBoundsException
 import welper.welper.exception.UserNotFoundException
 import welper.welper.repository.OpenApiCategoryRepository
 import welper.welper.repository.OpenApiPostRepository
@@ -136,13 +137,23 @@ class CategoryService(
             MutableList<CategoryListPostResponse.ServList> {
         val numOfServList: Int = numOfPage * 10;
         val lastServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf();
-        for (i in numOfServList..(numOfServList + 10)) {
-            lastServList.add(moreDeduplicationServList[i])
-        }
+        if (moreDeduplicationServList.size < numOfServList)
+            throw NonNumOfPageOutOfBoundsException()
+
+        val num = moreDeduplicationServList.size - numOfServList
+        if (moreDeduplicationServList.size < num)
+            for (i in numOfServList..(numOfServList + 10)) {
+                lastServList.add(moreDeduplicationServList[i])
+            }
+        else
+            for (i in numOfServList..num) {
+                lastServList.add(moreDeduplicationServList[i])
+            }
+
         return lastServList
     }
 
-    fun detailCategory(id: String): CategoryDetailResponse {
+    fun showDetailCategory(id: String): CategoryDetailResponse {
         try {
             val urlstr = "http://www.bokjiro.go.kr/openapi/rest/gvmtWelSvc" +
                     "?crtiKey=$key" +
@@ -197,20 +208,20 @@ class CategoryService(
 
     fun showCategoryList(numOfPage: Int): CategoryListPostResponse {
         val list = openApiPostRepository.findAll()
-        val servList = list.map{
-                    CategoryListPostResponse.ServList(
-                            inqNum = it.inqNum,
-                            jurMnofNm = it.jurMnofNm,
-                            jurOrgNm = it.jurOrgNm,
-                            servDgst = it.servDgst,
-                            servDtlLink = it.servDtlLink,
-                            servId = it.servId,
-                            servNm = it.servNm,
-                            svcfrstRegTs = it.svcfrstRegTs,
-                    )
+        val servList = list.map {
+            CategoryListPostResponse.ServList(
+                    inqNum = it.inqNum,
+                    jurMnofNm = it.jurMnofNm,
+                    jurOrgNm = it.jurOrgNm,
+                    servDgst = it.servDgst,
+                    servDtlLink = it.servDtlLink,
+                    servId = it.servId,
+                    servNm = it.servNm,
+                    svcfrstRegTs = it.svcfrstRegTs,
+            )
         }
         val lastServList: MutableList<CategoryListPostResponse.ServList> =
-            getPageOfList(numOfPage, servList as MutableList<CategoryListPostResponse.ServList>)
+                getPageOfList(numOfPage, servList as MutableList<CategoryListPostResponse.ServList>)
 
         return CategoryListPostResponse(
                 servList = lastServList
