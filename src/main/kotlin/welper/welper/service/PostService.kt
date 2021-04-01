@@ -97,7 +97,7 @@ class PostService(
         val lastPostList = getPageOfList(numOfPage, list)
         return PostListResponse(
                 post = lastPostList,
-                totalPage = list.size/10+1
+                totalPage = list.size/5
         )
     }
 
@@ -122,7 +122,8 @@ class PostService(
         val lastPostList = getPageOfList(numOfPage, list)
         return PostListResponse(
                 post = lastPostList,
-                totalPage = list.size/10+1
+                totalPage = list.size/5
+
         )
     }
 
@@ -149,7 +150,7 @@ class PostService(
 
         return PostListResponse(
                 post = lastPostList,
-                totalPage = list.size/10+1
+                totalPage = list.size/5
         )
     }
 
@@ -176,25 +177,24 @@ class PostService(
         list.filter { it.title.contains(content) }
         return PostListResponse(
                 post = list,
-                totalPage = list.size/10+1
+                totalPage = list.size/5
         )
     }
 
-    private fun getPageOfList(numOfPage: Int, moreDeduplicationServList: MutableList<PostListResponse.PostList>):
+    private fun getPageOfList(numOfPage: Int, postList: MutableList<PostListResponse.PostList>):
             MutableList<PostListResponse.PostList> {
-        val numOfServList: Int = numOfPage * 10;
+        val numOfServList: Int = numOfPage * 5;
         val lastPostList: MutableList<PostListResponse.PostList> = mutableListOf();
-        if (moreDeduplicationServList.size < numOfServList)
+        if (postList.size / 5 < numOfPage)
             throw NonNumOfPageOutOfBoundsException()
-
-        val num = moreDeduplicationServList.size - numOfServList
-        if (moreDeduplicationServList.size < num)
-            for (i in numOfServList..(numOfServList + 5)) {
-                lastPostList.add(moreDeduplicationServList[i])
+        val num = postList.size - numOfServList - 1
+        if (num > 10)
+            for (i in numOfServList until (numOfServList + 5)) {
+                lastPostList.add(postList[i])
             }
         else
-            for (i in numOfServList..num) {
-                lastPostList.add(moreDeduplicationServList[i])
+            for (i in numOfServList..(numOfServList + num)) {
+                lastPostList.add(postList[i])
             }
 
         return lastPostList
