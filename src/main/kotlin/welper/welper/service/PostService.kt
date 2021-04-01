@@ -98,9 +98,9 @@ class PostService(
         )
     }
 
-    fun postCategoryRead(token: String, category: String): PostListResponse {
+    fun postCategoryRead(token: String, categoryId: String): PostListResponse {
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
-        val post: List<Post?> = postRepository.findAllByCategory(category)
+        val post: List<Post?> = postRepository.findAllByCategory(categoryId)
 
         post.forEach {
             if (it != null) {
