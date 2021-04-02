@@ -56,13 +56,12 @@ class CategoryService(
             marryList.addAll(
                     openApiCategoryRepository.findAllByCategoryName(marry)
             )
+        val list: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
+        list.addAll(getDetailRandomArray(list, lifeList))
+        list.addAll(getDetailRandomArray(list, marryList))
+        list.addAll(getDetailRandomArray(list, genderList))
         return RandomCategoryResponse(
-                ageList = RandomCategoryResponse.AgeList(
-                        list = getDetailRandomArray(lifeList)),
-                genderList = RandomCategoryResponse.GenderList(
-                        list = getDetailRandomArray(genderList)),
-                marryList = RandomCategoryResponse.MarryList(
-                        list = getDetailRandomArray(marryList)),
+                recommendList = list
         )
     }
 
@@ -88,16 +87,12 @@ class CategoryService(
             )
         }
 
+        val list: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
+        list.addAll(getDetailRandomArray(list, lifeList))
+        list.addAll(getDetailRandomArray(list, marryList))
+        list.addAll(getDetailRandomArray(list, genderList))
         return RandomCategoryResponse(
-                ageList = RandomCategoryResponse.AgeList(
-                        type = "Random",
-                        list = getDetailRandomArray(lifeList)),
-                genderList = RandomCategoryResponse.GenderList(
-                        type = "Random",
-                        list = getDetailRandomArray(genderList)),
-                marryList = RandomCategoryResponse.MarryList(
-                        type = "Random",
-                        list = getDetailRandomArray(marryList)),
+                recommendList = list
         )
     }
 
@@ -261,14 +256,27 @@ class CategoryService(
         }
     }
 
-    private fun getDetailRandomArray(list: MutableSet<OpenApICategory>): List<RandomCategoryResponse.DetailRandomList> {
+    private fun getDetailRandomArray(
+            beforeList: MutableList<RandomCategoryResponse.DetailRandomList>?,
+            list: MutableSet<OpenApICategory>,
+    ): List<RandomCategoryResponse.DetailRandomList> {
         val detailRandomList: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
+
         if (list.isNotEmpty()) {
-            var num = 5;
-            if (list.size < 6)
+            var filterList:MutableList<OpenApICategory> = mutableListOf()
+            if (beforeList != null) {
+                filterList  = list.filter {
+                    it.openApiPost.inqNum != beforeList[0].inqNum &&
+                            it.openApiPost.inqNum != beforeList[1].inqNum
+                } as MutableList<OpenApICategory>
+            }
+            else filterList = list.toMutableList()
+
+            var num = 1;
+            if (list.size < 2)
                 num = list.size - 1
             for (i in 0..num) {
-                val lifeArrayList: OpenApICategory = list.random()
+                val lifeArrayList: OpenApICategory = filterList.random()
                 detailRandomList.add(
                         RandomCategoryResponse.DetailRandomList(
                                 inqNum = lifeArrayList.openApiPost.inqNum,
@@ -281,7 +289,7 @@ class CategoryService(
                                 svcfrstRegTs = lifeArrayList.openApiPost.svcfrstRegTs,
                         )
                 )
-                list.remove(lifeArrayList)
+                filterList.remove(lifeArrayList)
             }
         }
         return detailRandomList

@@ -1,24 +1,9 @@
 package welper.welper.controller.response
 
 class RandomCategoryResponse(
-        val ageList: AgeList,
-        val marryList: MarryList,
-        val genderList: GenderList,
+        val recommendList:List<DetailRandomList>
 ) {
-    class AgeList(
-            val type: String = "Age",
-            val list: List<DetailRandomList>,
-    )
 
-    class MarryList(
-            val type: String = "Marry",
-            val list: List<DetailRandomList>,
-    )
-
-    class GenderList(
-            val type: String = "Gender",
-            val list: List<DetailRandomList>,
-    )
 
     class DetailRandomList(
             val inqNum: String?,
