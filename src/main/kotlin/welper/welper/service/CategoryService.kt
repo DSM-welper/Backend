@@ -264,13 +264,12 @@ class CategoryService(
 
         if (list.isNotEmpty()) {
             var filterList:MutableList<OpenApICategory> = mutableListOf()
-            if (beforeList != null) {
-                filterList  = list.filter {
+            filterList = if (!beforeList.isNullOrEmpty()) {
+                list.filter {
                     it.openApiPost.inqNum != beforeList[0].inqNum &&
                             it.openApiPost.inqNum != beforeList[1].inqNum
                 } as MutableList<OpenApICategory>
-            }
-            else filterList = list.toMutableList()
+            } else list.toMutableList()
 
             var num = 1;
             if (list.size < 2)
