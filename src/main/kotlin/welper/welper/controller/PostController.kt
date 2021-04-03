@@ -30,7 +30,7 @@ class PostController(
     }
 
     @GetMapping("/search")
-    fun searchPost(@RequestHeader("Authorization") token: String, @RequestBody request: SearchPostRequest)
+    fun searchPost(@RequestHeader("Authorization") token: String, request: SearchPostRequest)
             : PostListResponse {
         authService.validateToken(token)
         return postService.searchPost(token, request.content,request.numOfPage)
@@ -55,7 +55,7 @@ class PostController(
     }
 
     @GetMapping
-    fun postList(@RequestHeader("Authorization") token: String, @RequestBody request:PageRequest): PostListResponse {
+    fun postList(@RequestHeader("Authorization") token: String,request:PageRequest): PostListResponse {
         authService.validateToken(token)
         return postService.postList(token,request.numOfPage)
     }
@@ -63,7 +63,7 @@ class PostController(
     fun postCategoryRead(
             @RequestHeader("Authorization") token: String,
             @PathVariable("categoryId") categoryId: String,
-            @RequestBody request:PageRequest,
+            request:PageRequest,
     ): PostListResponse {
         authService.validateToken(token)
         return postService.postCategoryRead(token, categoryId,request.numOfPage)
@@ -72,7 +72,7 @@ class PostController(
     @GetMapping("/mine")
     fun postMineRead(
             @RequestHeader("Authorization") token: String,
-            @RequestBody request:PageRequest,
+            request:PageRequest,
     ): PostListResponse {
         authService.validateToken(token)
         return postService.postMineRead(token,request.numOfPage)

@@ -32,7 +32,7 @@ class CategoryController(
     }
 
     @GetMapping("/search")
-    fun showSearchCategory(@RequestBody searchPostRequest: SearchPostRequest): CategoryListPostResponse {
+    fun showSearchCategory(searchPostRequest: SearchPostRequest): CategoryListPostResponse {
         return categoryService.showSearchCategory(searchPostRequest.content,searchPostRequest.numOfPage)
     }
 }
