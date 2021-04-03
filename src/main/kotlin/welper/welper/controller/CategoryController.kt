@@ -8,6 +8,7 @@ import welper.welper.controller.request.PageRequest
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.service.CategoryService
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/category")
@@ -15,15 +16,16 @@ class CategoryController(
         val categoryService: CategoryService,
 ) {
     @GetMapping("/tag")
-    fun showCategoryTagList(@RequestBody request: CategoryRequest): CategoryListPostResponse {
+    fun showCategoryTagList(@RequestParam request: CategoryRequest): CategoryListPostResponse {
         return categoryService.showCategoryTagList(
                 request.categoryName,request.numOfPage)
     }
 
     @GetMapping
-    fun showCategoryList(@RequestBody request: PageRequest): CategoryListPostResponse {
+    fun showCategoryList(@RequestParam request: PageRequest): CategoryListPostResponse {
         return categoryService.showCategoryList(request.numOfPage)
     }
+ 
 
     @GetMapping("/detail/{id}")
     fun showDetailCategory(@PathVariable id: String): CategoryDetailResponse {
