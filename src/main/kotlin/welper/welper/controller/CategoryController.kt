@@ -16,7 +16,8 @@ class CategoryController(
 ) {
     @GetMapping("/tag")
     fun showCategoryTagList(@RequestBody request: CategoryRequest): CategoryListPostResponse {
-        return categoryService.showCategoryTagList(request.categoryName,request.numOfPage)
+        return categoryService.showCategoryTagList(
+                request.categoryName,request.numOfPage)
     }
 
     @GetMapping

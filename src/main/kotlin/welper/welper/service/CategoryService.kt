@@ -98,7 +98,7 @@ class CategoryService(
 
     fun showCategoryTagList(categoryNameList: List<Category>, numOfPage: Int)
             : CategoryListPostResponse {
-        val list = categoryNameList.map { it.value }
+        val list = categoryNameList.map{ it.value }.filter{ it != "빈값" }
         val categoryList: MutableList<OpenApICategory> =
                 openApiCategoryRepository.findSeveralByCategory(list)
         val servList = categoryList.map {
@@ -113,7 +113,7 @@ class CategoryService(
                     svcfrstRegTs = it.openApiPost.svcfrstRegTs,
             )
         }
-        val categoryNameCount = categoryNameList.count()
+        val categoryNameCount = list.count()
         val deduplicationServList: List<CategoryListPostResponse.ServList> = servList.groupBy { it.servId }
                 .filter { it.value.size == categoryNameCount }.flatMap { it.value }
         val moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
