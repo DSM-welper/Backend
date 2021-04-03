@@ -25,8 +25,7 @@ class CategoryController(
     fun showCategoryList(@RequestParam request: PageRequest): CategoryListPostResponse {
         return categoryService.showCategoryList(request.numOfPage)
     }
- 
-
+    
     @GetMapping("/detail/{id}")
     fun showDetailCategory(@PathVariable id: String): CategoryDetailResponse {
             return categoryService.showDetailCategory(id)
