@@ -295,7 +295,7 @@ class CategoryService(
     }
 
     private fun createDetailList(doc: Document, targetName: String)
-            : List<CategoryDetailResponse.DetailList> {
+            : List<CategoryDetailResponse.DetailList>? {
         val nList: NodeList = doc.getElementsByTagName(targetName)
         val list: MutableList<CategoryDetailResponse.DetailList> = mutableListOf()
 
@@ -310,7 +310,9 @@ class CategoryService(
             )
             list.add(a)
         }
-        return list
+        return if(list.isNotEmpty())
+            list
+        else null
     }
 
     private fun getTagValue(tag: String, eElement: Element): String? {
