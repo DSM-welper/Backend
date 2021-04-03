@@ -16,16 +16,16 @@ class CategoryController(
         val categoryService: CategoryService,
 ) {
     @GetMapping("/tag")
-    fun showCategoryTagList(@RequestParam request: CategoryRequest): CategoryListPostResponse {
+    fun showCategoryTagList(request: CategoryRequest): CategoryListPostResponse {
         return categoryService.showCategoryTagList(
                 request.categoryName,request.numOfPage)
     }
 
     @GetMapping
-    fun showCategoryList(@RequestParam request: PageRequest): CategoryListPostResponse {
+    fun showCategoryList(request: PageRequest): CategoryListPostResponse {
         return categoryService.showCategoryList(request.numOfPage)
     }
-    
+
     @GetMapping("/detail/{id}")
     fun showDetailCategory(@PathVariable id: String): CategoryDetailResponse {
             return categoryService.showDetailCategory(id)
