@@ -54,18 +54,7 @@ class PostService(
         val comments: List<Comments?> = commentsRepository.findAllByPostId(id)
 
         val list: MutableList<PostResponse.CommentsResponse> = mutableListOf()
-        comments.map {
-            if (it != null)
-                list.add(PostResponse.CommentsResponse(
-                        id = it.id,
-                        parents = it.parents,
-                        depts = it.depts,
-                        comments = it.comments,
-                        postId = it.postId,
-                        commentWriter = it.user.name,
-                        sequence = it.sequence,
-                ))
-        }
+
 
         return PostResponse(
                 title = post.title,
@@ -73,7 +62,6 @@ class PostService(
                 createdAt = post.createdAt,
                 category = post.category,
                 writer = user.name,
-                comment = list,
                 id = post.id,
         )
     }
