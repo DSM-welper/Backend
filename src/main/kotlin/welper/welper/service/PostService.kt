@@ -51,10 +51,7 @@ class PostService(
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findPostById(id) ?: throw PostNotFoundException(email, id)
-        val comments: List<Comments?> = commentsRepository.findAllByPostId(id)
-
         val list: MutableList<PostResponse.CommentsResponse> = mutableListOf()
-
 
         return PostResponse(
                 title = post.title,
