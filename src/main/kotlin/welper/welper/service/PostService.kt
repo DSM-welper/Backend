@@ -1,15 +1,16 @@
 package welper.welper.service
 
-import org.springframework.data.repository.findByIdOrNull
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.controller.request.CommentsRequest
+import welper.welper.controller.response.CommentResponse
 import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
 import welper.welper.domain.Comments
 import welper.welper.domain.Post
 import welper.welper.domain.User
 import welper.welper.exception.NonNumOfPageOutOfBoundsException
-import welper.welper.exception.PostListNotFoundException
 import welper.welper.exception.PostNotFoundException
 import welper.welper.exception.UserNotFoundException
 import welper.welper.repository.CommentsRepository
@@ -24,6 +25,21 @@ class PostService(
         val postRepository: PostRepository,
         val commentsRepository: CommentsRepository,
 ) {
+    fun commentListRead(postId:Int,pageable:Pageable): CommentResponse {
+        val page:Page<Comments> = commentsRepository.findAllByPostId(pageable = pageable,postId = postId)
+        val list: Page<CommentResponse.Comment> = page.map {
+            CommentResponse.Comment(
+                    sequence = it.sequence,
+                    comment = it.comments,
+                    depts = it.depts,
+                    writer = it.user.name,
+                    parents = it.parents,
+            )
+        }
+        return CommentResponse(
+                list = list
+        )
+    }
     fun postCreate(token: String, title: String, content: String, category: String, createdAt: LocalDateTime) {
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
