@@ -1,5 +1,8 @@
 package welper.welper.controller
 
+import io.swagger.annotations.ApiImplicitParam
+import io.swagger.annotations.ApiImplicitParams
+import io.swagger.annotations.ApiOperation
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.*
@@ -33,6 +36,10 @@ class CommentsController(
         authService.validateToken(token)
         commentsService.commentsWrite(token, postId, commentsRequest.contents)
     }
+//    @ApiImplicitParams({
+//        ApiImplicitParam(name = "page", value = "페이지", required = true)
+//    })
+    @ApiOperation(value="댓글 리스트",notes = "query로 page만 주면됩니다.")
     @GetMapping("/{postId}")
     fun commentListRead(
             @RequestHeader("Authorization") token: String,
