@@ -25,21 +25,7 @@ class PostService(
         val postRepository: PostRepository,
         val commentsRepository: CommentsRepository,
 ) {
-    fun commentListRead(postId:Int,pageable:Pageable): CommentResponse {
-        val page:Page<Comments> = commentsRepository.findAllByPostId(pageable = pageable,postId = postId)
-        val list: Page<CommentResponse.Comment> = page.map {
-            CommentResponse.Comment(
-                    sequence = it.sequence,
-                    comment = it.comments,
-                    depts = it.depts,
-                    writer = it.user.name,
-                    parents = it.parents,
-            )
-        }
-        return CommentResponse(
-                list = list
-        )
-    }
+
     fun postCreate(token: String, title: String, content: String, category: String, createdAt: LocalDateTime) {
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)

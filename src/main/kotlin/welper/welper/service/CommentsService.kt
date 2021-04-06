@@ -1,7 +1,9 @@
 package welper.welper.service
 
-import org.springframework.data.repository.findByIdOrNull
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import welper.welper.controller.response.CommentResponse
 import welper.welper.domain.Comments
 import welper.welper.domain.Post
 import welper.welper.domain.User
@@ -19,6 +21,25 @@ class CommentsService(
         val commentRepository: CommentsRepository,
         val postRepository: PostRepository,
 ) {
+    fun commentListRead(postId: Int, pageable: Pageable): CommentResponse {
+        val page: Page<Comments> = commentRepository.findAllByPostId(pageable = pageable, postId = postId)
+        val list: MutableList<CommentResponse.Comment> = mutableListOf()
+        page.forEach {
+            list.add(CommentResponse.Comment(
+                    sequence = it.sequence,
+                    comment = it.comments,
+                    depts = it.depts,
+                    writer = it.user.name,
+                    parents = it.parents,
+            ))
+        }
+        return CommentResponse(
+                list = list,
+                totalOfElements = page.totalElements,
+                totalOfPage = page.totalPages,
+        )
+    }
+
     fun commentsParents(postId: Int, commentsId: Int, content: String, token: String) {
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
