@@ -21,13 +21,13 @@ class CommentsService(
 ) {
     fun commentsParents(postId: Int, commentsId: Int, content: String, token: String) {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
-        val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
-        val comments: Comments = (commentRepository.findByIdOrNull(commentsId)
+        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
+        val post: Post = postRepository.findPostById(postId) ?: throw PostNotFoundException(email, postId)
+        val comments: Comments = (commentRepository.findCommentsById(commentsId)
                 ?: throw CommentsNotFoundException(commentsId))
         val allComments: List<Comments> = commentRepository.findAllByPostId(postId)
-        var i = 1
-        var i2 = countParents(postId, comments, i)
+        val i = 1
+        val i2 = countParents(postId, comments, i)
         println("ansser$i2")
 
         allComments.forEach {
@@ -50,8 +50,8 @@ class CommentsService(
 
     fun commentsWrite(token: String, postId: Int, content: String) {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
-        val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
+        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
+        val post: Post = postRepository.findPostById(postId) ?: throw PostNotFoundException(email, postId)
         val comments: List<Comments?> = commentRepository.findAll()
 
         commentRepository.save(
@@ -67,12 +67,12 @@ class CommentsService(
     }
 
     fun commentsDelete(token: String, postId: Int, commentsId: Int) {
-        examineInformation(token, postId)
+        examineInformation(token, postId, commentsId)
         deleteCommentsChild(postId, commentsId)
         deleteComments(postId, commentsId)
     }
 
-    fun deleteCommentsChild(postId: Int, commentsId: Int) {
+    private fun deleteCommentsChild(postId: Int, commentsId: Int) {
         val commentsChild: List<Comments> = commentRepository.findAllByPostIdAndParents(postId, commentsId)
         commentsChild.forEach {
             val allComments: List<Comments> = commentRepository.findAllByPostId(postId)
@@ -87,8 +87,8 @@ class CommentsService(
         }
     }
 
-    fun deleteComments(postId: Int, commentsId: Int) {
-        val comments: Comments = (commentRepository.findByIdOrNull(commentsId)
+    private fun deleteComments(postId: Int, commentsId: Int) {
+        val comments: Comments = (commentRepository.findCommentsById(commentsId)
                 ?: throw CommentsNotFoundException(commentsId))
         val allComments: List<Comments> = commentRepository.findAllByPostId(postId)
         commentRepository.delete(comments)
@@ -100,13 +100,14 @@ class CommentsService(
         }
     }
 
-    fun examineInformation(token: String, postId: Int) {
+    private fun examineInformation(token: String, postId: Int, commentsId: Int) {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
-        val post: Post = postRepository.findByIdOrNull(postId) ?: throw PostNotFoundException(email, postId)
+        val user = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
+        postRepository.findPostById(postId) ?: throw PostNotFoundException(email, postId)
+        commentRepository.findByIdAndUser(commentsId, user) ?: throw CommentsNotFoundException(commentsId)
     }
 
-    fun countParents(postId: Int, comments: Comments, i: Int): Int {
+    private fun countParents(postId: Int, comments: Comments, i: Int): Int {
         var i2 = i
         val commentsChild: List<Comments> = commentRepository.findAllByPostIdAndParents(postId, comments.id)
         if (commentsChild.isNotEmpty()) {

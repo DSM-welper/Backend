@@ -16,12 +16,11 @@ class DatabaseConfiguration(
     val username: String,
     @Value("\${DB_PASS}")
     val password: String,
+
 ) {
 
     @Bean
     fun dataSource(): DataSource {
-        println("url: $url")
-        println("driver: $driverClassName")
         return DataSourceBuilder.create()
                 .driverClassName(driverClassName)
                 .url(url)

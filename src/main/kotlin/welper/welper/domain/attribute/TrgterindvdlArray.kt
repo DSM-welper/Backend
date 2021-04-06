@@ -1,4 +1,12 @@
 package welper.welper.domain.attribute
 
-class TrgterindvdlArray {
+enum class TrgterindvdlArray {
+   DONOT,
+   SETTERMIN,
+   SOLOOLD,
+   SINGLEPARENTS,
+   GRANDCHILDREN,
+   MULTICULTURAL,
+   CHILDHEAD,
+   EXCEPT,
 }

@@ -25,8 +25,8 @@ class AuthService(
     private val characterEncoding = Charset.forName("UTF-8")
 
 
-    fun signUp(email: String, password: String, name: String, age: Int, marry: Marry, gender: Gender, disorder: Boolean) {
-        val emailCertify: EmailCertify = emailCertifyRepository.findByEmailAndCertified(email, true)
+    fun signup(email: String, password: String, name: String, age: Int, marry: Marry, gender: Gender, disorder: Boolean) {
+        emailCertifyRepository.findByEmailAndCertified(email, true)
                 ?: throw NonExistEmailCertifyException(email)
         val isJoinPossible = isJoinPossible(email)
         if (isJoinPossible) throw AlreadyExistAccountException(email)
@@ -43,16 +43,27 @@ class AuthService(
         )
     }
 
-    fun login(email: String, password: String): LoginResponse {
-        userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
-        val user: User = userRepository.findByEmailAndPassword(email, encodingPassword(password))
-                ?: throw AuthenticationNumberMismatchException(email)
+    fun signin(email: String, password: String): LoginResponse {
+        userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
+        validateAccountInformation(email, password)
+
         return LoginResponse(
-                accessToken = createAccessToken(user.email),
-                refreshToken = createRefreshToken(user.email),
+                accessToken = createAccessToken(email),
+                refreshToken = createRefreshToken(email),
         )
     }
 
+    fun recreateAccessToken(refreshToken: String): String {
+        validateToken(refreshToken)
+
+        val email = jwtService.getEmail(refreshToken)
+        return createAccessToken(email)
+    }
+
+    fun validateToken(token: String) {
+        val isValid = jwtService.isValid(token)
+        if (!isValid) throw InvalidTokenException(token)
+    }
 
     private fun encodingPassword(originalPassword: String): String {
         val messageDigest = MessageDigest.getInstance(encryptionAlgorithm)
@@ -66,16 +77,19 @@ class AuthService(
 
     private fun createRefreshToken(email: String) = jwtService.createToken(email, Token.REFRESH)
 
-    fun recreateAccessToken(refreshToken: String): String {
-        validateToken(refreshToken)
 
-        val email = jwtService.getEmail(refreshToken)
-        return createAccessToken(email)
+    private fun validateAccountInformation(email: String, teacherPassword: String) {
+        val teacher = findUserByEmail(email)
+        val encodedPassword = encodingPassword(teacherPassword)
+        validateSamePassword(teacher.password, encodedPassword)
     }
 
-    fun validateToken(token: String) {
-        val isValid = jwtService.isValid(token)
-        if (!isValid) throw InvalidTokenException(token)
+    private fun findUserByEmail(email: String) =
+            userRepository.findByEmail(email) ?: throw AccountInformationMismatchException(email, "찾은 정보 없음")
+
+    private fun validateSamePassword(requestPassword: String, findPassword: String) {
+        if (requestPassword != findPassword)
+            throw AccountInformationMismatchException(requestPassword, findPassword)
     }
 
 }

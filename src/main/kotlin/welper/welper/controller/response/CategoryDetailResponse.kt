@@ -1,37 +1,18 @@
 package welper.welper.controller.response
 
 data class CategoryDetailResponse(
-        var wantedDtl: String?,
         var alwServCn: String?,
-        val applmetList: List<ApplmetList>,
-        val basfrmList: List<BasfrmList>,
-        val baslawList: List<BaslawList>,
-        val inqplCtadrList:List<InqplCtadrList>,
+        val applmetList: List<DetailList>? ,
+        val basfrmList: List<DetailList>?,
+        val baslawList: List<DetailList>?,
+        val inqplCtadrList: List<DetailList>?,
         val servDgst: String?,
         val servId: String?,
         val servNm: String?,
         val slctCritCn: String?,
         val tgtrDtlCn: String?,
 ) {
-    class ApplmetList(
-            val servSeCode: String?,
-            val servSeDetailNm: String?,
-            val servSeDetailLink: String?,
-    )
-
-    class BasfrmList(
-            val servSeCode: String?,
-            val servSeDetailNm: String?,
-            val servSeDetailLink: String?,
-    )
-
-    class BaslawList(
-            val servSeCode: String?,
-            val servSeDetailNm: String?,
-            val servSeDetailLink: String?,
-    )
-
-    class InqplCtadrList(
+    class DetailList(
             val servSeCode: String?,
             val servSeDetailNm: String?,
             val servSeDetailLink: String?,

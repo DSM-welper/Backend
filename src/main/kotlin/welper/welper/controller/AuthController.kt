@@ -14,9 +14,9 @@ import javax.validation.Valid
 class AuthController(
         private val authService: AuthService,
 ) {
-    @PostMapping("/signUp")
-    fun signUp(@RequestBody @Valid request: SignUpRequest) =
-            authService.signUp(
+    @PostMapping("/signup")
+    fun signup(@RequestBody @Valid request: SignUpRequest) =
+            authService.signup(
                     email = request.email,
                     password = request.password,
                     name = request.name,
@@ -27,8 +27,8 @@ class AuthController(
             )
 
     @PostMapping
-    fun login(@RequestBody @Valid request: LoginRequest): LoginResponse =
-            authService.login(
+    fun signin(@RequestBody @Valid request: LoginRequest): LoginResponse =
+            authService.signin(
                     email = request.email,
                     password = request.password,
             )
@@ -36,4 +36,9 @@ class AuthController(
     @PatchMapping
     fun recreateToken(@RequestHeader("refreshToken") token: String): AccessTokenResponse =
             AccessTokenResponse(authService.recreateAccessToken(token))
+
+    @PostMapping("/token")
+    fun validateToken(@RequestHeader("Authorization") token: String) =
+            authService.validateToken(token)
+
 }

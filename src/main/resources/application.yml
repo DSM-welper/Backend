@@ -3,11 +3,10 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: ahn479512@gmail.com
-    password: jin89434795
-
-
+    password: ${MAIL_PASSWORD}
   jpa:
     hibernate:
+      use-new-id-generator-mappings: false
       ddl-auto: update
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -16,3 +15,7 @@ spring:
   output:
     ansi:
       enabled: always
+server:
+  address: 0.0.0.0
+  port: 8080
+

@@ -12,6 +12,6 @@ class CrossOriginResourceSharingConfiguration : WebMvcConfigurer {
             .allowedOrigins("*")
             .allowedMethods("*")
             .allowCredentials(false)
-            .maxAge(3600)
+            .maxAge(3000)
     }
 }

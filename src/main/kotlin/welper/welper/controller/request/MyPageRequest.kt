@@ -6,16 +6,13 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 
 class MyPageRequest(
-        val marry: Marry,
+        val marry: Marry?=null,
 
-        val gender: Gender,
+        val gender: Gender?=null,
 
-        val disorder: Boolean,
-        @get:NotBlank(message = "허용하지 않는 형식 <NULL, EMPTY, BLANK>")
-        @get:Pattern(regexp = "^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,3}$", message = "정규표현식 = ^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,3}$")
-        val age: Int,
+        val disorder: Boolean?=null,
 
-        @get:NotBlank(message = "허용하지 않는 형식 <NULL, EMPTY, BLANK>")
-        @get:Pattern(regexp = "^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,12}$", message = "정규표현식 = ^[a-zA-Zㄱ-ㅎ가-힣\\s]{1,12}$")
-        val name: String,
+        val age: Int?=null,
+
+        val name: String?=null,
 )
