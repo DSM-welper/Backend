@@ -82,14 +82,4 @@ class PostController(
         return postService.postMineRead(token, request.numOfPage)
     }
 
-    @GetMapping("comments/{postId}")
-    fun commentListRead(
-            @RequestHeader("Authorization") token: String,
-            @PathVariable("postId") postId: Int,
-            @PageableDefault(size=6, sort= ["sequence"])
-            pageable:Pageable,
-    ): CommentResponse {
-        authService.validateToken(token)
-        return postService.commentListRead(postId,pageable)
-    }
 }

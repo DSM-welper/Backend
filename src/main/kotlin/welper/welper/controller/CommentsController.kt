@@ -1,7 +1,10 @@
 package welper.welper.controller
 
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.CommentsRequest
+import welper.welper.controller.response.CommentResponse
 import welper.welper.service.AuthService
 import welper.welper.service.CommentsService
 
@@ -30,7 +33,16 @@ class CommentsController(
         authService.validateToken(token)
         commentsService.commentsWrite(token, postId, commentsRequest.contents)
     }
-
+    @GetMapping("/{postId}")
+    fun commentListRead(
+            @RequestHeader("Authorization") token: String,
+            @PathVariable("postId") postId: Int,
+            @PageableDefault(size=6, sort= ["sequence"])
+            pageable: Pageable,
+    ): CommentResponse {
+        authService.validateToken(token)
+        return commentsService.commentListRead(postId,pageable)
+    }
 
     @DeleteMapping("/{postId}/{commentsId}")
     fun commentsDelete(
