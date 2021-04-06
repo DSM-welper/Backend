@@ -13,6 +13,7 @@ class Comments(
 
         @Column(name = "depth")
         val depts: Int,
+
         @Column(name = "comments")
         val comments: String,
 
