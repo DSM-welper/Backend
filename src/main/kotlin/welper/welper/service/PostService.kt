@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import welper.welper.controller.request.CommentsRequest
+import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.controller.response.CommentResponse
 import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
@@ -175,7 +176,7 @@ class PostService(
         if (postList.size / 5 < numOfPostList)
             throw NonNumOfPageOutOfBoundsException()
         val num = postList.size - numOfPostList - 1
-        if (num > 10)
+        if (num > 5)
             for (i in numOfPostList until (numOfPostList + 5)) {
                 lastPostList.add(postList[i])
             }
@@ -187,3 +188,4 @@ class PostService(
         return lastPostList
     }
 }
+
