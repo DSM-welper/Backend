@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import welper.welper.controller.request.CommentsRequest
+import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.controller.response.CommentResponse
 import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
@@ -25,21 +26,7 @@ class PostService(
         val postRepository: PostRepository,
         val commentsRepository: CommentsRepository,
 ) {
-    fun commentListRead(postId:Int,pageable:Pageable): CommentResponse {
-        val page:Page<Comments> = commentsRepository.findAllByPostId(pageable = pageable,postId = postId)
-        val list: Page<CommentResponse.Comment> = page.map {
-            CommentResponse.Comment(
-                    sequence = it.sequence,
-                    comment = it.comments,
-                    depts = it.depts,
-                    writer = it.user.name,
-                    parents = it.parents,
-            )
-        }
-        return CommentResponse(
-                list = list
-        )
-    }
+
     fun postCreate(token: String, title: String, content: String, category: String, createdAt: LocalDateTime) {
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
@@ -186,18 +173,19 @@ class PostService(
             MutableList<PostListResponse.PostList> {
         val numOfPostList: Int = numOfPage * 5;
         val lastPostList: MutableList<PostListResponse.PostList> = mutableListOf();
-        if (postList.size / 5 < numOfPostList)
+        if (postList.size < numOfPostList)
             throw NonNumOfPageOutOfBoundsException()
         val num = postList.size - numOfPostList - 1
-        if (num > 10)
+        if (num > 5)
             for (i in numOfPostList until (numOfPostList + 5)) {
                 lastPostList.add(postList[i])
             }
         else
-            for (i in numOfPostList..(numOfPostList + num)) {
+            for (i in numOfPostList until (numOfPostList + num)) {
                 lastPostList.add(postList[i])
             }
 
         return lastPostList
     }
 }
+

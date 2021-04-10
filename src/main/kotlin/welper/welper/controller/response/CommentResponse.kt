@@ -1,9 +1,9 @@
 package welper.welper.controller.response
 
-import org.springframework.data.domain.Page
-
 data class CommentResponse(
-        val list: Page<Comment>,
+        val list: List<Comment>,
+        val totalOfPage:Int,
+        val totalOfElements: Long,
 ) {
     class Comment(
             val comment: String,
