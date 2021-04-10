@@ -103,4 +103,12 @@ class PostController(
         return postService.postMineRead(token, pageable)
     }
 
+    @GetMapping("/test")
+    fun test(
+            @RequestHeader("Authorization") token: String,
+            request: PageRequest
+    ):PostListResponse{
+        authService.validateToken(token)
+        return postService.test(request.numOfPage)
+    }
 }
