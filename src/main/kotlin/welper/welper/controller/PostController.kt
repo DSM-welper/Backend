@@ -35,7 +35,7 @@ class PostController(
     }
 
     @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
-    @ApiOperation(value = "댓글 리스트", notes = "query로 page만 주면됩니다.")
+    @ApiOperation(value = "제목 검색 포스트 리스트", notes = "query로 page만 주면됩니다.")
     @GetMapping("/search")
     fun searchPost(
             @RequestHeader("Authorization") token: String, request: SearchPostRequest,
@@ -68,7 +68,7 @@ class PostController(
 
     @GetMapping
     @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
-    @ApiOperation(value = "댓글 리스트", notes = "query로 page만 주면됩니다.")
+    @ApiOperation(value = "포스트 리스트", notes = "query로 page만 주면됩니다.")
     fun postList(
             @RequestHeader("Authorization") token: String,
             @PageableDefault(size = 5, sort = ["id"])
@@ -80,7 +80,7 @@ class PostController(
 
     @GetMapping("/category/{category}")
     @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
-    @ApiOperation(value = "댓글 리스트", notes = "query로 page만 주면됩니다.")
+    @ApiOperation(value = "카테고리 검색 포스트 리스트", notes = "query로 page만 주면됩니다.")
     fun postCategoryRead(
             @RequestHeader("Authorization") token: String,
             @PathVariable("category") category: String,
@@ -93,7 +93,7 @@ class PostController(
 
     @GetMapping("/mine")
     @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
-    @ApiOperation(value = "댓글 리스트", notes = "query로 page만 주면됩니다.")
+    @ApiOperation(value = "자신의 포스트 리스트", notes = "query로 page만 주면됩니다.")
     fun postMineRead(
             @RequestHeader("Authorization") token: String,
             @PageableDefault(size = 5, sort = ["id"])
