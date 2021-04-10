@@ -3,7 +3,8 @@ package welper.welper.controller.response
 import java.time.LocalDateTime
 
 data class PostListResponse (
-     val totalPage:Int,
+     val totalOfPage:Int,
+     val totalOfElements:Long,
      val post:List<PostList>
 ){
     class PostList(
