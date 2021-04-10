@@ -173,7 +173,7 @@ class PostService(
             MutableList<PostListResponse.PostList> {
         val numOfPostList: Int = numOfPage * 5;
         val lastPostList: MutableList<PostListResponse.PostList> = mutableListOf();
-        if (postList.size / 5 < numOfPostList)
+        if (postList.size < numOfPostList)
             throw NonNumOfPageOutOfBoundsException()
         val num = postList.size - numOfPostList - 1
         if (num > 5)
