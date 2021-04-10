@@ -36,6 +36,7 @@ class CommentsController(
         authService.validateToken(token)
         commentsService.commentsWrite(token, postId, commentsRequest.contents)
     }
+
     @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
     @ApiOperation(value="댓글 리스트",notes = "query로 page만 주면됩니다.")
     @GetMapping("/{postId}")
