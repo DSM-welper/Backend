@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.CategoryRequest
 import welper.welper.controller.request.SearchPostRequest
 import welper.welper.controller.request.PageRequest
+import welper.welper.controller.request.SearchCategoryRequest
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.service.CategoryService
@@ -32,7 +33,7 @@ class CategoryController(
     }
 
     @GetMapping("/search")
-    fun showSearchCategory(searchPostRequest: SearchPostRequest): CategoryListPostResponse {
-        return categoryService.showSearchCategory(searchPostRequest.content,searchPostRequest.numOfPage)
+    fun showSearchCategory(request: SearchCategoryRequest): CategoryListPostResponse {
+        return categoryService.showSearchCategory(request.content,request.numOfPage)
     }
 }
