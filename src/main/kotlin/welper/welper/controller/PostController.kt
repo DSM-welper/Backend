@@ -1,5 +1,7 @@
 package welper.welper.controller
 
+import io.swagger.annotations.ApiImplicitParam
+import io.swagger.annotations.ApiOperation
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.*
@@ -32,11 +34,17 @@ class PostController(
         )
     }
 
+    @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
+    @ApiOperation(value = "댓글 리스트", notes = "query로 page만 주면됩니다.")
     @GetMapping("/search")
-    fun searchPost(@RequestHeader("Authorization") token: String, request: SearchPostRequest)
+    fun searchPost(
+            @RequestHeader("Authorization") token: String, request: SearchPostRequest,
+            @PageableDefault(size = 5, sort = ["id"])
+            pageable: Pageable,
+    )
             : PostListResponse {
         authService.validateToken(token)
-        return postService.searchPost(token, request.content, request.numOfPage)
+        return postService.searchPost(token, request.content, pageable)
     }
 
     @DeleteMapping("/{id}")
@@ -48,6 +56,7 @@ class PostController(
         postService.postDelete(token, id)
     }
 
+
     @GetMapping("/detail/{id}")
     fun postDetailRead(
             @RequestHeader("Authorization") token: String,
@@ -58,28 +67,40 @@ class PostController(
     }
 
     @GetMapping
-    fun postList(@RequestHeader("Authorization") token: String, request: PageRequest): PostListResponse {
-        authService.validateToken(token)
-        return postService.postList(token, request.numOfPage)
-    }
-
-    @GetMapping("/category/{categoryId}")
-    fun postCategoryRead(
+    @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
+    @ApiOperation(value = "댓글 리스트", notes = "query로 page만 주면됩니다.")
+    fun postList(
             @RequestHeader("Authorization") token: String,
-            @PathVariable("categoryId") categoryId: String,
-            request: PageRequest,
+            @PageableDefault(size = 5, sort = ["id"])
+            pageable: Pageable,
     ): PostListResponse {
         authService.validateToken(token)
-        return postService.postCategoryRead(token, categoryId, request.numOfPage)
+        return postService.postList(token, pageable)
+    }
+
+    @GetMapping("/category/{category}")
+    @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
+    @ApiOperation(value = "댓글 리스트", notes = "query로 page만 주면됩니다.")
+    fun postCategoryRead(
+            @RequestHeader("Authorization") token: String,
+            @PathVariable("category") category: String,
+            @PageableDefault(size = 5, sort = ["id"])
+            pageable: Pageable,
+    ): PostListResponse {
+        authService.validateToken(token)
+        return postService.postCategoryRead(token, category, pageable)
     }
 
     @GetMapping("/mine")
+    @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
+    @ApiOperation(value = "댓글 리스트", notes = "query로 page만 주면됩니다.")
     fun postMineRead(
             @RequestHeader("Authorization") token: String,
-            request: PageRequest,
+            @PageableDefault(size = 5, sort = ["id"])
+            pageable: Pageable,
     ): PostListResponse {
         authService.validateToken(token)
-        return postService.postMineRead(token, request.numOfPage)
+        return postService.postMineRead(token, pageable)
     }
 
 }
