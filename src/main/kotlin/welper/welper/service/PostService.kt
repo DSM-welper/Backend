@@ -181,7 +181,7 @@ class PostService(
                 lastPostList.add(postList[i])
             }
         else
-            for (i in numOfPostList..(numOfPostList + num)) {
+            for (i in numOfPostList until (numOfPostList + num)) {
                 lastPostList.add(postList[i])
             }
 
