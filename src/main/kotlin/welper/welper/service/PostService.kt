@@ -1,15 +1,17 @@
 package welper.welper.service
 
-import org.springframework.data.repository.findByIdOrNull
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import welper.welper.controller.request.CommentsRequest
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.controller.response.CommentResponse
 import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
 import welper.welper.domain.Comments
 import welper.welper.domain.Post
 import welper.welper.domain.User
 import welper.welper.exception.NonNumOfPageOutOfBoundsException
-import welper.welper.exception.PostListNotFoundException
 import welper.welper.exception.PostNotFoundException
 import welper.welper.exception.UserNotFoundException
 import welper.welper.repository.CommentsRepository
@@ -24,6 +26,7 @@ class PostService(
         val postRepository: PostRepository,
         val commentsRepository: CommentsRepository,
 ) {
+
     fun postCreate(token: String, title: String, content: String, category: String, createdAt: LocalDateTime) {
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
@@ -51,21 +54,7 @@ class PostService(
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findPostById(id) ?: throw PostNotFoundException(email, id)
-        val comments: List<Comments?> = commentsRepository.findAllByPostId(id)
-
         val list: MutableList<PostResponse.CommentsResponse> = mutableListOf()
-        comments.map {
-            if (it != null)
-                list.add(PostResponse.CommentsResponse(
-                        id = it.id,
-                        parents = it.parents,
-                        depts = it.depts,
-                        comments = it.comments,
-                        postId = it.postId,
-                        commentWriter = it.user.name,
-                        sequence = it.sequence,
-                ))
-        }
 
         return PostResponse(
                 title = post.title,
@@ -73,7 +62,6 @@ class PostService(
                 createdAt = post.createdAt,
                 category = post.category,
                 writer = user.name,
-                comment = list,
                 id = post.id,
         )
     }
@@ -97,7 +85,7 @@ class PostService(
         val lastPostList = getPageOfList(numOfPage, list)
         return PostListResponse(
                 post = lastPostList,
-                totalPage = list.size/10+1
+                totalPage = list.size/5
         )
     }
 
@@ -122,7 +110,8 @@ class PostService(
         val lastPostList = getPageOfList(numOfPage, list)
         return PostListResponse(
                 post = lastPostList,
-                totalPage = list.size/10+1
+                totalPage = list.size/5
+
         )
     }
 
@@ -149,7 +138,7 @@ class PostService(
 
         return PostListResponse(
                 post = lastPostList,
-                totalPage = list.size/10+1
+                totalPage = list.size/5
         )
     }
 
@@ -176,27 +165,27 @@ class PostService(
         list.filter { it.title.contains(content) }
         return PostListResponse(
                 post = list,
-                totalPage = list.size/10+1
+                totalPage = list.size/5
         )
     }
 
-    private fun getPageOfList(numOfPage: Int, moreDeduplicationServList: MutableList<PostListResponse.PostList>):
+    private fun getPageOfList(numOfPage: Int, postList: MutableList<PostListResponse.PostList>):
             MutableList<PostListResponse.PostList> {
-        val numOfServList: Int = numOfPage * 10;
+        val numOfPostList: Int = numOfPage * 5;
         val lastPostList: MutableList<PostListResponse.PostList> = mutableListOf();
-        if (moreDeduplicationServList.size < numOfServList)
+        if (postList.size < numOfPostList)
             throw NonNumOfPageOutOfBoundsException()
-
-        val num = moreDeduplicationServList.size - numOfServList
-        if (moreDeduplicationServList.size < num)
-            for (i in numOfServList..(numOfServList + 5)) {
-                lastPostList.add(moreDeduplicationServList[i])
+        val num = postList.size - numOfPostList - 1
+        if (num > 5)
+            for (i in numOfPostList until (numOfPostList + 5)) {
+                lastPostList.add(postList[i])
             }
         else
-            for (i in numOfServList..num) {
-                lastPostList.add(moreDeduplicationServList[i])
+            for (i in numOfPostList until (numOfPostList + num)) {
+                lastPostList.add(postList[i])
             }
 
         return lastPostList
     }
 }
+

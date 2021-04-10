@@ -56,13 +56,12 @@ class CategoryService(
             marryList.addAll(
                     openApiCategoryRepository.findAllByCategoryName(marry)
             )
+        val list: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
+        list.addAll(getDetailRandomArray(list, lifeList))
+        list.addAll(getDetailRandomArray(list, marryList))
+        list.addAll(getDetailRandomArray(list, genderList))
         return RandomCategoryResponse(
-                ageList = RandomCategoryResponse.AgeList(
-                        list = getDetailRandomArray(lifeList)),
-                genderList = RandomCategoryResponse.GenderList(
-                        list = getDetailRandomArray(genderList)),
-                marryList = RandomCategoryResponse.MarryList(
-                        list = getDetailRandomArray(marryList)),
+                recommendList = list
         )
     }
 
@@ -88,22 +87,18 @@ class CategoryService(
             )
         }
 
+        val list: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
+        list.addAll(getDetailRandomArray(list, lifeList))
+        list.addAll(getDetailRandomArray(list, marryList))
+        list.addAll(getDetailRandomArray(list, genderList))
         return RandomCategoryResponse(
-                ageList = RandomCategoryResponse.AgeList(
-                        type = "Random",
-                        list = getDetailRandomArray(lifeList)),
-                genderList = RandomCategoryResponse.GenderList(
-                        type = "Random",
-                        list = getDetailRandomArray(genderList)),
-                marryList = RandomCategoryResponse.MarryList(
-                        type = "Random",
-                        list = getDetailRandomArray(marryList)),
+                recommendList = list
         )
     }
 
     fun showCategoryTagList(categoryNameList: List<Category>, numOfPage: Int)
             : CategoryListPostResponse {
-        val list = categoryNameList.map { it.value }
+        val list = categoryNameList.map{ it.value }.filter{ it != "빈값" }
         val categoryList: MutableList<OpenApICategory> =
                 openApiCategoryRepository.findSeveralByCategory(list)
         val servList = categoryList.map {
@@ -118,7 +113,7 @@ class CategoryService(
                     svcfrstRegTs = it.openApiPost.svcfrstRegTs,
             )
         }
-        val categoryNameCount = categoryNameList.count()
+        val categoryNameCount = list.count()
         val deduplicationServList: List<CategoryListPostResponse.ServList> = servList.groupBy { it.servId }
                 .filter { it.value.size == categoryNameCount }.flatMap { it.value }
         val moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
@@ -130,7 +125,7 @@ class CategoryService(
 
         return CategoryListPostResponse(
                 servList = lastServList,
-                toTalPage = moreDeduplicationServList.size / 10 + 1,
+                toTalPage = moreDeduplicationServList.size / 10,
         )
     }
 
@@ -187,7 +182,7 @@ class CategoryService(
 
         return CategoryListPostResponse(
                 servList = lastServList,
-                toTalPage = servList.size / 10 + 1,
+                toTalPage = servList.size / 10,
         )
     }
 
@@ -210,7 +205,8 @@ class CategoryService(
 
         return CategoryListPostResponse(
                 servList = lastServList,
-                toTalPage = servList.size / 10 + 1,
+                toTalPage = servList.size / 10,
+
                 )
     }
 
@@ -218,16 +214,15 @@ class CategoryService(
             MutableList<CategoryListPostResponse.ServList> {
         val numOfServList: Int = numOfPage * 10;
         val lastServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf();
-        if (moreDeduplicationServList.size < numOfServList)
+        if (moreDeduplicationServList.size / 10 < numOfPage)
             throw NonNumOfPageOutOfBoundsException()
-
-        val num = moreDeduplicationServList.size - numOfServList
-        if (moreDeduplicationServList.size < num)
-            for (i in numOfServList..(numOfServList + 10)) {
+        val num = moreDeduplicationServList.size - numOfServList - 1
+        if (num > 10)
+            for (i in numOfServList until (numOfServList + 10)) {
                 lastServList.add(moreDeduplicationServList[i])
             }
         else
-            for (i in numOfServList..num) {
+            for (i in numOfServList..(numOfServList + num)) {
                 lastServList.add(moreDeduplicationServList[i])
             }
 
@@ -261,14 +256,26 @@ class CategoryService(
         }
     }
 
-    private fun getDetailRandomArray(list: MutableSet<OpenApICategory>): List<RandomCategoryResponse.DetailRandomList> {
+    private fun getDetailRandomArray(
+            beforeList: MutableList<RandomCategoryResponse.DetailRandomList>?,
+            list: MutableSet<OpenApICategory>,
+    ): List<RandomCategoryResponse.DetailRandomList> {
         val detailRandomList: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
+
         if (list.isNotEmpty()) {
-            var num: Int = 2;
-            if (list.size < 3)
+            var filterList:MutableList<OpenApICategory> = mutableListOf()
+            filterList = if (!beforeList.isNullOrEmpty()) {
+                list.filter {
+                    it.openApiPost.inqNum != beforeList[0].inqNum &&
+                            it.openApiPost.inqNum != beforeList[1].inqNum
+                } as MutableList<OpenApICategory>
+            } else list.toMutableList()
+
+            var num = 1;
+            if (list.size < 2)
                 num = list.size - 1
             for (i in 0..num) {
-                val lifeArrayList: OpenApICategory = list.random()
+                val lifeArrayList: OpenApICategory = filterList.random()
                 detailRandomList.add(
                         RandomCategoryResponse.DetailRandomList(
                                 inqNum = lifeArrayList.openApiPost.inqNum,
@@ -281,14 +288,14 @@ class CategoryService(
                                 svcfrstRegTs = lifeArrayList.openApiPost.svcfrstRegTs,
                         )
                 )
-                list.remove(lifeArrayList)
+                filterList.remove(lifeArrayList)
             }
         }
         return detailRandomList
     }
 
     private fun createDetailList(doc: Document, targetName: String)
-            : List<CategoryDetailResponse.DetailList> {
+            : List<CategoryDetailResponse.DetailList>? {
         val nList: NodeList = doc.getElementsByTagName(targetName)
         val list: MutableList<CategoryDetailResponse.DetailList> = mutableListOf()
 
@@ -303,7 +310,9 @@ class CategoryService(
             )
             list.add(a)
         }
-        return list
+        return if(list.isNotEmpty())
+            list
+        else null
     }
 
     private fun getTagValue(tag: String, eElement: Element): String? {

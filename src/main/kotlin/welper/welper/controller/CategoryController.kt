@@ -8,6 +8,7 @@ import welper.welper.controller.request.PageRequest
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.service.CategoryService
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/category")
@@ -15,12 +16,13 @@ class CategoryController(
         val categoryService: CategoryService,
 ) {
     @GetMapping("/tag")
-    fun showCategoryTagList(@RequestBody request: CategoryRequest): CategoryListPostResponse {
-        return categoryService.showCategoryTagList(request.categoryName,request.numOfPage)
+    fun showCategoryTagList(request: CategoryRequest): CategoryListPostResponse {
+        return categoryService.showCategoryTagList(
+                request.categoryName,request.numOfPage)
     }
 
     @GetMapping
-    fun showCategoryList(@RequestBody request: PageRequest): CategoryListPostResponse {
+    fun showCategoryList(request: PageRequest): CategoryListPostResponse {
         return categoryService.showCategoryList(request.numOfPage)
     }
 
@@ -30,7 +32,7 @@ class CategoryController(
     }
 
     @GetMapping("/search")
-    fun showSearchCategory(@RequestBody searchPostRequest: SearchPostRequest): CategoryListPostResponse {
+    fun showSearchCategory(searchPostRequest: SearchPostRequest): CategoryListPostResponse {
         return categoryService.showSearchCategory(searchPostRequest.content,searchPostRequest.numOfPage)
     }
 }

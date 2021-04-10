@@ -1,5 +1,7 @@
 package welper.welper.repository
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import welper.welper.domain.Comments
 import welper.welper.domain.User
@@ -10,4 +12,5 @@ interface CommentsRepository : JpaRepository<Comments, Int> {
     fun findByIdAndUser(id: Int, user: User):Comments?
     fun findCommentsById(id: Int):Comments?
     fun deleteAllByPostId(postId: Int)
+    fun findAllByPostId(postId: Int,pageable: Pageable): Page<Comments>
 }

@@ -1,9 +1,12 @@
 package welper.welper.controller
 
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.PageRequest
 import welper.welper.controller.request.PostRequest
 import welper.welper.controller.request.SearchPostRequest
+import welper.welper.controller.response.CommentResponse
 import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
 import welper.welper.domain.Post
@@ -30,10 +33,10 @@ class PostController(
     }
 
     @GetMapping("/search")
-    fun searchPost(@RequestHeader("Authorization") token: String, @RequestBody request: SearchPostRequest)
+    fun searchPost(@RequestHeader("Authorization") token: String, request: SearchPostRequest)
             : PostListResponse {
         authService.validateToken(token)
-        return postService.searchPost(token, request.content,request.numOfPage)
+        return postService.searchPost(token, request.content, request.numOfPage)
     }
 
     @DeleteMapping("/{id}")
@@ -55,26 +58,28 @@ class PostController(
     }
 
     @GetMapping
-    fun postList(@RequestHeader("Authorization") token: String, @RequestBody request:PageRequest): PostListResponse {
+    fun postList(@RequestHeader("Authorization") token: String, request: PageRequest): PostListResponse {
         authService.validateToken(token)
-        return postService.postList(token,request.numOfPage)
+        return postService.postList(token, request.numOfPage)
     }
+
     @GetMapping("/category/{categoryId}")
     fun postCategoryRead(
             @RequestHeader("Authorization") token: String,
             @PathVariable("categoryId") categoryId: String,
-            @RequestBody request:PageRequest,
+            request: PageRequest,
     ): PostListResponse {
         authService.validateToken(token)
-        return postService.postCategoryRead(token, categoryId,request.numOfPage)
+        return postService.postCategoryRead(token, categoryId, request.numOfPage)
     }
 
     @GetMapping("/mine")
     fun postMineRead(
             @RequestHeader("Authorization") token: String,
-            @RequestBody request:PageRequest,
+            request: PageRequest,
     ): PostListResponse {
         authService.validateToken(token)
-        return postService.postMineRead(token,request.numOfPage)
+        return postService.postMineRead(token, request.numOfPage)
     }
+
 }

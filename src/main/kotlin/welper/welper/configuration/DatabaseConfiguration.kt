@@ -16,6 +16,7 @@ class DatabaseConfiguration(
     val username: String,
     @Value("\${DB_PASS}")
     val password: String,
+
 ) {
 
     @Bean

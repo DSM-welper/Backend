@@ -32,5 +32,6 @@ enum class Category(val value: String, val code:String) {
     EMPLOYMENT("고용","&desireArray=7000000"),
     LIFE("생활환경","&desireArray=8000000"),
     LAW("법","&desireArray=9000000"),
-    ELSE("기타","&desireArray=A000000")
+    ELSE("기타","&desireArray=A000000"),
+    NONE("빈값","")
 }
