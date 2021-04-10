@@ -181,21 +181,20 @@ class PostService(
                 )
             }
         }
-        val pageList = getPageOfList(numOfPage,list)
+        val pageList = getPageOfList(numOfPage, list)
 
         return PostListResponse(
                 post = pageList,
-                totalOfPage = (postList.size-1) /5 +1,
+                totalOfPage = (postList.size - 1) / 5 + 1,
                 totalOfElements = postList.size.toLong()
         )
     }
 
-
     private fun getPageOfList(numOfPage: Int, postList: MutableList<PostListResponse.PostList>):
             MutableList<PostListResponse.PostList> {
-        val numOfPostList: Int = (numOfPage-1) * 5;
+        val numOfPostList: Int = (numOfPage - 1) * 5;
         val lastPostList: MutableList<PostListResponse.PostList> = mutableListOf();
-        if (postList.size < numOfPostList+1)
+        if (postList.size < numOfPostList + 1)
             throw NonNumOfPageOutOfBoundsException()
         val num = postList.size - numOfPostList
 
@@ -204,7 +203,7 @@ class PostService(
                 lastPostList.add(postList[i])
             }
         else
-            for (i in numOfPostList until  (numOfPostList + num)) {
+            for (i in numOfPostList until (numOfPostList + num)) {
                 lastPostList.add(postList[i])
             }
 
