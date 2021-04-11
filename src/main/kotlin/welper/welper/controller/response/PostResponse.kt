@@ -10,6 +10,7 @@ data class PostResponse(
         val category: String,
         val createdAt: LocalDateTime,
         val writer: String,
+        val isMine: Boolean,
 ) {
     class CommentsResponse
     (
