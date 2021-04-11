@@ -63,7 +63,7 @@ class PostService(
                 content = post.content,
                 createdAt = post.createdAt,
                 category = post.category,
-                writer = user.name,
+                writer = post.user.name,
                 id = post.id,
                 isMine = isMine,
         )
