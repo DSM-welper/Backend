@@ -1,5 +1,6 @@
 package welper.welper.controller
 
+import io.swagger.annotations.ApiOperation
 import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.LoginRequest
 import welper.welper.controller.request.SignUpRequest
@@ -14,6 +15,7 @@ import javax.validation.Valid
 class AuthController(
         private val authService: AuthService,
 ) {
+    @ApiOperation(value="회원가입",notes = "Marry = DO,DONOT,SECRET  gender = WOMEN,MEN,SECRET")
     @PostMapping("/signup")
     fun signup(@RequestBody @Valid request: SignUpRequest) =
             authService.signup(
