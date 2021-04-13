@@ -1,5 +1,6 @@
 package welper.welper.controller.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
 data class PostListResponse (
@@ -10,6 +11,7 @@ data class PostListResponse (
     class PostList(
         val id:Int,
         val title:String,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         val creatAt:LocalDateTime,
         val category:String,
         val writer :String,
