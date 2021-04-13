@@ -39,7 +39,7 @@ class PostController(
     @GetMapping("/search")
     fun searchPost(
             @RequestHeader("Authorization") token: String, request: SearchPostRequest,
-            @PageableDefault(size = 5, sort = ["id"])
+            @PageableDefault(size = 5, sort = ["createdAt"],direction = Sort.Direction.DESC)
             pageable: Pageable,
     )
             : PostListResponse {
@@ -71,7 +71,7 @@ class PostController(
     @ApiOperation(value = "포스트 리스트", notes = "query로 page만 주면됩니다.")
     fun postList(
             @RequestHeader("Authorization") token: String,
-            @PageableDefault(size = 5, sort = ["id"])
+            @PageableDefault(size = 5, sort = ["createdAt"],direction = Sort.Direction.DESC)
             pageable: Pageable,
     ): PostListResponse {
         authService.validateToken(token)
@@ -84,7 +84,7 @@ class PostController(
     fun postCategoryRead(
             @RequestHeader("Authorization") token: String,
             @PathVariable("category") category: String,
-            @PageableDefault(size = 5, sort = ["id"])
+            @PageableDefault(size = 5, sort = ["createdAt"],direction = Sort.Direction.DESC)
             pageable: Pageable,
     ): PostListResponse {
         authService.validateToken(token)
@@ -96,7 +96,7 @@ class PostController(
     @ApiOperation(value = "자신의 포스트 리스트", notes = "query로 page만 주면됩니다.")
     fun postMineRead(
             @RequestHeader("Authorization") token: String,
-            @PageableDefault(size = 5, sort = ["id"])
+            @PageableDefault(size = 5, sort = ["createdAt"],direction = Sort.Direction.DESC )
             pageable: Pageable,
     ): PostListResponse {
         authService.validateToken(token)
