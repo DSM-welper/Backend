@@ -1,5 +1,6 @@
 package welper.welper.domain
 
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -7,6 +8,9 @@ import javax.persistence.*
 class Comments(
 
         id: Int = 0,
+
+        @Column(name = "createdAt")
+        val createdAt: LocalDateTime,
 
         @Column(name = "parents")
         val parents: Int,
@@ -23,7 +27,6 @@ class Comments(
         @ManyToOne
         @JoinColumn(name = "user", referencedColumnName = "email")
         var user: User,
-
 
         sequence: Int = 0,
 ) {
