@@ -13,6 +13,8 @@ import welper.welper.exception.UserNotFoundException
 import welper.welper.repository.CommentsRepository
 import welper.welper.repository.PostRepository
 import welper.welper.repository.UserRepository
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Service
 class CommentsService(
@@ -31,7 +33,8 @@ class CommentsService(
                     depts = it.depts,
                     writer = it.user.name,
                     parents = it.parents,
-                    id = it.id
+                    id = it.id,
+                    createdAt = it.createdAt
             ))
         }
         return CommentResponse(
@@ -66,6 +69,7 @@ class CommentsService(
                         comments = content,
                         postId = post.id,
                         user = user,
+                        createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
                 )
         )
     }
@@ -84,6 +88,7 @@ class CommentsService(
                         comments = content,
                         postId = post.id,
                         user = user,
+                        createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
                 )
         )
     }
