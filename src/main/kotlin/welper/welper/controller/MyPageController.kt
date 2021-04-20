@@ -1,6 +1,8 @@
 package welper.welper.controller
 
+import io.swagger.annotations.ApiOperation
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.MyPageRequest
 import welper.welper.controller.response.LoginResponse
@@ -32,7 +34,8 @@ class MyPageController(
                 disorder = user.disorder,
         )
     }
-
+    @ApiOperation(value="개인정보 변경",notes = "Marry = DO,DONOT,SECRET  gender = WOMEN,MEN,SECRET  빈값은 null 혹은 아예 안넘겨주시면 됩니다.")
+    @ResponseStatus(HttpStatus.OK)
     @PatchMapping
     fun updateMyPage(
             @RequestHeader("Authorization") token: String,

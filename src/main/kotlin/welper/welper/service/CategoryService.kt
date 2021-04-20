@@ -98,7 +98,7 @@ class CategoryService(
 
     fun showCategoryTagList(categoryNameList: List<Category>, numOfPage: Int)
             : CategoryListPostResponse {
-        val list = categoryNameList.map{ it.value }.filter{ it != "빈값" }
+        val list = categoryNameList.map { it.value }.filter { it != "빈값" }
         val categoryList: MutableList<OpenApICategory> =
                 openApiCategoryRepository.findSeveralByCategory(list)
         val servList = categoryList.map {
@@ -125,7 +125,7 @@ class CategoryService(
 
         return CategoryListPostResponse(
                 servList = lastServList,
-                toTalPage = moreDeduplicationServList.size / 10,
+                toTalPage = moreDeduplicationServList.size / 10 + 1,
         )
     }
 
@@ -182,7 +182,7 @@ class CategoryService(
 
         return CategoryListPostResponse(
                 servList = lastServList,
-                toTalPage = servList.size / 10,
+                toTalPage = servList.size / 10 + 1,
         )
     }
 
@@ -205,7 +205,7 @@ class CategoryService(
 
         return CategoryListPostResponse(
                 servList = lastServList,
-                toTalPage = servList.size / 10,
+                toTalPage = servList.size / 10 + 1,
 
                 )
     }
@@ -214,15 +214,15 @@ class CategoryService(
             MutableList<CategoryListPostResponse.ServList> {
         val numOfServList: Int = numOfPage * 10;
         val lastServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf();
-        if (moreDeduplicationServList.size / 10 < numOfPage)
+        if (moreDeduplicationServList.size  < numOfServList +1)
             throw NonNumOfPageOutOfBoundsException()
-        val num = moreDeduplicationServList.size - numOfServList - 1
-        if (num > 10)
+        val num = moreDeduplicationServList.size - numOfServList
+        if (num >= 10)
             for (i in numOfServList until (numOfServList + 10)) {
                 lastServList.add(moreDeduplicationServList[i])
             }
         else
-            for (i in numOfServList..(numOfServList + num)) {
+            for (i in numOfServList until (numOfServList + num)) {
                 lastServList.add(moreDeduplicationServList[i])
             }
 
@@ -263,7 +263,7 @@ class CategoryService(
         val detailRandomList: MutableList<RandomCategoryResponse.DetailRandomList> = mutableListOf()
 
         if (list.isNotEmpty()) {
-            var filterList:MutableList<OpenApICategory> = mutableListOf()
+            var filterList: MutableList<OpenApICategory> = mutableListOf()
             filterList = if (!beforeList.isNullOrEmpty()) {
                 list.filter {
                     it.openApiPost.inqNum != beforeList[0].inqNum &&
@@ -310,7 +310,7 @@ class CategoryService(
             )
             list.add(a)
         }
-        return if(list.isNotEmpty())
+        return if (list.isNotEmpty())
             list
         else null
     }

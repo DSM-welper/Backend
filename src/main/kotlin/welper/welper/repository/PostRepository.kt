@@ -13,6 +13,6 @@ interface PostRepository:JpaRepository<Post,Int>{
     fun findAllByCategory(category: String,pageable: Pageable):Page<Post>
     fun findAllByUser(user: User,pageable: Pageable):Page<Post>
     fun findPostById(id: Int): Post?
-    @Query("Select c from Post c where c.title like :content" )
+    @Query("Select c from Post c where c.title like %:content%" )
     fun findPostBySearch(content:String,pageable:Pageable):Page<Post>
 }

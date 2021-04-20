@@ -54,15 +54,18 @@ class PostService(
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findPostById(id) ?: throw PostNotFoundException(email, id)
-        val list: MutableList<PostResponse.CommentsResponse> = mutableListOf()
-
+        var isMine = false
+        if(user == (post.user)){
+            isMine= true
+        }
         return PostResponse(
                 title = post.title,
                 content = post.content,
                 createdAt = post.createdAt,
                 category = post.category,
-                writer = user.name,
+                writer = post.user.name,
                 id = post.id,
+                isMine = isMine,
         )
     }
 
@@ -89,9 +92,9 @@ class PostService(
         )
     }
 
-    fun postCategoryRead(token: String, category: String,pageable: Pageable): PostListResponse {
+    fun postCategoryRead(token: String, category: String, pageable: Pageable): PostListResponse {
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
-        val page: Page<Post> = postRepository.findAllByCategory(category,pageable)
+        val page: Page<Post> = postRepository.findAllByCategory(category, pageable)
 
         page.forEach {
             if (it != null) {
@@ -118,7 +121,7 @@ class PostService(
         val email: String = jwtService.getEmail(token)
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
-        val page: Page<Post> = postRepository.findAllByUser(user,pageable)
+        val page: Page<Post> = postRepository.findAllByUser(user, pageable)
 
         page.forEach {
             if (it != null) {
@@ -142,7 +145,7 @@ class PostService(
     }
 
     fun searchPost(token: String, content: String, pageable: Pageable): PostListResponse {
-        val page: Page<Post> = postRepository.findPostBySearch(content,pageable)
+        val page: Page<Post> = postRepository.findPostBySearch(content, pageable)
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
         page.forEach {
             if (it != null) {
@@ -163,25 +166,50 @@ class PostService(
                 totalOfPage = page.totalPages,
         )
     }
+
+
+    fun test(numOfPage: Int): PostListResponse {
+        val postList = postRepository.findAll()
+        val list: MutableList<PostListResponse.PostList> = mutableListOf()
+        postList.forEach {
+            if (it != null) {
+                list.add(
+                        PostListResponse.PostList(
+                                title = it.title,
+                                id = it.id,
+                                writer = it.user.name,
+                                creatAt = it.createdAt,
+                                category = it.category
+                        )
+                )
+            }
+        }
+        val pageList = getPageOfList(numOfPage, list)
+
+        return PostListResponse(
+                post = pageList,
+                totalOfPage = (postList.size - 1) / 5 + 1,
+                totalOfElements = postList.size.toLong()
+        )
+    }
+
+    private fun getPageOfList(numOfPage: Int, postList: MutableList<PostListResponse.PostList>):
+            MutableList<PostListResponse.PostList> {
+        val numOfPostList: Int = (numOfPage - 1) * 5;
+        val lastPostList: MutableList<PostListResponse.PostList> = mutableListOf();
+        if (postList.size < numOfPostList + 1)
+            throw NonNumOfPageOutOfBoundsException()
+        val num = postList.size - numOfPostList
+
+        if (num >= 5)
+            for (i in numOfPostList until (numOfPostList + 5)) {
+                lastPostList.add(postList[i])
+            }
+        else
+            for (i in numOfPostList until (numOfPostList + num)) {
+                lastPostList.add(postList[i])
+            }
+
+        return lastPostList
+    }
 }
-
-//    private fun getPageOfList(numOfPage: Int, postList: MutableList<PostListResponse.PostList>):
-//            MutableList<PostListResponse.PostList> {
-//        val numOfPostList: Int = numOfPage * 5;
-//        val lastPostList: MutableList<PostListResponse.PostList> = mutableListOf();
-//        if (postList.size < numOfPostList)
-//            throw NonNumOfPageOutOfBoundsException()
-//        val num = postList.size - numOfPostList - 1
-//        if (num >= 5)
-//            for (i in numOfPostList until (numOfPostList + 5)) {
-//                lastPostList.add(postList[i])
-//            }
-//        else
-//            for (i in numOfPostList..(numOfPostList + num)) {
-//                lastPostList.add(postList[i])
-//            }
-//
-//        return lastPostList
-//    }
-//}
-
