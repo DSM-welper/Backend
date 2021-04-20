@@ -31,6 +31,7 @@ class CommentsService(
                     depts = it.depts,
                     writer = it.user.name,
                     parents = it.parents,
+                    id = it.id
             ))
         }
         return CommentResponse(

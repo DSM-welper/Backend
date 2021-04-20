@@ -6,6 +6,7 @@ data class CommentResponse(
         val totalOfElements: Long,
 ) {
     class Comment(
+            val id:Int,
             val comment: String,
             val parents: Int,
             val depts: Int,
