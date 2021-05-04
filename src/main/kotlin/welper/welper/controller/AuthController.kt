@@ -3,6 +3,7 @@ package welper.welper.controller
 import io.swagger.annotations.ApiOperation
 import org.springframework.web.bind.annotation.*
 import welper.welper.controller.request.LoginRequest
+import welper.welper.controller.request.PasswordRequest
 import welper.welper.controller.request.SignUpRequest
 import welper.welper.controller.response.AccessTokenResponse
 import welper.welper.controller.response.LoginResponse
@@ -15,7 +16,7 @@ import javax.validation.Valid
 class AuthController(
         private val authService: AuthService,
 ) {
-    @ApiOperation(value="회원가입",notes = "Marry = DO,DONOT,SECRET  gender = WOMEN,MEN,SECRET")
+    @ApiOperation(value = "회원가입", notes = "Marry = DO,DONOT,SECRET  gender = WOMEN,MEN,SECRET")
     @PostMapping("/signup")
     fun signup(@RequestBody @Valid request: SignUpRequest) =
             authService.signup(
@@ -34,7 +35,15 @@ class AuthController(
                     email = request.email,
                     password = request.password,
             )
-
+    @ApiOperation(value = "회원 탈퇴", notes = "회원 탈퇴가 되긴하는데, 회원탈퇴 연관된거 고민중..")
+    @DeleteMapping
+    fun withdrawalUser(
+            @RequestBody request: PasswordRequest,
+            @RequestHeader("Authorization") token: String,
+    ) {
+        authService.validateToken(token)
+        authService.withdrawalUser(request.password, token)
+    }
     @PatchMapping
     fun recreateToken(@RequestHeader("refreshToken") token: String): AccessTokenResponse =
             AccessTokenResponse(authService.recreateAccessToken(token))
@@ -42,5 +51,4 @@ class AuthController(
     @PostMapping("/token")
     fun validateToken(@RequestHeader("Authorization") token: String) =
             authService.validateToken(token)
-
 }
