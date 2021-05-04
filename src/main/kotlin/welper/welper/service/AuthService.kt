@@ -53,6 +53,13 @@ class AuthService(
         )
     }
 
+    fun withdrawalUser(password: String, token: String) {
+        val email: String = jwtService.getEmail(token)
+        val user = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
+        validateAccountInformation(user.email, password)
+
+    }
+
     fun recreateAccessToken(refreshToken: String): String {
         validateToken(refreshToken)
 
@@ -79,9 +86,9 @@ class AuthService(
 
 
     private fun validateAccountInformation(email: String, teacherPassword: String) {
-        val teacher = findUserByEmail(email)
+        val user = findUserByEmail(email)
         val encodedPassword = encodingPassword(teacherPassword)
-        validateSamePassword(teacher.password, encodedPassword)
+        validateSamePassword(user.password, encodedPassword)
     }
 
     private fun findUserByEmail(email: String) =
