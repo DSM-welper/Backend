@@ -34,7 +34,7 @@ class AuthService(
         emailCertifyRepository.findByEmailAndCertified(email, true)
                 ?: throw NonExistEmailCertifyException(email)
         val isJoinPossible = isJoinPossible(email)
-        if (isJoinPossible) throw AlreadyExistAccountException(email)
+        if (!isJoinPossible) throw AlreadyExistAccountException(email)
         userRepository.save(
                 User(
                         email = email,
@@ -89,7 +89,7 @@ class AuthService(
         return String.format("%0128x", BigInteger(1, messageDigest.digest()))
     }
 
-    private fun isJoinPossible(email: String) = userRepository.existsById(email)
+    private fun isJoinPossible(email: String) = userRepository.existsById(email)&&deleteEmailRepository.existsById(email)
 
     private fun createAccessToken(email: String) = jwtService.createToken(email, Token.ACCESS)
 
