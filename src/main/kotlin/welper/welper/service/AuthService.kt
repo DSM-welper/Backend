@@ -3,16 +3,20 @@ package welper.welper.service
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import welper.welper.controller.response.LoginResponse
+import welper.welper.domain.DeleteEmail
 import welper.welper.domain.EmailCertify
 import welper.welper.domain.User
 import welper.welper.domain.attribute.Gender
 import welper.welper.domain.attribute.Marry
 import welper.welper.exception.*
+import welper.welper.repository.DeleteEmailRepository
 import welper.welper.repository.EmailCertifyRepository
 import welper.welper.repository.UserRepository
 import java.math.BigInteger
 import java.nio.charset.Charset
 import java.security.MessageDigest
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
 @Service
@@ -20,6 +24,7 @@ class AuthService(
         private val userRepository: UserRepository,
         private val jwtService: JwtService,
         private val emailCertifyRepository: EmailCertifyRepository,
+        private val deleteEmailRepository: DeleteEmailRepository,
 ) {
     private val encryptionAlgorithm = "SHA-512"
     private val characterEncoding = Charset.forName("UTF-8")
@@ -29,7 +34,7 @@ class AuthService(
         emailCertifyRepository.findByEmailAndCertified(email, true)
                 ?: throw NonExistEmailCertifyException(email)
         val isJoinPossible = isJoinPossible(email)
-        if (isJoinPossible) throw AlreadyExistAccountException(email)
+        if (!isJoinPossible) throw AlreadyExistAccountException(email)
         userRepository.save(
                 User(
                         email = email,
@@ -57,7 +62,13 @@ class AuthService(
         val email: String = jwtService.getEmail(token)
         val user = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         validateAccountInformation(user.email, password)
-
+        userRepository.deleteById(email)
+        deleteEmailRepository.save(
+                DeleteEmail(
+                        email = email,
+                        deleteTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
+                )
+        )
     }
 
     fun recreateAccessToken(refreshToken: String): String {
@@ -78,7 +89,7 @@ class AuthService(
         return String.format("%0128x", BigInteger(1, messageDigest.digest()))
     }
 
-    private fun isJoinPossible(email: String) = userRepository.existsById(email)
+    private fun isJoinPossible(email: String) = userRepository.existsById(email)&&deleteEmailRepository.existsById(email)
 
     private fun createAccessToken(email: String) = jwtService.createToken(email, Token.ACCESS)
 
