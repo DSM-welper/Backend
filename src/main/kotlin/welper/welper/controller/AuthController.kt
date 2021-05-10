@@ -35,15 +35,16 @@ class AuthController(
                     email = request.email,
                     password = request.password,
             )
-    @ApiOperation(value = "회원 탈퇴", notes = "회원 탈퇴가 되긴하는데, 회원탈퇴 연관된거 고민중..")
+
     @DeleteMapping
     fun withdrawalUser(
-            @RequestBody request: PasswordRequest,
+            request: PasswordRequest,
             @RequestHeader("Authorization") token: String,
     ) {
         authService.validateToken(token)
         authService.withdrawalUser(request.password, token)
     }
+
     @PatchMapping
     fun recreateToken(@RequestHeader("refreshToken") token: String): AccessTokenResponse =
             AccessTokenResponse(authService.recreateAccessToken(token))
