@@ -125,7 +125,7 @@ class CategoryService(
                 getPageOfList(numOfPage, deduplicationServList)
 
         return CategoryListPostResponse(
-                servList = deduplicationServList,
+                servList = lastServList,
                 toTalPage = deduplicationServList.size / 10 + 1,
         )
     }
