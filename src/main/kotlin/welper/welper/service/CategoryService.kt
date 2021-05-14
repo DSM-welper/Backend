@@ -113,19 +113,19 @@ class CategoryService(
                     svcfrstRegTs = it.openApiPost.svcfrstRegTs,
             )
         }
-        val categoryNameCount = list.count()
-        val deduplicationServList: List<CategoryListPostResponse.ServList> = servList.groupBy { it.servId }
-                .filter { it.value.size == categoryNameCount }.flatMap { it.value }
-        val moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
-        for (i in deduplicationServList.indices step categoryNameCount) {
-            moreDeduplicationServList.add(deduplicationServList[i])
-        }
+        val deduplicationServList: MutableList<CategoryListPostResponse.ServList> = servList.toHashSet().toMutableList()
+//        val categoryNameCount = list.count()
+//        groupBy { it.servId }.filter { it.value.size == categoryNameCount }.flatMap { it.value }
+//        val moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
+//        for (i in deduplicationServList.indices step categoryNameCount) {
+//            moreDeduplicationServList.add(deduplicationServList[i])
+//        }
         val lastServList: MutableList<CategoryListPostResponse.ServList> =
-                getPageOfList(numOfPage, moreDeduplicationServList)
+                getPageOfList(numOfPage, deduplicationServList)
 
         return CategoryListPostResponse(
                 servList = lastServList,
-                toTalPage = moreDeduplicationServList.size / 10 + 1,
+                toTalPage = deduplicationServList.size / 10 + 1,
         )
     }
 
