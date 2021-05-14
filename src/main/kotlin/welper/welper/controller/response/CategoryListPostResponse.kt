@@ -1,6 +1,6 @@
 package welper.welper.controller.response
 
-data class CategoryListPostResponse(
+    data class CategoryListPostResponse(
         val toTalPage: Int,
         val servList: List<ServList>,
 ) {
@@ -14,30 +14,29 @@ data class CategoryListPostResponse(
             val servNm: String?,
             val svcfrstRegTs: String?,
     )
-//    {
-//        override fun hashCode(): Int {
-//            return (inqNum.toString().hashCode() + jurMnofNm.toString().hashCode() +
-//                    jurOrgNm.toString().hashCode() + servDgst.toString().hashCode()
-//                    + servDtlLink.toString().hashCode() + servId.toString().hashCode()
-//                    + servNm.toString().hashCode() + svcfrstRegTs.toString().hashCode()
+    {
+        override fun hashCode(): Int {
+            return (inqNum.toString().hashCode() + jurMnofNm.toString().hashCode() +
+                    jurOrgNm.toString().hashCode() + servDgst.toString().hashCode()
+                    + servDtlLink.toString().hashCode() + servId.toString().hashCode()
+                    + servNm.toString().hashCode() + svcfrstRegTs.toString().hashCode()
+
+                    )
+        }
 //
-//                    )
-//        }
-//
-//        override fun equals(other: Any?): Boolean {
-//            if (other is ServList) {
-//                val temp = other
-//                return (temp.inqNum == this.inqNum
-//                        && temp.jurOrgNm == this.jurOrgNm
-//                        && temp.jurMnofNm == this.jurMnofNm
-//                        && temp.servDgst == this.servDgst
-//                        && temp.servDtlLink == this.servDtlLink
-//                        && temp.servId == this.servId
-//                        && temp.servNm == this.servNm
-//                        && temp.svcfrstRegTs == this.svcfrstRegTs
-//                        )
-//            }
-//            return false
-//        }
-//    }
+        override fun equals(other: Any?): Boolean {
+            if (other is ServList) {
+                return (other.inqNum == this.inqNum
+                        && other.jurOrgNm == this.jurOrgNm
+                        && other.jurMnofNm == this.jurMnofNm
+                        && other.servDgst == this.servDgst
+                        && other.servDtlLink == this.servDtlLink
+                        && other.servId == this.servId
+                        && other.servNm == this.servNm
+                        && other.svcfrstRegTs == this.svcfrstRegTs
+                        )
+            }
+            return false
+        }
+    }
 }
