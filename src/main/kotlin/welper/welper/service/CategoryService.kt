@@ -98,14 +98,18 @@ class CategoryService(
         )
     }
 
-    fun showCategoryTagList(categoryNameList: List<Category>, numOfPage: Int, token: String)
+    fun showCategoryTagList(categoryNameList: List<Category>, numOfPage: Int, token: String?)
             : CategoryListPostResponse {
-        val isValid = jwtService.isValid(token)
+        val isValid: Boolean = if (token != null) {
+            jwtService.isValid(token)
+        } else {
+            false
+        }
         val list = categoryNameList.map { it.value }.filter { it != "빈값" }
         val categoryList: MutableList<OpenApICategory> =
                 openApiCategoryRepository.findSeveralByCategory(list)
         val servList: List<CategoryListPostResponse.ServList>
-        if (isValid) {
+        if (isValid && token != null) {
             val email: String = jwtService.getEmail(token)
             servList = categoryList.map {
                 CategoryListPostResponse.ServList(
