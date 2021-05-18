@@ -312,6 +312,9 @@ class CategoryService(
                     )
             )
         }
+        else{
+            throw CategoryNotFound(servId)
+        }
     }
 
     private fun getPageOfList(numOfPage: Int, moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList>):
