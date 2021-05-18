@@ -230,19 +230,41 @@ class CategoryService(
         )
     }
 
-    fun showCategoryList(numOfPage: Int): CategoryListPostResponse {
+    fun showCategoryList(numOfPage: Int, token: String): CategoryListPostResponse {
+        val isValid = jwtService.isValid(token)
         val list = openApiPostRepository.findAll()
-        val servList = list.map {
-            CategoryListPostResponse.ServList(
-                    inqNum = it.inqNum,
-                    jurMnofNm = it.jurMnofNm,
-                    jurOrgNm = it.jurOrgNm,
-                    servDgst = it.servDgst,
-                    servDtlLink = it.servDtlLink,
-                    servId = it.servId,
-                    servNm = it.servNm,
-                    svcfrstRegTs = it.svcfrstRegTs,
-            )
+        val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
+        if (isValid) {
+            val email: String = jwtService.getEmail(token)
+            list.forEach {
+                servList.add(
+                        CategoryListPostResponse.ServList(
+                                inqNum = it.inqNum,
+                                jurMnofNm = it.jurMnofNm,
+                                jurOrgNm = it.jurOrgNm,
+                                servDgst = it.servDgst,
+                                servDtlLink = it.servDtlLink,
+                                servId = it.servId,
+                                servNm = it.servNm,
+                                svcfrstRegTs = it.svcfrstRegTs,
+                                isBookMark = bookMarkRepository.existsByEmailAndOpenApiPost(email, it)
+                        ))
+            }
+        } else {
+            list.forEach {
+                servList.add(
+                        CategoryListPostResponse.ServList(
+                                inqNum = it.inqNum,
+                                jurMnofNm = it.jurMnofNm,
+                                jurOrgNm = it.jurOrgNm,
+                                servDgst = it.servDgst,
+                                servDtlLink = it.servDtlLink,
+                                servId = it.servId,
+                                servNm = it.servNm,
+                                svcfrstRegTs = it.svcfrstRegTs,
+                                isBookMark = false,
+                        ))
+            }
         }
         val lastServList: MutableList<CategoryListPostResponse.ServList> =
                 getPageOfList(numOfPage, servList as MutableList<CategoryListPostResponse.ServList>)

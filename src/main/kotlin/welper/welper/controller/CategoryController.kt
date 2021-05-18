@@ -26,7 +26,7 @@ class CategoryController(
 
     @GetMapping
     fun showCategoryList(@RequestHeader("Authorization") token: String, request: PageRequest): CategoryListPostResponse {
-        return categoryService.showCategoryList(request.numOfPage)
+        return categoryService.showCategoryList(request.numOfPage,token)
     }
 
     @GetMapping("/detail/{id}")
