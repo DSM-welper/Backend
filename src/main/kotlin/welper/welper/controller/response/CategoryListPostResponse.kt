@@ -13,6 +13,7 @@ package welper.welper.controller.response
             val servId: String?,
             val servNm: String?,
             val svcfrstRegTs: String?,
+            val isBookMark:Boolean
     )
     {
         override fun hashCode(): Int {
