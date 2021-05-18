@@ -298,7 +298,14 @@ class CategoryService(
                             email = email, openApiPost = openApiPost
                     )
             )
-        } else {
+        }
+    }
+
+    fun bookMarkDeleteCategory(token: String, servId: String) {
+        val email: String = jwtService.getEmail(token)
+        userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
+        val openApiPost = openApiPostRepository.findByIdOrNull(servId) ?: throw CategoryNotFoundException(servId)
+        if (bookMarkRepository.existsByEmailAndOpenApiPost(email, openApiPost)) {
             bookMarkRepository.delete(
                     BookMark(
                             email = email, openApiPost = openApiPost
