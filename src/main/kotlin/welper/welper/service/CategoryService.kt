@@ -298,6 +298,12 @@ class CategoryService(
                             email = email, openApiPost = openApiPost
                     )
             )
+        } else {
+            bookMarkRepository.delete(
+                    BookMark(
+                            email = email, openApiPost = openApiPost
+                    )
+            )
         }
     }
 
