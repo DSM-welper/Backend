@@ -38,16 +38,16 @@ class CommentsController(
     }
 
     @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
-    @ApiOperation(value="댓글 리스트",notes = "query로 page만 주면됩니다.")
+    @ApiOperation(value = "댓글 리스트", notes = "query로 page만 주면됩니다.")
     @GetMapping("/{postId}")
     fun commentListRead(
             @RequestHeader("Authorization") token: String,
             @PathVariable("postId") postId: Int,
-            @PageableDefault(size=6, sort= ["sequence"])
+            @PageableDefault(size = 6, sort = ["sequence"])
             pageable: Pageable,
     ): CommentResponse {
         authService.validateToken(token)
-        return commentsService.commentListRead(postId,pageable)
+        return commentsService.commentListRead(postId, pageable)
     }
 
     @DeleteMapping("/{postId}/{commentsId}")
