@@ -1,6 +1,7 @@
 package welper.welper.service
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -9,12 +10,12 @@ import org.w3c.dom.NodeList
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
 import welper.welper.controller.response.RandomCategoryResponse
+import welper.welper.domain.BookMark
 import welper.welper.domain.OpenApICategory
 import welper.welper.domain.User
 import welper.welper.domain.attribute.*
-import welper.welper.exception.NonExistCategoryDetailException
-import welper.welper.exception.NonNumOfPageOutOfBoundsException
-import welper.welper.exception.UserNotFoundException
+import welper.welper.exception.*
+import welper.welper.repository.BookMarkRepository
 import welper.welper.repository.OpenApiCategoryRepository
 import welper.welper.repository.OpenApiPostRepository
 import welper.welper.repository.UserRepository
@@ -29,6 +30,7 @@ class CategoryService(
         private val openApiPostRepository: OpenApiPostRepository,
         private val jwtService: JwtService,
         private val userRepository: UserRepository,
+        private val bookMarkRepository: BookMarkRepository,
 ) {
     fun userCategory(token: String): RandomCategoryResponse {
         val email = jwtService.getEmail(token)
@@ -114,7 +116,7 @@ class CategoryService(
             )
         }
         val categoryNameCount = list.count()
-        val deduplicationServList: MutableList<CategoryListPostResponse.ServList> =  servList.groupBy { it.servId }
+        val deduplicationServList: MutableList<CategoryListPostResponse.ServList> = servList.groupBy { it.servId }
                 .filter { it.value.size == categoryNameCount }.flatMap { it.value }.toHashSet().toMutableList()
 //        groupBy { it.servId }.filter { it.value.size == categoryNameCount }.flatMap { it.value }
 //        val moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
@@ -211,11 +213,24 @@ class CategoryService(
                 )
     }
 
+    fun bookMarkCategory(token: String, servId: String) {
+        val email: String = jwtService.getEmail(token)
+        userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
+        val openApiPost = openApiPostRepository.findByIdOrNull(servId) ?: throw CategoryNotFoundException(servId)
+        if (bookMarkRepository.existsByEmailAndOpenApiPost(email, openApiPost)) {
+            bookMarkRepository.save(
+                    BookMark(
+                            email = email, openApiPost = openApiPost
+                    )
+            )
+        }
+    }
+
     private fun getPageOfList(numOfPage: Int, moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList>):
             MutableList<CategoryListPostResponse.ServList> {
         val numOfServList: Int = numOfPage * 10;
         val lastServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf();
-        if (moreDeduplicationServList.size  < numOfServList +1)
+        if (moreDeduplicationServList.size < numOfServList + 1)
             throw NonNumOfPageOutOfBoundsException()
         val num = moreDeduplicationServList.size - numOfServList
         if (num >= 10)
