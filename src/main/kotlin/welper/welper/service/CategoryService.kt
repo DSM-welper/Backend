@@ -181,11 +181,15 @@ class CategoryService(
         }
     }
 
-    fun showSearchCategory(content: String, numOfPage: Int, token: String): CategoryListPostResponse {
-        val isValid = jwtService.isValid(token)
+    fun showSearchCategory(content: String, numOfPage: Int, token: String?): CategoryListPostResponse {
+        val isValid: Boolean = if (token != null) {
+            jwtService.isValid(token)
+        } else {
+            false
+        }
         val list = openApiPostRepository.findAll()
         val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
-        if (isValid) {
+        if (isValid && token != null) {
             val email: String = jwtService.getEmail(token)
             list.filter {
                 it.servDgst.contains(content)
@@ -234,11 +238,15 @@ class CategoryService(
         )
     }
 
-    fun showCategoryList(numOfPage: Int, token: String): CategoryListPostResponse {
-        val isValid = jwtService.isValid(token)
+    fun showCategoryList(numOfPage: Int, token: String?): CategoryListPostResponse {
+        val isValid: Boolean = if (token != null) {
+            jwtService.isValid(token)
+        } else {
+            false
+        }
         val list = openApiPostRepository.findAll()
         val servList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
-        if (isValid) {
+        if (isValid && token != null) {
             val email: String = jwtService.getEmail(token)
             list.forEach {
                 servList.add(
