@@ -217,7 +217,7 @@ class CategoryService(
         val email: String = jwtService.getEmail(token)
         userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val openApiPost = openApiPostRepository.findByIdOrNull(servId) ?: throw CategoryNotFoundException(servId)
-        if (bookMarkRepository.existsByEmailAndOpenApiPost(email, openApiPost)) {
+        if (!bookMarkRepository.existsByEmailAndOpenApiPost(email, openApiPost)) {
             bookMarkRepository.save(
                     BookMark(
                             email = email, openApiPost = openApiPost
