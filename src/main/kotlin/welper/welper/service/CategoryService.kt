@@ -307,12 +307,9 @@ class CategoryService(
         val openApiPost = openApiPostRepository.findByIdOrNull(servId) ?: throw CategoryNotFoundException(servId)
         if (bookMarkRepository.existsByEmailAndOpenApiPost(email, openApiPost)) {
             bookMarkRepository.delete(
-                    BookMark(
-                            email = email, openApiPost = openApiPost
-                    )
+                    bookMarkRepository.findByEmailAndOpenApiPost(email, openApiPost)
             )
-        }
-        else{
+        } else {
             throw CategoryNotFound(servId)
         }
     }
