@@ -44,4 +44,9 @@ class CategoryController(
         authService.validateToken(token)
         return categoryService.bookMarkCategory(token, servId)
     }
+    @DeleteMapping("/bookMark/{servId}")
+    fun bookMarkDeleteCategory(@RequestHeader("Authorization") token: String, @PathVariable servId: String) {
+        authService.validateToken(token)
+        return categoryService.bookMarkDeleteCategory(token, servId)
+    }
 }
