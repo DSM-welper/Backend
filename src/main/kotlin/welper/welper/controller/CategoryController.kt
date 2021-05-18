@@ -19,7 +19,7 @@ class CategoryController(
         val authService: AuthService,
         ) {
     @GetMapping("/tag")
-    fun showCategoryTagList(@RequestHeader("Authorization") token: String, request: CategoryRequest): CategoryListPostResponse {
+    fun showCategoryTagList(@RequestHeader("Authorization") token: String?, request: CategoryRequest): CategoryListPostResponse {
         return categoryService.showCategoryTagList(
                 request.categoryName, request.numOfPage,token)
     }
