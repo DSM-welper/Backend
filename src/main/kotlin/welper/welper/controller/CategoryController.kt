@@ -36,7 +36,7 @@ class CategoryController(
 
     @GetMapping("/search")
     fun showSearchCategory(@RequestHeader("Authorization") token: String ,request: SearchCategoryRequest): CategoryListPostResponse {
-        return categoryService.showSearchCategory(request.content, request.numOfPage)
+        return categoryService.showSearchCategory(request.content, request.numOfPage,token)
     }
 
     @PostMapping("/bookMark/{servId}")
