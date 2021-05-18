@@ -113,8 +113,9 @@ class CategoryService(
                     svcfrstRegTs = it.openApiPost.svcfrstRegTs,
             )
         }
-        val deduplicationServList: MutableList<CategoryListPostResponse.ServList> = servList.toHashSet().toMutableList()
-//        val categoryNameCount = list.count()
+        val categoryNameCount = list.count()
+        val deduplicationServList: MutableList<CategoryListPostResponse.ServList> =  servList.groupBy { it.servId }
+                .filter { it.value.size == categoryNameCount }.flatMap { it.value }.toHashSet().toMutableList()
 //        groupBy { it.servId }.filter { it.value.size == categoryNameCount }.flatMap { it.value }
 //        val moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList> = mutableListOf()
 //        for (i in deduplicationServList.indices step categoryNameCount) {
