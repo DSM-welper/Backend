@@ -19,14 +19,14 @@ class CategoryController(
         val authService: AuthService,
         ) {
     @GetMapping("/tag")
-    fun showCategoryTagList(request: CategoryRequest): CategoryListPostResponse {
+    fun showCategoryTagList(@RequestHeader("Authorization") token: String, request: CategoryRequest): CategoryListPostResponse {
         return categoryService.showCategoryTagList(
-                request.categoryName, request.numOfPage)
+                request.categoryName, request.numOfPage,token)
     }
 
     @GetMapping
-    fun showCategoryList(request: PageRequest): CategoryListPostResponse {
-        return categoryService.showCategoryList(request.numOfPage)
+    fun showCategoryList(@RequestHeader("Authorization") token: String, request: PageRequest): CategoryListPostResponse {
+        return categoryService.showCategoryList(request.numOfPage,token)
     }
 
     @GetMapping("/detail/{id}")
@@ -35,8 +35,8 @@ class CategoryController(
     }
 
     @GetMapping("/search")
-    fun showSearchCategory(request: SearchCategoryRequest): CategoryListPostResponse {
-        return categoryService.showSearchCategory(request.content, request.numOfPage)
+    fun showSearchCategory(@RequestHeader("Authorization") token: String ,request: SearchCategoryRequest): CategoryListPostResponse {
+        return categoryService.showSearchCategory(request.content, request.numOfPage,token)
     }
 
     @PostMapping("/bookMark/{servId}")
