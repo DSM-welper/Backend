@@ -10,4 +10,5 @@ import welper.welper.domain.Post
 interface BookMarkRepository : JpaRepository<BookMark, Int> {
     fun existsByEmailAndOpenApiPost(email: String, post: OpenApiPost): Boolean
     fun findAllByEmail(email: String, pageable: Pageable): Page<BookMark>
+    fun findByEmailAndOpenApiPost(email: String, post: OpenApiPost): BookMark
 }
