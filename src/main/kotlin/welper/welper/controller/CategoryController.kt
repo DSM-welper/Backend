@@ -8,6 +8,7 @@ import welper.welper.controller.request.PageRequest
 import welper.welper.controller.request.SearchCategoryRequest
 import welper.welper.controller.response.CategoryDetailResponse
 import welper.welper.controller.response.CategoryListPostResponse
+import welper.welper.service.AuthService
 import welper.welper.service.CategoryService
 import javax.validation.Valid
 
@@ -15,11 +16,12 @@ import javax.validation.Valid
 @RequestMapping("/category")
 class CategoryController(
         val categoryService: CategoryService,
-) {
+        val authService: AuthService,
+        ) {
     @GetMapping("/tag")
     fun showCategoryTagList(request: CategoryRequest): CategoryListPostResponse {
         return categoryService.showCategoryTagList(
-                request.categoryName,request.numOfPage)
+                request.categoryName, request.numOfPage)
     }
 
     @GetMapping
@@ -29,11 +31,17 @@ class CategoryController(
 
     @GetMapping("/detail/{id}")
     fun showDetailCategory(@PathVariable id: String): CategoryDetailResponse {
-            return categoryService.showDetailCategory(id)
+        return categoryService.showDetailCategory(id)
     }
 
     @GetMapping("/search")
     fun showSearchCategory(request: SearchCategoryRequest): CategoryListPostResponse {
-        return categoryService.showSearchCategory(request.content,request.numOfPage)
+        return categoryService.showSearchCategory(request.content, request.numOfPage)
+    }
+
+    @PostMapping("/bookMark/{servId}")
+    fun bookMarkCategory(@RequestHeader("Authorization") token: String, @PathVariable servId: String) {
+        authService.validateToken(token)
+        return categoryService.bookMarkCategory(token,servId)
     }
 }
