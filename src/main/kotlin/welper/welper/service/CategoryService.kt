@@ -301,6 +301,19 @@ class CategoryService(
         }
     }
 
+    fun bookMarkDeleteCategory(token: String, servId: String) {
+        val email: String = jwtService.getEmail(token)
+        userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
+        val openApiPost = openApiPostRepository.findByIdOrNull(servId) ?: throw CategoryNotFoundException(servId)
+        if (bookMarkRepository.existsByEmailAndOpenApiPost(email, openApiPost)) {
+            bookMarkRepository.delete(
+                    BookMark(
+                            email = email, openApiPost = openApiPost
+                    )
+            )
+        }
+    }
+
     private fun getPageOfList(numOfPage: Int, moreDeduplicationServList: MutableList<CategoryListPostResponse.ServList>):
             MutableList<CategoryListPostResponse.ServList> {
         val numOfServList: Int = numOfPage * 10;
