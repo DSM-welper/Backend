@@ -19,13 +19,13 @@ class CategoryController(
         val authService: AuthService,
         ) {
     @GetMapping("/tag")
-    fun showCategoryTagList(request: CategoryRequest): CategoryListPostResponse {
+    fun showCategoryTagList(@RequestHeader("Authorization") token: String, request: CategoryRequest): CategoryListPostResponse {
         return categoryService.showCategoryTagList(
-                request.categoryName, request.numOfPage)
+                request.categoryName, request.numOfPage,token)
     }
 
     @GetMapping
-    fun showCategoryList(request: PageRequest): CategoryListPostResponse {
+    fun showCategoryList(@RequestHeader("Authorization") token: String, request: PageRequest): CategoryListPostResponse {
         return categoryService.showCategoryList(request.numOfPage)
     }
 
@@ -35,7 +35,7 @@ class CategoryController(
     }
 
     @GetMapping("/search")
-    fun showSearchCategory(request: SearchCategoryRequest): CategoryListPostResponse {
+    fun showSearchCategory(@RequestHeader("Authorization") token: String ,request: SearchCategoryRequest): CategoryListPostResponse {
         return categoryService.showSearchCategory(request.content, request.numOfPage)
     }
 
