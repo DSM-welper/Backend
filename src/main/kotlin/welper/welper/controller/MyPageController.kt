@@ -27,18 +27,14 @@ class MyPageController(
         val jwtService: JwtService,
         val authService: AuthService,
 ) {
-    @ApiImplicitParam(name = "page", value = "페이지", required = true, dataType = "int", paramType = "query")
-    @ApiOperation(value = "마이페이지", notes = "query로 page만 주면됩니다.")
     @GetMapping
     fun myPage(
             @RequestHeader("Authorization") token: String,
-            @PageableDefault(size = 8)
-            pageable: Pageable,
     ): MyPageResponse {
         authService.validateToken(token)
         val email = jwtService.getEmail(token)
         val user: User = userRepository.findByIdOrNull(email) ?: throw UserNotFoundException(email)
-        val bookMark: Page<BookMark> = bookMarkRepository.findAllByEmail(email, pageable)
+        val bookMark: List<BookMark> = bookMarkRepository.findAllByEmail(email)
         return MyPageResponse(
                 email = user.email,
                 marry = user.marry,
@@ -46,8 +42,7 @@ class MyPageController(
                 age = user.age,
                 name = user.name,
                 disorder = user.disorder,
-                bookMark = bookMark.toList().map { it.openApiPost },
-                totalPage = bookMark.totalPages
+                bookMark = bookMark.map { it.openApiPost },
         )
     }
 
