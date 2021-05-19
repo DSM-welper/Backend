@@ -12,5 +12,4 @@ data class MyPageResponse(
         val name: String,
         val disorder: Boolean,
         val bookMark: List<OpenApiPost>,
-        val totalPage: Int,
 )
