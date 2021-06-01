@@ -31,7 +31,7 @@ class CommentsService(
                     sequence = it.sequence,
                     comment = it.comments,
                     depts = it.depts,
-                    writer = it.user.name,
+                    writer = it.writer,
                     parents = it.parents,
                     id = it.id,
                     createdAt = it.createdAt
@@ -68,7 +68,8 @@ class CommentsService(
                         sequence = comments.sequence + i2,
                         comments = content,
                         postId = post.id,
-                        user = user,
+                        email = user.email,
+                        writer = user.name,
                         createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
                 )
         )
@@ -87,7 +88,8 @@ class CommentsService(
                         sequence = comments.size + 1,
                         comments = content,
                         postId = post.id,
-                        user = user,
+                        email = user.email,
+                        writer = user.name,
                         createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
                 )
         )
@@ -129,9 +131,8 @@ class CommentsService(
 
     private fun examineInformation(token: String, postId: Int, commentsId: Int) {
         val email: String = jwtService.getEmail(token)
-        val user = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         postRepository.findPostById(postId) ?: throw PostNotFoundException(email, postId)
-        commentRepository.findByIdAndUser(commentsId, user) ?: throw CommentsNotFoundException(commentsId)
+        commentRepository.findByIdAndEmail(commentsId, email) ?: throw CommentsNotFoundException(commentsId)
     }
 
     private fun countParents(postId: Int, comments: Comments, i: Int): Int {

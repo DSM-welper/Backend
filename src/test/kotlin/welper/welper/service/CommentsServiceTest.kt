@@ -13,9 +13,6 @@ import welper.welper.domain.attribute.Gender
 import welper.welper.domain.attribute.Marry
 import welper.welper.exception.CommentsNotFoundException
 import welper.welper.exception.PostNotFoundException
-import welper.welper.repository.CommentsRepository
-import welper.welper.repository.PostRepository
-import welper.welper.repository.UserRepository
 import java.time.LocalDateTime
 
 internal class CommentsServiceTest {

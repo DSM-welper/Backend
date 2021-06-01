@@ -3,12 +3,8 @@ package welper.welper.service
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import welper.welper.controller.request.CommentsRequest
-import welper.welper.controller.response.CategoryListPostResponse
-import welper.welper.controller.response.CommentResponse
 import welper.welper.controller.response.PostListResponse
 import welper.welper.controller.response.PostResponse
-import welper.welper.domain.Comments
 import welper.welper.domain.Post
 import welper.welper.domain.User
 import welper.welper.exception.NonNumOfPageOutOfBoundsException
@@ -29,22 +25,22 @@ class PostService(
 
     fun postCreate(token: String, title: String, content: String, category: String, createdAt: LocalDateTime) {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
+        val user = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         postRepository.save(
                 Post(
                         title = title,
                         content = content,
                         category = category,
                         createdAt = createdAt,
-                        user = user,
+                        email = user.email,
+                        writer = user.name
                 )
         )
     }
 
     fun postDelete(token: String, id: Int) {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
-        val post: Post = postRepository.findByIdAndUser(id, user) ?: throw PostNotFoundException(email, id)
+        val post: Post = postRepository.findByIdAndEmail(id, email) ?: throw PostNotFoundException(email, id)
 
         commentsRepository.deleteAllByPostId(post.id)
         postRepository.delete(post)
@@ -55,15 +51,15 @@ class PostService(
         val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val post: Post = postRepository.findPostById(id) ?: throw PostNotFoundException(email, id)
         var isMine = false
-        if(user == (post.user)){
-            isMine= true
+        if (user.email == (post.email)) {
+            isMine = true
         }
         return PostResponse(
                 title = post.title,
                 content = post.content,
                 createdAt = post.createdAt,
                 category = post.category,
-                writer = post.user.name,
+                writer = post.writer,
                 id = post.id,
                 isMine = isMine,
         )
@@ -78,7 +74,7 @@ class PostService(
                         PostListResponse.PostList(
                                 title = it.title,
                                 id = it.id,
-                                writer = it.user.name,
+                                writer = it.writer,
                                 creatAt = it.createdAt,
                                 category = it.category
                         )
@@ -102,7 +98,7 @@ class PostService(
                         PostListResponse.PostList(
                                 title = it.title,
                                 id = it.id,
-                                writer = it.user.name,
+                                writer = it.writer,
                                 creatAt = it.createdAt,
                                 category = it.category
                         )
@@ -119,9 +115,8 @@ class PostService(
 
     fun postMineRead(token: String, pageable: Pageable): PostListResponse {
         val email: String = jwtService.getEmail(token)
-        val user: User = userRepository.findByEmail(email) ?: throw UserNotFoundException(email)
         val list: MutableList<PostListResponse.PostList> = mutableListOf()
-        val page: Page<Post> = postRepository.findAllByUser(user, pageable)
+        val page: Page<Post> = postRepository.findAllByEmail(email, pageable)
 
         page.forEach {
             if (it != null) {
@@ -129,7 +124,7 @@ class PostService(
                         PostListResponse.PostList(
                                 title = it.title,
                                 id = it.id,
-                                writer = it.user.name,
+                                writer = it.writer,
                                 creatAt = it.createdAt,
                                 category = it.category
                         )
@@ -153,7 +148,7 @@ class PostService(
                         PostListResponse.PostList(
                                 title = it.title,
                                 id = it.id,
-                                writer = it.user.name,
+                                writer = it.writer,
                                 creatAt = it.createdAt,
                                 category = it.category
                         )
@@ -177,7 +172,7 @@ class PostService(
                         PostListResponse.PostList(
                                 title = it.title,
                                 id = it.id,
-                                writer = it.user.name,
+                                writer = it.writer,
                                 creatAt = it.createdAt,
                                 category = it.category
                         )

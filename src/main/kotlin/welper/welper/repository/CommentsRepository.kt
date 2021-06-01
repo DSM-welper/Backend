@@ -8,11 +8,12 @@ import welper.welper.domain.Comments
 import welper.welper.domain.User
 
 interface CommentsRepository : JpaRepository<Comments, Int> {
-    fun findAllByPostId(postId: Int):List<Comments>
-    fun findAllByPostIdAndParents(postId: Int, parents: Int):List<Comments>
-    fun findByIdAndUser(id: Int, user: User):Comments?
-    fun findCommentsById(id: Int):Comments?
+    fun findAllByPostId(postId: Int): List<Comments>
+    fun findAllByPostIdAndParents(postId: Int, parents: Int): List<Comments>
+    fun findByIdAndEmail(id: Int, email: String): Comments?
+    fun findCommentsById(id: Int): Comments?
+
     @Transactional
     fun deleteAllByPostId(postId: Int)
-    fun findAllByPostId(postId: Int,pageable: Pageable): Page<Comments>
+    fun findAllByPostId(postId: Int, pageable: Pageable): Page<Comments>
 }
