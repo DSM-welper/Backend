@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table(name ="post")
+@Table(name = "post")
 class Post(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +20,13 @@ class Post(
         @Column(name = "createdAt")
         val createdAt: LocalDateTime,
 
-        @ManyToOne
-        @JoinColumn(name = "user", referencedColumnName = "email")
-        var user: User,
+//        @ManyToOne
+//        @JoinColumn(name = "user", referencedColumnName = "email")
+        @Column(name = "email")
+        var email: String,
+
+        @Column(name = "writer")
+        var writer: String,
 
         @Column(name = "category")
         val category: String,
