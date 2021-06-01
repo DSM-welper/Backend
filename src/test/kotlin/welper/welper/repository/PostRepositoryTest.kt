@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.TestConstructor
-import welper.welper.domain.Post
 import welper.welper.domain.User
 import welper.welper.domain.attribute.Gender
 import welper.welper.domain.attribute.Marry
