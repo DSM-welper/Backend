@@ -5,18 +5,12 @@ import com.nhaarman.mockitokotlin2.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.repository.findByIdOrNull
-import welper.welper.controller.response.PostResponse
 import welper.welper.domain.Comments
 import welper.welper.domain.Post
 import welper.welper.domain.User
 import welper.welper.domain.attribute.Gender
 import welper.welper.domain.attribute.Marry
 import welper.welper.exception.PostNotFoundException
-import welper.welper.repository.CommentsRepository
-import welper.welper.repository.PostRepository
-import welper.welper.repository.UserRepository
 import java.time.LocalDateTime
 import java.util.*
 
