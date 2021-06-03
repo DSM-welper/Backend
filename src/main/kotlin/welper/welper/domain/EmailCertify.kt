@@ -18,8 +18,10 @@ class EmailCertify(
     var certified = certified
         private set
 
-    fun isCertified(certified: Boolean) {
+    fun isCertified() {
         this.certified = true
     }
-
+    fun isReCertified() {
+        this.certified = false
+    }
 }
