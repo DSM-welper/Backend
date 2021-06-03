@@ -7,6 +7,7 @@ import welper.welper.domain.EmailCertify
 import welper.welper.exception.AlreadyExistAccountException
 import welper.welper.exception.AuthenticationNumberMismatchException
 import welper.welper.repository.EmailCertifyRepository
+import welper.welper.repository.UserRepository
 import java.math.BigInteger
 import java.nio.charset.Charset
 import java.security.MessageDigest
@@ -17,13 +18,14 @@ import java.util.*
 class EmailService(
         private val javaMailSender: JavaMailSender,
         private val emailCertifyRepository: EmailCertifyRepository,
+        private val userRepository: UserRepository,
 ) {
     private val encryptionAlgorithm = "SHA-512"
     private val characterEncoding = Charset.forName("UTF-8")
 
     fun send(email: String) {
-        val isJoinPossible = isJoinPossible(email)
-        if(isJoinPossible) throw AlreadyExistAccountException(email)
+
+        isJoinPossible(email)
 
         val randomCode: String = getRandomString(10)
 
@@ -48,7 +50,7 @@ class EmailService(
     fun approvalMail(authCode: String, email: String) {
         val emailCertify: EmailCertify = emailCertifyRepository.findByEmailAndAuthCode(email = email, authCode = encodingAuthCode(authCode))
                 ?: throw AuthenticationNumberMismatchException(email)
-        emailCertify.isCertified(emailCertify.certified)
+        emailCertify.isCertified()
         emailCertifyRepository.save(emailCertify)
     }
 
@@ -65,6 +67,15 @@ class EmailService(
                 .map { charset.random() }
                 .joinToString("")
     }
-    private fun isJoinPossible(email: String) = emailCertifyRepository.existsByEmailAndCertified(email,true)?:false
 
+    private fun isJoinPossible(email: String) {
+        val findByEmail: EmailCertify? = emailCertifyRepository.findByEmailAndCertified(email, true)
+        if (findByEmail != null)
+            if (userRepository.existsByEmail(email))
+                throw AlreadyExistAccountException(email)
+            else {
+                findByEmail.isReCertified()
+                emailCertifyRepository.save(findByEmail)
+            }
+    }
 }
